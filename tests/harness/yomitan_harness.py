@@ -26,9 +26,10 @@ import http.server
 import os
 import socketserver
 import threading
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 from .contract import OVERFLOW_TOLERANCE_PX
 
@@ -60,7 +61,7 @@ class _Handler(http.server.SimpleHTTPRequestHandler):
             return str(HARNESS_PAGE)
         return super().translate_path(path)
 
-    def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
+    def log_message(self, format: str, *args: Any) -> None:
         return  # keep pytest output readable
 
 
@@ -133,7 +134,7 @@ class Box:
     def bottom(self) -> float:
         return self.y + self.height
 
-    def overlaps(self, other: "Box") -> bool:
+    def overlaps(self, other: Box) -> bool:
         return (
             self.x < other.right
             and other.x < self.right
@@ -419,12 +420,12 @@ class YomitanRenderer:
 
 
 __all__ = [
-    "Box",
     "DESKTOP_VIEWPORT",
     "EXPECTED_YOMITAN_VERSION",
     "NARROW_VIEWPORT",
-    "RenderedCard",
     "YOMITAN_ROOT",
+    "Box",
+    "RenderedCard",
     "YomitanRenderer",
     "serve_yomitan",
     "yomitan_revision",

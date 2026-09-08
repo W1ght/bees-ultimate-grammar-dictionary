@@ -47,6 +47,7 @@ def _git_show(path: pathlib.Path) -> str:
         ["git", "show", f"HEAD:{path.as_posix()}"],
         capture_output=True,
         text=True,
+        check=False,  # a missing blob is a supported case, handled below
     )
     if result.returncode != 0:
         print(
@@ -90,6 +91,7 @@ def main() -> int:
 
     survived: list[str] = []
     missing: list[str] = []
+    restore_failed = False
     try:
         for token in TOKENS:
             if token not in css:
@@ -102,6 +104,7 @@ def main() -> int:
                  "--tb=no", "-p", "no:cacheprovider"],
                 capture_output=True,
                 text=True,
+                check=False,  # a failing suite IS the expected outcome here
             )
             failed = _failed_tests(result.stdout)
             verdict = "KILLED  " if failed else "SURVIVED"
@@ -112,11 +115,12 @@ def main() -> int:
                 survived.append(token)
     finally:
         TARGET.write_text(pristine, encoding="utf-8")
-        restored = TARGET.read_text(encoding="utf-8") == pristine
-        print(f"\nrestored {TARGET}: {restored}")
-        if not restored:
-            print("RESTORE FAILED -- fix the file before committing", file=sys.stderr)
-            return 3
+        restore_failed = TARGET.read_text(encoding="utf-8") != pristine
+        print(f"\nrestored {TARGET}: {not restore_failed}")
+
+    if restore_failed:
+        print("RESTORE FAILED -- fix the file before committing", file=sys.stderr)
+        return 3
 
     if missing:
         print(f"\n{len(missing)} token(s) no longer in the stylesheet; update TOKENS.")

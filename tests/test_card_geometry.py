@@ -9,7 +9,6 @@ because an ancestor is only ever as wide as its widest unbreakable descendant.
 from __future__ import annotations
 
 import pytest
-
 from harness import selectors as sel
 from harness.contract import OVERFLOW_TOLERANCE_PX, ZOOMED_ROOT_FONT_PX
 
@@ -151,7 +150,7 @@ def test_furigana_ruby_sits_above_its_base_text(renderer, card, styles_css):
     misaligned = []
     for index in range(rendered.count("rt")):
         annotation = rendered.box("rt", index)
-        base = rendered._page.locator("rt").nth(index).evaluate(  # noqa: SLF001
+        base = rendered._page.locator("rt").nth(index).evaluate(
             """(el) => {
                 const rect = el.closest('ruby').getBoundingClientRect();
                 return {y: rect.y, height: rect.height};

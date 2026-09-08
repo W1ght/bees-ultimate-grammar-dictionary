@@ -19,9 +19,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tests"))
 sys.path.insert(0, str(ROOT / "src"))
 
-from harness import selectors as sel  # noqa: E402
-from harness.card_builder import active_builder, build_card  # noqa: E402
-from harness.yomitan_harness import (  # noqa: E402
+from harness import selectors as sel
+from harness.card_builder import active_builder, build_card
+from harness.yomitan_harness import (
     DESKTOP_VIEWPORT,
     NARROW_VIEWPORT,
     YomitanRenderer,
@@ -88,38 +88,37 @@ def main() -> int:
     }
     shots: list[dict[str, Any]] = manifest["shots"]
 
-    with serve_yomitan() as url:
-        with sync_playwright() as playwright:
-            browser = playwright.chromium.launch()
-            page = browser.new_page()
-            errors: list[str] = []
-            page.on("pageerror", lambda error: errors.append(str(error)))
-            renderer = YomitanRenderer(page, url)
+    with serve_yomitan() as url, sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page()
+        errors: list[str] = []
+        page.on("pageerror", lambda error: errors.append(str(error)))
+        renderer = YomitanRenderer(page, url)
 
-            for name, fixture, kwargs, expand in SHOTS:
-                card = build_card(corpus["entries"][fixture], labels)
-                rendered = renderer.render(card, styles_css=STYLES_CSS, **kwargs)
-                for section in expand:
-                    if rendered.exists(section):
-                        rendered.open_details(section)
-                path = rendered.screenshot(out / f"card-{name}.png")
-                overflow = rendered.overflow_report()
-                manifest_entry = {
-                    "name": name,
-                    "fixture": fixture,
-                    "options": {
-                        key: value for key, value in kwargs.items() if key != "viewport"
-                    },
-                    "viewport": kwargs.get("viewport", DESKTOP_VIEWPORT),
-                    "expanded": list(expand),
-                    "file": path.name,
-                    "cardBox": rendered.box(sel.ROOT).__dict__,
-                    "overflowBoxes": len(overflow),
-                }
-                shots.append(manifest_entry)
-                print(f"{path}  overflow_boxes={len(overflow)}")
+        for name, fixture, kwargs, expand in SHOTS:
+            card = build_card(corpus["entries"][fixture], labels)
+            rendered = renderer.render(card, styles_css=STYLES_CSS, **kwargs)
+            for section in expand:
+                if rendered.exists(section):
+                    rendered.open_details(section)
+            path = rendered.screenshot(out / f"card-{name}.png")
+            overflow = rendered.overflow_report()
+            manifest_entry = {
+                "name": name,
+                "fixture": fixture,
+                "options": {
+                    key: value for key, value in kwargs.items() if key != "viewport"
+                },
+                "viewport": kwargs.get("viewport", DESKTOP_VIEWPORT),
+                "expanded": list(expand),
+                "file": path.name,
+                "cardBox": rendered.box(sel.ROOT).__dict__,
+                "overflowBoxes": len(overflow),
+            }
+            shots.append(manifest_entry)
+            print(f"{path}  overflow_boxes={len(overflow)}")
 
-            browser.close()
+        browser.close()
 
     if errors:
         print(f"\nJS errors during capture: {errors}", file=sys.stderr)

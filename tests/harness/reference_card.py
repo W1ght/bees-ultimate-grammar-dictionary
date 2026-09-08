@@ -66,9 +66,7 @@ def _headword_row(entry: dict) -> dict:
         if collapse(point["reading"] or "") not in ("", entry["expression"])
     }
     if readings:
-        parts.append(
-            _role("cardReading", "span", sorted(readings)[0], lang="ja")
-        )
+        parts.append(_role("cardReading", "span", min(readings), lang="ja"))
     levels = [
         level
         for level in _JLPT_ORDER

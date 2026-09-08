@@ -8,7 +8,6 @@ cannot report green while silently testing a stand-in or a stale Yomitan.
 from __future__ import annotations
 
 import pytest
-
 from harness import card_builder
 from harness.yomitan_harness import EXPECTED_YOMITAN_VERSION, yomitan_revision
 

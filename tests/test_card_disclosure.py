@@ -9,7 +9,6 @@ it without any test on the source JSON noticing.
 from __future__ import annotations
 
 import pytest
-
 from harness import selectors as sel
 from harness.contract import MIN_TOUCH_TARGET_PX
 
@@ -73,7 +72,7 @@ def test_no_disclosure_overlaps_another_when_all_expanded(renderer, card, styles
     """With everything open, no two summary rows share pixels."""
     rendered = renderer.render(card(RICH), styles_css=styles_css)
     for index in range(rendered.count("details")):
-        rendered._page.locator("details").nth(index).evaluate(  # noqa: SLF001
+        rendered._page.locator("details").nth(index).evaluate(
             "el => el.open = true"
         )
     boxes = rendered.boxes(sel.SUMMARY)

@@ -16,7 +16,8 @@ the stand-in after the production composer lands.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 #: Yomitan assigns `data` keys via `element.dataset[key]` after prefixing `sc`
 #: and upper-casing the first character. A `DOMStringMap` setter rejects any
@@ -29,10 +30,15 @@ CARD_ROOT_SELECTOR = "[data-sc-grammar-card]"
 
 
 def _production_builder() -> Callable[[Any, int], list] | None:
+    # The broad excepts below are deliberate capability probes, not swallowed
+    # bugs: this function's whole job is to answer "can the production composer
+    # build a card?" for an arbitrary in-progress module. Narrowing them would
+    # make an unrelated import-time error in UGD-09's code crash collection of
+    # every test in this suite instead of degrading to the contract stand-in.
     try:
         from bugd.banks import build_term_entry
         from bugd.merge import MergedEntry
-    except Exception:
+    except Exception:  # noqa: BLE001 - capability probe, see above
         return None
 
     probe = MergedEntry(expression="x")
@@ -40,7 +46,7 @@ def _production_builder() -> Callable[[Any, int], list] | None:
         build_term_entry(probe, 1)
     except NotImplementedError:
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001,S110 - see below
         # Any other failure means the composer exists and is doing real work;
         # a bare probe entry simply is not valid input for it.
         pass
@@ -56,8 +62,8 @@ def reference_available() -> bool:
     error that looks like a broken test file.
     """
     try:
-        import bugd.richtext  # noqa: F401
-    except Exception:
+        import bugd.richtext  # noqa: F401 - availability probe
+    except Exception:  # noqa: BLE001 - probing importability, not handling a bug
         return False
     return True
 

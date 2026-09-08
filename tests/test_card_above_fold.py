@@ -8,8 +8,9 @@ node is caught here rather than in production.
 
 from __future__ import annotations
 
-import pytest
+import itertools
 
+import pytest
 from harness import selectors as sel
 from harness.contract import MIN_BADGE_GAP_PX
 
@@ -35,7 +36,7 @@ def test_above_fold_holds_only_contract_rows(renderer, card, styles_css, name):
     line added above the fold because the data happened to be available.
     """
     rendered = renderer.render(card(name), styles_css=styles_css)
-    roles = rendered._page.evaluate(  # noqa: SLF001 - harness-internal by design
+    roles = rendered._page.evaluate(
         """(aboveFold) => {
             const node = document.querySelector(aboveFold);
             return [...node.children].map(
@@ -95,7 +96,7 @@ def test_jlpt_badges_are_visually_separated(renderer, card, styles_css):
     )
     gaps = [
         (index, round(right.x - left.right, 2))
-        for index, (left, right) in enumerate(zip(badges, badges[1:]))
+        for index, (left, right) in enumerate(itertools.pairwise(badges))
     ]
     too_tight = [pair for pair in gaps if pair[1] < MIN_BADGE_GAP_PX]
     assert not too_tight, (

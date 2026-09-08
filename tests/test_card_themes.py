@@ -15,7 +15,6 @@ combinations are measured separately.
 from __future__ import annotations
 
 import pytest
-
 from harness import selectors as sel
 from harness.colour import SYSTEM_COLORS, contrast_ratio
 from harness.contract import MIN_BODY_CONTRAST, MIN_NONTEXT_CONTRAST
@@ -39,7 +38,7 @@ def _background(rendered) -> str:
     is what actually decides legibility. Walking up to it is the difference
     between measuring real contrast and measuring text against `rgba(0,0,0,0)`.
     """
-    return rendered._page.evaluate(  # noqa: SLF001 - harness-internal by design
+    return rendered._page.evaluate(
         """(root) => {
             let el = document.querySelector(root);
             while (el) {

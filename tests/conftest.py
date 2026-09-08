@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import json
 import sys
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 import pytest
 
@@ -36,8 +37,8 @@ def sample_point() -> GrammarPoint:
 # --- real-Yomitan render suite (UGD-12) ---------------------------------
 sys.path.insert(0, str(Path(__file__).parent))
 
-from harness.card_builder import build_card  # noqa: E402
-from harness.yomitan_harness import (  # noqa: E402
+from harness.card_builder import build_card
+from harness.yomitan_harness import (
     EXPECTED_YOMITAN_VERSION,
     YomitanRenderer,
     serve_yomitan,
@@ -75,7 +76,7 @@ def styles_css() -> str:
 def yomitan_url() -> Iterator[str]:
     try:
         revision = yomitan_revision()
-    except Exception as error:  # pragma: no cover - environment guard
+    except Exception as error:  # noqa: BLE001 - environment guard, skips loudly
         pytest.skip(f"{_SKIP}{error}")
     if not revision["describe"].startswith(EXPECTED_YOMITAN_VERSION):
         pytest.fail(
@@ -102,7 +103,7 @@ def browser() -> Iterator[Any]:
     with sync_playwright() as playwright:
         try:
             instance = playwright.chromium.launch()
-        except Exception as error:  # pragma: no cover - environment guard
+        except Exception as error:  # noqa: BLE001 - environment guard, skips loudly
             pytest.skip(f"{_SKIP}{error}")
         try:
             yield instance
