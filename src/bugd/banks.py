@@ -30,8 +30,16 @@ from .merge import MergedEntry
 CARD_ROOT_ROLE = "grammar-card"
 
 
-def build_index(revision: str, *, is_updatable: bool = False) -> dict:
-    """Build `index.json` for the unified dictionary."""
+def build_index(
+    revision: str, *, index_url: str | None = None, download_url: str | None = None
+) -> dict:
+    """Build `index.json` for the unified dictionary.
+
+    Yomitan's index schema pins `isUpdatable` to `const: true` and makes it
+    depend on both `indexUrl` and `downloadUrl`, so a self-updating index is
+    valid only as all three together. The dictionary is local-only by default:
+    the updater fields are omitted unless both URLs are supplied.
+    """
     if not isinstance(revision, str) or not revision.strip():
         raise MalformedPayload("index revision must be a non-empty string")
     index = {
@@ -46,8 +54,13 @@ def build_index(revision: str, *, is_updatable: bool = False) -> dict:
         "sourceLanguage": "ja",
         "targetLanguage": "en",
         "sequenced": True,
-        "isUpdatable": is_updatable,
     }
+    if (index_url is None) != (download_url is None):
+        raise MalformedPayload("a self-updating index requires both indexUrl and downloadUrl")
+    if index_url is not None and download_url is not None:
+        index["indexUrl"] = index_url
+        index["downloadUrl"] = download_url
+        index["isUpdatable"] = True
     return index
 
 

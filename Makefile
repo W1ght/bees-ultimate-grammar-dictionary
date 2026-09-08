@@ -7,6 +7,13 @@
 #   validate -> pinned official Yomitan schema validation (python + node)
 
 PY ?= python3
+
+# Resolve node through the shell rather than letting make exec a bare `node`.
+# make short-circuits single-word recipes to a direct exec and uses its own PATH
+# walk, which on this host hits an empty `/usr/bin/node` DIRECTORY that shadows
+# the real interpreter and fails with "Permission denied".
+NODE ?= $(shell command -v node 2>/dev/null || echo node)
+
 PYTHONPATH := src
 export PYTHONPATH
 
@@ -38,7 +45,7 @@ validate:
 # Independent Node/ajv cross-check of the same artifact against the same pinned
 # schemas. Requires `npm install`.
 validate-node:
-	node scripts/validate_yomitan.mjs $(ZIP)
+	$(NODE) scripts/validate_yomitan.mjs $(ZIP)
 
 test:
 	$(PY) -m pytest -q

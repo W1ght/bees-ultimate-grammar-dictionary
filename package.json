@@ -4,11 +4,12 @@
   "type": "module",
   "description": "Independent Node/ajv validation of the built Bee's Ultimate Grammar Dictionary ZIP",
   "scripts": {
-    "extract": "python3 -m bugd.cli extract",
-    "merge": "python3 -m bugd.cli merge",
-    "build": "python3 -m bugd.cli build",
-    "validate": "node scripts/validate_yomitan.mjs build/bees-ultimate-grammar-dictionary.zip",
-    "test": "python3 -m pytest -q"
+    "extract": "make extract",
+    "merge": "make merge",
+    "build": "make build",
+    "validate": "make validate",
+    "validate:node": "make validate-node",
+    "test": "make test"
   },
   "dependencies": {
     "adm-zip": "0.6.0",
