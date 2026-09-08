@@ -1,0 +1,17 @@
+{
+  "name": "bees-ultimate-grammar-dictionary-tools",
+  "private": true,
+  "type": "module",
+  "description": "Independent Node/ajv validation of the built Bee's Ultimate Grammar Dictionary ZIP",
+  "scripts": {
+    "extract": "python3 -m bugd.cli extract",
+    "merge": "python3 -m bugd.cli merge",
+    "build": "python3 -m bugd.cli build",
+    "validate": "node scripts/validate_yomitan.mjs build/bees-ultimate-grammar-dictionary.zip",
+    "test": "python3 -m pytest -q"
+  },
+  "dependencies": {
+    "adm-zip": "0.6.0",
+    "ajv": "^8.17.1"
+  }
+}

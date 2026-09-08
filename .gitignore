@@ -1,0 +1,24 @@
+# Build outputs
+/build/
+/dist/
+/out/
+*.zip
+SHA256SUMS
+
+# Acquired / extracted source data (regenerable, large, possibly non-redistributable)
+/data/sources/*/
+!/data/sources/.gitkeep
+/data/extracted/
+/data/merged/
+/cache/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
