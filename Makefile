@@ -25,13 +25,19 @@ export SOURCE_DATE_EPOCH := 0
 
 ZIP := build/bees-ultimate-grammar-dictionary.zip
 
-.PHONY: all extract merge build validate validate-node test clean help
+.PHONY: all extract keymap merge build validate validate-node test clean help
 
 help:
-	@printf 'targets: extract merge build validate validate-node test all clean\n'
+	@printf 'targets: extract keymap merge build validate validate-node test all clean\n'
 
 extract:
 	$(PY) -m bugd.cli extract
+
+# Cross-source canonical keymap (data/merge/keymap.json). Consumed by `merge`.
+keymap:
+	$(PY) scripts/build_keymap.py
+	$(PY) scripts/audit_keymap.py
+	$(PY) scripts/render_ambiguity_report.py
 
 merge:
 	$(PY) -m bugd.cli merge
@@ -50,7 +56,7 @@ validate-node:
 test:
 	$(PY) -m pytest -q
 
-all: extract merge build validate
+all: extract keymap merge build validate
 
 clean:
 	rm -rf build dist data/extracted data/merged

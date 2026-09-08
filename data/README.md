@@ -10,6 +10,7 @@ data/
     SOURCE.lock.json              digest lock of every consumed file
     <original files...>
   extracted/<source-name>.json    normalized GrammarPoint records  (gitignored)
+  merge/keymap.json               cross-source canonical keymap + report  (gitignored)
   merged/corpus.json              the one unified MergedEntry corpus  (gitignored)
 ```
 
@@ -64,6 +65,49 @@ One artifact per source, written by `make extract`:
 
 Extractors preserve the whole tail. Compact-card truncation is a rendering
 decision made in `bugd.banks`, never here.
+
+## `data/merge/keymap.json`
+
+Written by `scripts/build_keymap.py` (module: `bugd.keymap`): the authority for
+*which source rows are the same grammar point*. The merge stage reads it through
+`bugd.keymap_io` and falls back to derived keys only when it is absent.
+
+```json
+{
+  "schemaVersion": 1,
+  "assignments": [
+    {"source": "dojg", "sourceId": "ながら", "substanceHash": "<sha256>",
+     "canonicalKey": "ながら"}
+  ],
+  "points": [
+    {"canonicalKey": "ながら", "expression": "ながら",
+     "lookupForms": ["ながら"], "axes": {"variety": "standard", "era": "modern"},
+     "contributors": [/* row identities */], "sourceCount": 2,
+     "observedRegisters": [], "observedSignatures": [], "jlptLevels": ["N4"]}
+  ],
+  "report": { /* every ambiguous case and the guard that decided it */ }
+}
+```
+
+A row's identity is `(source, sourceId, substanceHash)`. The hash is required
+because `sourceId` is **not** unique: edewakaru ships `も` eleven times and
+donna_toki `お` six times as genuinely different senses, so addressing rows by
+`(source, sourceId)` alone would make them collide.
+
+Canonical keys are `<key>`, `<key>#<disambiguator>` when a bucket holds several
+distinct senses, and are prefixed `<variety>/<era>:` outside the default
+`standard/modern` scope so a classical form can never collide with its modern
+homograph.
+
+The matcher folds on positive attested evidence or refuses — a missed fold is
+untidy, a wrong fold destroys a distinction the source authors made. `report`
+enumerates refusals in full rather than counting them, so a reviewer can check
+that e.g. `ないことはある` and `ないことはない` stayed apart and see which guard did
+it. Regenerate with:
+
+```
+PYTHONPATH=src python3 scripts/build_keymap.py
+```
 
 ## `data/merged/corpus.json`
 
