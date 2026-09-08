@@ -2,20 +2,33 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import zipfile
 
 import pytest
 
-from bugd import DICTIONARY_AUTHOR, DICTIONARY_FORMAT, DICTIONARY_TITLE, TERM_BANK_SHARD
-from bugd.banks import build_banks, build_index, build_tag_bank, build_term_entry
-from bugd.jsonio import MalformedPayload, load_json
+from bugd import (
+    DICTIONARY_AUTHOR,
+    DICTIONARY_FORMAT,
+    DICTIONARY_TITLE,
+    TERM_BANK_SHARD,
+    YOMITAN_SCHEMA_REVISION,
+)
+from bugd.banks import (
+    CARD_ROOT_ROLE,
+    build_banks,
+    build_index,
+    build_tag_bank,
+    build_term_entry,
+)
+from bugd.jsonio import MalformedPayload, dump_json, load_json
 from bugd.merge import MergedEntry, merge_points
 from bugd.package import ZIP_DATE, build_zip, package_members
-from bugd.pipeline import run_build, run_validate, zip_name
+from bugd.pipeline import SchemaValidationError, run_build, run_validate, zip_name
 from bugd.styles import STYLES_CSS
-from bugd.validate import validate_zip
+from bugd.validate import ALLOWED_EXTRA_MEMBERS, term_entry_count, validate_zip
 
 
 def test_index_carries_the_unified_title_and_format():
@@ -219,3 +232,183 @@ def test_index_json_in_the_built_zip_is_canonical_json(tmp_path):
     with zipfile.ZipFile(tmp_path / "b" / zip_name()) as archive:
         payload = load_json(archive.read("index.json").decode("utf-8"))
     assert payload["title"] == DICTIONARY_TITLE
+
+
+# --------------------------------------------------------------------------
+# release gate: dist publication, entry counts, and stray members
+# --------------------------------------------------------------------------
+
+
+def _term_entry(sequence: int, *, media_path: str | None = None) -> list:
+    """One schema-valid structured-content term entry for packaging tests."""
+    content: list = [{"tag": "div", "content": "hearsay; I hear that"}]
+    if media_path is not None:
+        content.append(
+            {"tag": "img", "path": media_path, "collapsed": False, "collapsible": False}
+        )
+    return [
+        "そうです", "", "fixture", "", 0,
+        [{
+            "type": "structured-content",
+            "content": {"tag": "div", "data": {CARD_ROOT_ROLE: "root"}, "content": content},
+        }],
+        sequence, "",
+    ]
+
+
+def _built(tmp_path, members):
+    zip_path = tmp_path / zip_name()
+    zip_path.write_bytes(build_zip(members))
+    return zip_path
+
+
+def test_a_populated_archive_passes_the_full_gate(tmp_path):
+    zip_path = _built(
+        tmp_path,
+        package_members(
+            index=build_index("2026.09.08"),
+            banks={"term_bank_1.json": [_term_entry(n, media_path="media/x.png") for n in (1, 2)]},
+            tag_bank=build_tag_bank({"fixture": "Fixture Source"}),
+            styles_css=STYLES_CSS,
+            media={"x.png": b"\x89PNG\r\n\x1a\n"},
+        ),
+    )
+    assert validate_zip(zip_path, require_entries=True) == []
+    assert term_entry_count(zip_path) == 2
+
+
+def test_term_entry_count_is_read_back_from_the_artifact(tmp_path):
+    zip_path = _built(
+        tmp_path,
+        package_members(
+            index=build_index("1"),
+            banks={
+                "term_bank_1.json": [_term_entry(1), _term_entry(2)],
+                "term_bank_2.json": [_term_entry(3)],
+            },
+            styles_css=STYLES_CSS,
+        ),
+    )
+    assert term_entry_count(zip_path) == 3
+
+
+def test_require_entries_refuses_an_empty_dictionary(tmp_path):
+    zip_path = _built(
+        tmp_path, package_members(index=build_index("1"), banks={}, styles_css=STYLES_CSS)
+    )
+    # Structurally valid, so the default gate passes; the release gate does not.
+    assert validate_zip(zip_path) == []
+    failures = validate_zip(zip_path, require_entries=True)
+    assert any("no term entries" in failure for failure in failures)
+
+
+def test_validate_refuses_a_member_yomitan_would_silently_ignore(tmp_path):
+    zip_path = _built(
+        tmp_path,
+        package_members(
+            index=build_index("1"),
+            banks={},
+            styles_css=STYLES_CSS,
+            extra={"README.md": "shipped but never imported"},
+        ),
+    )
+    failures = validate_zip(zip_path)
+    assert any("unrecognised archive member" in failure for failure in failures)
+
+
+def test_licence_and_attribution_members_are_allowed(tmp_path):
+    # The per-source licences require notices to accompany redistribution, so
+    # these must travel with the archive without tripping the stray-member gate.
+    zip_path = _built(
+        tmp_path,
+        package_members(
+            index=build_index("1"),
+            banks={},
+            styles_css=STYLES_CSS,
+            extra={name: "x" for name in sorted(ALLOWED_EXTRA_MEMBERS)},
+        ),
+    )
+    assert validate_zip(zip_path) == []
+
+
+def test_validate_reports_duplicate_member_names(tmp_path):
+    # zipfile permits duplicate names; Yomitan would read only one of them.
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as archive:
+        archive.writestr("index.json", dump_json(build_index("1")))
+        archive.writestr("styles.css", "")
+        archive.writestr("styles.css", "")
+    zip_path = tmp_path / zip_name()
+    zip_path.write_bytes(buffer.getvalue())
+    failures = validate_zip(zip_path)
+    assert any("duplicate member names" in failure for failure in failures)
+
+
+def test_build_publishes_validated_bytes_to_dist(tmp_path):
+    result = run_build(
+        merged_dir=tmp_path / "absent",
+        build_dir=tmp_path / "build",
+        dist_dir=tmp_path / "dist",
+        revision="2026.09.08",
+    )
+    dist_path = tmp_path / "dist" / zip_name()
+    assert result["distPath"] == str(dist_path)
+    # dist bytes are the exact validated build bytes, not a rebuild.
+    assert dist_path.read_bytes() == (tmp_path / "build" / zip_name()).read_bytes()
+    sums = (tmp_path / "dist" / "SHA256SUMS").read_text(encoding="utf-8")
+    assert sums == f"{result['sha256']}  {zip_name()}\n"
+
+
+def test_build_does_not_publish_unless_asked(tmp_path):
+    result = run_build(
+        merged_dir=tmp_path / "absent", build_dir=tmp_path / "build", revision="1"
+    )
+    assert "distPath" not in result
+    assert not (tmp_path / "dist").exists()
+
+
+def test_build_reports_the_artifacts_own_digest_and_entry_count(tmp_path):
+    result = run_build(
+        merged_dir=tmp_path / "absent", build_dir=tmp_path / "build", revision="2026.09.08"
+    )
+    zip_path = tmp_path / "build" / zip_name()
+    assert result["sha256"] == hashlib.sha256(zip_path.read_bytes()).hexdigest()
+    assert result["termEntries"] == term_entry_count(zip_path)
+    assert result["schemaRevision"] == YOMITAN_SCHEMA_REVISION
+
+
+def test_build_fails_closed_and_publishes_nothing_on_a_gate_failure(tmp_path):
+    dist_dir = tmp_path / "dist"
+    with pytest.raises(SchemaValidationError) as raised:
+        run_build(
+            merged_dir=tmp_path / "absent",
+            build_dir=tmp_path / "build",
+            dist_dir=dist_dir,
+            revision="2026.09.08",
+            require_entries=True,
+        )
+    assert any("no term entries" in failure for failure in raised.value.failures)
+    assert not dist_dir.exists()
+
+
+def test_dist_publication_is_atomic_over_an_existing_artifact(tmp_path):
+    dist_dir = tmp_path / "dist"
+    dist_dir.mkdir()
+    (dist_dir / zip_name()).write_bytes(b"stale")
+    result = run_build(
+        merged_dir=tmp_path / "absent",
+        build_dir=tmp_path / "build",
+        dist_dir=dist_dir,
+        revision="2026.09.08",
+    )
+    assert (dist_dir / zip_name()).read_bytes() != b"stale"
+    assert sorted(p.name for p in dist_dir.iterdir()) == ["SHA256SUMS", zip_name()]
+    assert result["sha256"] in (dist_dir / "SHA256SUMS").read_text(encoding="utf-8")
+
+
+def test_validate_stage_can_apply_the_release_gate(tmp_path):
+    run_build(merged_dir=tmp_path / "absent", build_dir=tmp_path / "build", revision="1")
+    assert run_validate(build_dir=tmp_path / "build") == (True, [])
+    ok, failures = run_validate(build_dir=tmp_path / "build", require_entries=True)
+    assert not ok
+    assert any("no term entries" in failure for failure in failures)

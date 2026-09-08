@@ -2,7 +2,7 @@
 // Independent Node/ajv validation of a built Bee's Ultimate Grammar Dictionary ZIP
 // against the pinned official Yomitan schemas under schemas/.
 //
-// Usage: node scripts/validate_yomitan.mjs <path-to-dictionary.zip>
+// Usage: node scripts/validate_yomitan.mjs <path-to-dictionary.zip> [--require-entries]
 //
 // This is deliberately a second implementation of src/bugd/validate.py: two
 // validators reading the same pinned schema bytes, so a bug in one is caught by
@@ -12,7 +12,10 @@
 //   - index.json and every contiguous term / term-meta / tag bank validate
 //     against schemas/*.json using JSON Schema draft-07
 //   - no native kanji bank ships (it would route lookups to the fixed renderer)
+//   - no duplicate member names, and no unrecognised member Yomitan would
+//     silently ignore while still shipping it to users
 //   - every structured-content img path resolves to a packaged member
+//   - with --require-entries, the archive carries at least one term entry
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -26,15 +29,20 @@ const Ajv = require("ajv");
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const schemaDir = join(root, "schemas");
 
-const zipPath = process.argv[2];
+const args = process.argv.slice(2);
+const requireEntries = args.includes("--require-entries");
+const zipPath = args.find((arg) => !arg.startsWith("--"));
 if (!zipPath) {
-  console.error("usage: validate_yomitan.mjs <dictionary.zip>");
+  console.error("usage: validate_yomitan.mjs <dictionary.zip> [--require-entries]");
   process.exit(2);
 }
 
 const MEDIA_DIR = "media";
 const EXPECTED_ROOT = ["index.json", "styles.css"];
 const FORBIDDEN_BANK = /^(?:kanji_bank|kanji_meta_bank)_[1-9][0-9]*\.json$/;
+// Licence/attribution text may travel with the archive even though Yomitan
+// ignores it; keep this list identical to validate.ALLOWED_EXTRA_MEMBERS.
+const ALLOWED_EXTRA = new Set(["LICENSE", "NOTICE", "ATTRIBUTION.md"]);
 
 const SCHEMA_FOR = { "index.json": "dictionary-index-schema.json" };
 
@@ -76,11 +84,25 @@ for (const name of names) {
     ok = false;
   }
 }
+if (names.length !== nameSet.size) {
+  console.error("FAIL: archive contains duplicate member names");
+  ok = false;
+}
 for (const want of EXPECTED_ROOT) {
   if (!nameSet.has(want)) {
     console.error(`FAIL: missing expected member: ${want}`);
     ok = false;
   }
+}
+
+// Yomitan silently skips members it does not recognise, so a stray root file is
+// invisible at import yet still shipped to users. Refuse it here too.
+const knownRoot = new Set([...EXPECTED_ROOT, ...Object.keys(SCHEMA_FOR)]);
+for (const name of names) {
+  if (name.startsWith(`${MEDIA_DIR}/`) || knownRoot.has(name) || ALLOWED_EXTRA.has(name)) continue;
+  if (BANK_GROUPS.some((group) => group.pattern.test(name))) continue;
+  console.error(`FAIL: unrecognised archive member Yomitan would ignore: ${name}`);
+  ok = false;
 }
 
 // Fail fast within each invalid branch: production structured-content banks have
@@ -158,8 +180,23 @@ if (termBanks.length > 0) {
   console.log(`OK: ${referenced.size} referenced img assets all resolve`);
 }
 
+// Release gate: a structurally valid but empty archive imports as a dictionary
+// with nothing in it, so refuse to treat it as publishable.
+const termEntries = termBanks.reduce((total, member) => {
+  const bank = parsed.get(member.name);
+  return total + (Array.isArray(bank) ? bank.length : 0);
+}, 0);
+if (requireEntries && termEntries === 0) {
+  console.error(
+    "FAIL: no term entries: an importable dictionary must carry at least one " +
+      "term bank entry (refusing to package an empty dictionary)"
+  );
+  ok = false;
+}
+
 if (!ok) {
   console.error("Yomitan validation FAILED");
   process.exit(1);
 }
+console.log(`OK: ${termEntries} term entries across ${termBanks.length} term bank(s)`);
 console.log("Yomitan validation passed");

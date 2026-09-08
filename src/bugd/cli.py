@@ -9,9 +9,11 @@ import sys
 from .jsonio import dump_json
 from .pipeline import (
     DEFAULT_BUILD_DIR,
+    DEFAULT_DIST_DIR,
     DEFAULT_EXTRACTED_DIR,
     DEFAULT_MERGED_DIR,
     DEFAULT_SOURCES_DIR,
+    SchemaValidationError,
     run_build,
     run_extract,
     run_merge,
@@ -27,6 +29,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--extracted-dir", type=pathlib.Path, default=DEFAULT_EXTRACTED_DIR)
     parser.add_argument("--merged-dir", type=pathlib.Path, default=DEFAULT_MERGED_DIR)
     parser.add_argument("--build-dir", type=pathlib.Path, default=DEFAULT_BUILD_DIR)
+    parser.add_argument("--dist-dir", type=pathlib.Path, default=DEFAULT_DIST_DIR)
+    parser.add_argument(
+        "--no-dist",
+        action="store_true",
+        help="build and validate without publishing to the dist directory",
+    )
+    parser.add_argument(
+        "--require-entries",
+        action="store_true",
+        help="fail closed unless the archive carries at least one term entry",
+    )
     parser.add_argument("--revision", default=None, help="explicit YYYY.MM.DD[.N] revision")
     parser.add_argument("--source", action="append", dest="only", help="limit extract to a source")
 
@@ -56,17 +69,30 @@ def main(argv: list[str] | None = None) -> int:
             print(f"[merge] {dump_json(run_merge(extracted_dir=args.extracted_dir, merged_dir=args.merged_dir))}")
 
     if stage in ("build", "all"):
-        result = run_build(
-            merged_dir=args.merged_dir, build_dir=args.build_dir, revision=args.revision
-        )
+        try:
+            result = run_build(
+                merged_dir=args.merged_dir,
+                build_dir=args.build_dir,
+                dist_dir=None if args.no_dist else args.dist_dir,
+                revision=args.revision,
+                require_entries=args.require_entries,
+            )
+        except SchemaValidationError as error:
+            # Fail closed: report every failure and publish nothing.
+            print(f"[build] {error}", file=sys.stderr)
+            return 1
         print(
             f"[build] {result['zipPath']} revision={result['revision']} "
-            f"entries={result['entries']} bytes={result['byteCount']} "
-            f"sha256={str(result['sha256'])[:12]}"
+            f"entries={result['termEntries']} bytes={result['byteCount']}"
         )
+        print(f"[build] sha256={result['sha256']}")
+        if result.get("distPath"):
+            print(f"[build] published {result['distPath']}")
 
     if stage in ("validate", "all"):
-        ok, failures = run_validate(build_dir=args.build_dir)
+        ok, failures = run_validate(
+            build_dir=args.build_dir, require_entries=args.require_entries
+        )
         for failure in failures:
             print(f"[validate] FAIL: {failure}", file=sys.stderr)
         if not ok:

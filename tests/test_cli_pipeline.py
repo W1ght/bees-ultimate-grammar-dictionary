@@ -15,11 +15,16 @@ from bugd.pipeline import (
 
 
 def _args(stage, tmp_path, *extra):
+    # Every directory is redirected under tmp_path, including --dist-dir: the CLI
+    # publishes to `dist/` by default, so a test that omitted it would write the
+    # repository's real distribution directory as a side effect of running the
+    # suite.
     return [
         "--sources-dir", str(tmp_path / "sources"),
         "--extracted-dir", str(tmp_path / "extracted"),
         "--merged-dir", str(tmp_path / "merged"),
         "--build-dir", str(tmp_path / "build"),
+        "--dist-dir", str(tmp_path / "dist"),
         *extra,
         stage,
     ]
