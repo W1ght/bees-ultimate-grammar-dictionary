@@ -110,10 +110,25 @@ for (const name of names) {
 const ajv = new Ajv({ allErrors: false, strict: false });
 const parsed = new Map();
 
+// Compile each pinned schema ONCE and reuse the validator across every bank.
+// Yomitan's schemas carry an `$id`, so calling ajv.compile() a second time for
+// term_bank_2.json threw `schema with key or id "dictionaryTermBankV3" already
+// exists` and aborted the run *after* term_bank_1.json had already printed OK —
+// a multi-bank dictionary was therefore never fully cross-checked.
+const compiled = new Map();
+const validatorFor = (schemaName) => {
+  let validate = compiled.get(schemaName);
+  if (validate === undefined) {
+    validate = ajv.compile(loadSchema(schemaName));
+    compiled.set(schemaName, validate);
+  }
+  return validate;
+};
+
 const validateMember = (member, schemaName, label) => {
   const data = JSON.parse(zip.readAsText(member));
   parsed.set(member, data);
-  const validate = ajv.compile(loadSchema(schemaName));
+  const validate = validatorFor(schemaName);
   if (!validate(data)) {
     ok = false;
     console.error(`FAIL: ${member} does not match ${schemaName}`);

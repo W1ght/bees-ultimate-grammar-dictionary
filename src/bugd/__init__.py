@@ -16,6 +16,8 @@ re-run independently and every intermediate is inspectable.
 DICTIONARY_TITLE = "Bee's Ultimate Grammar Dictionary"
 DICTIONARY_SLUG = "bees-ultimate-grammar-dictionary"
 DICTIONARY_AUTHOR = "bee-san"
+# Shown in Yomitan's dictionary details pane as the source of the dictionary.
+DICTIONARY_URL = "https://github.com/bee-san/bees-ultimate-grammar-dictionary"
 
 # Yomitan revision whose official schemas are pinned under schemas/.
 YOMITAN_SCHEMA_REVISION = "26.8.24.0"
@@ -29,6 +31,7 @@ __all__ = [
     "DICTIONARY_TITLE",
     "DICTIONARY_SLUG",
     "DICTIONARY_AUTHOR",
+    "DICTIONARY_URL",
     "YOMITAN_SCHEMA_REVISION",
     "DICTIONARY_FORMAT",
     "TERM_BANK_SHARD",

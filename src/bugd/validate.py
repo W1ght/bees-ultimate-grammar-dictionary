@@ -14,8 +14,17 @@ from typing import Any
 
 import jsonschema
 
+try:  # optional accelerator; see _compiled_validator for why it matters
+    import fastjsonschema
+except ImportError:  # pragma: no cover - exercised by the no-accelerator path
+    fastjsonschema = None
+
 from .jsonio import MalformedPayload, load_json
 from .package import MEDIA_DIR
+
+#: Compiled-validator cache keyed by pinned schema file name. Compiling the
+#: term-bank schema is cheap (~0.06s) but happens once per bank member otherwise.
+_COMPILED_CACHE: dict[str, Any] = {}
 
 SCHEMA_DIR = pathlib.Path(__file__).resolve().parents[2] / "schemas"
 
@@ -152,7 +161,40 @@ def _check_unknown_members(names: list[str]) -> list[str]:
     return failures
 
 
+def _compiled_validator(schema_name: str):
+    """A compiled validator for a pinned schema, or None when unavailable.
+
+    Pure-Python `jsonschema` walks the term-bank schema's deeply recursive
+    structured-content `oneOf` for every node: profiling one real card measured
+    ~8M function calls and ~2s PER ENTRY, i.e. well over an hour for a 2,419-entry
+    corpus, which makes the gate unusable at full scale. `fastjsonschema`
+    generates straight-line Python for the same pinned schema bytes and validates
+    1,000 entries in ~3s.
+
+    This is an accelerator, not a policy change: the schema, the failure
+    condition, and the fail-closed behaviour are identical, and both validators
+    were checked to reject the same malformed payloads (nested `p`, non-integer
+    sequence, short entry, non-array glossary, non-array bank). When the
+    accelerator is not installed the original validator is used, so the gate
+    never silently weakens — it only gets slower.
+    """
+    if fastjsonschema is None:
+        return None
+    compiled = _COMPILED_CACHE.get(schema_name)
+    if compiled is None:
+        compiled = fastjsonschema.compile(load_schema(schema_name))
+        _COMPILED_CACHE[schema_name] = compiled
+    return compiled
+
+
 def _check(payload: Any, schema_name: str, member: str) -> list[str]:
+    compiled = _compiled_validator(schema_name)
+    if compiled is not None:
+        try:
+            compiled(payload)
+        except fastjsonschema.JsonSchemaException as error:  # type: ignore[union-attr]
+            return [f"{member} does not match {schema_name}: {error.message}"]
+        return []
     validator = jsonschema.Draft7Validator(load_schema(schema_name))
     errors = sorted(validator.iter_errors(payload), key=lambda error: list(error.absolute_path))
     return [
