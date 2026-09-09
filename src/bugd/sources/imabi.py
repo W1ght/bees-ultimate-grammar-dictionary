@@ -27,19 +27,50 @@ other source modules record redistribution posture.
 from __future__ import annotations
 
 import html
+import pathlib
 import re
 
-from ..jsonio import load_json
+from ..jsonio import dump_json, load_json
 from ..model import Example, GrammarPoint
 from .base import Extractor, ExtractResult, load_source_lock
 from .registry import register_extractor
 
 #: Site-meta pages excluded from the lesson spine (matched by slug).
-META_SLUGS = {"contact", "about", "about-2"}
+#:
+#: Measured against the locked 501-page spine, exactly seven pages carry no
+#: lesson content. The first four were already excluded; `style-guide` (a
+#: WordPress theme test page whose whole body is "Heading 1 ... This is a
+#: quote"), `about-us` (the author's biography) and the site landing page were
+#: not, and reached the emitted records as headwords "STYLE GUIDE",
+#: "Imabi's Little crew" and "Welcome to IMABI!".
+#:
+#: The landing page is matched by page id rather than slug: its slug is the
+#: percent-encoded Japanese title `%e3%82%88...` (ようこそ、「いまび」へ), which no
+#: readable slug rule can match without also risking real Japanese-titled
+#: lessons. Its body is a level chooser plus a site-remodel completion
+#: percentage, and it is `link` == the site root.
+META_SLUGS = {"contact", "about", "about-2", "style-guide", "about-us"}
 META_SLUG_PREFIX = ("table-of-contents", "privacy-policy", "sitemap")
+
+#: Site landing page (WP page id), excluded by id — see META_SLUGS.
+META_PAGE_IDS = frozenset({11})
+
+#: Per-source JSONL lands beside the locked bytes so a reviewer can read one
+#: source's normalized records without running the merge stage. Mirrors the
+#: community sources' `points.jsonl` convention.
+JSONL_NAME = "points.jsonl"
+
+#: Human-readable report naming every locked page as imported or skipped.
+COVERAGE_NAME = "COVERAGE.md"
 
 #: Attribution rendered on merged IMABI entries.
 ATTRIBUTION = "IMABI (imabi.net)"
+
+#: How this build's permission to use the full content is known. The user
+#: reports the IMABI authors approved full-content use; that report is the whole
+#: basis and is recorded verbatim in `data/sources/imabi/PERMISSION.json`. No
+#: licence name, licence text, or licence URL is asserted by this build.
+PERMISSION_BASIS = "user-reported"
 
 _TAG = re.compile(r"<[^>]+>")
 _BR = re.compile(r"<br\s*/?>", re.I)
@@ -100,6 +131,22 @@ def extract_examples(text: str) -> list[tuple[str, str | None]]:
     return examples
 
 
+def skip_reason(page_id: int, slug: str, title: str) -> str | None:
+    """Why this locked page is not an importable lesson, or None if it is.
+
+    One function so the reported reason and the exclusion decision can never
+    disagree: the coverage report is rendered from the same values the loop
+    used to skip.
+    """
+    if page_id in META_PAGE_IDS:
+        return "site landing page, not a lesson"
+    if slug in META_SLUGS or slug.startswith(META_SLUG_PREFIX):
+        return "site-meta page, not a lesson"
+    if not title:
+        return "no headword: the page title is empty"
+    return None
+
+
 @register_extractor
 class ImabiExtractor(Extractor):
     """One grammar point per IMABI lesson page."""
@@ -122,9 +169,10 @@ class ImabiExtractor(Extractor):
 
         points: list[GrammarPoint] = []
         consumed: dict[str, str] = {}
-        excluded = 0
+        skips: list[dict[str, object]] = []
         zero_example_lessons = 0
         total_examples = 0
+        examples_with_english = 0
 
         for relative_path in page_files:
             # Fail closed: read_locked_bytes raises if the page is missing from
@@ -134,14 +182,14 @@ class ImabiExtractor(Extractor):
 
             page = load_json(raw.decode("utf-8"))
             slug = page.get("slug", "")
-            if slug in META_SLUGS or slug.startswith(META_SLUG_PREFIX):
-                excluded += 1
-                continue
-
+            page_id = page["id"]
             title = html.unescape(page["title"]["rendered"]).strip()
-            if not title:
-                # A lesson with no headword cannot be a lookup entry.
-                excluded += 1
+
+            reason = skip_reason(page_id, slug, title)
+            if reason is not None:
+                skips.append(
+                    {"pageId": page_id, "slug": slug, "title": title, "reason": reason}
+                )
                 continue
 
             body = strip_html(page["content"]["rendered"])
@@ -154,6 +202,7 @@ class ImabiExtractor(Extractor):
                 for japanese, english in extract_examples(body)
             )
             total_examples += len(examples)
+            examples_with_english += sum(1 for ex in examples if ex.english)
             if not examples:
                 zero_example_lessons += 1
 
@@ -180,28 +229,117 @@ class ImabiExtractor(Extractor):
                 )
             )
 
-        return ExtractResult(
+        result = ExtractResult(
             source=self.name,
             points=points,
             consumed=consumed,
             stats={
                 "lockedPages": len(page_files),
-                "excludedMetaPages": excluded,
+                "importedLessons": len(points),
                 "points": len(points),
+                "skippedPages": len(skips),
+                "skips": skips,
+                "skipReasonCounts": _reason_counts(skips),
                 "totalExamples": total_examples,
+                "examplesWithEnglish": examples_with_english,
                 "lessonsWithZeroExamples": zero_example_lessons,
                 "licenseTier": self.license_tier,
                 "redistributable": self.redistributable,
                 "attribution": ATTRIBUTION,
+                "permissionBasis": PERMISSION_BASIS,
             },
         )
+        # The card's two reviewable deliverables, written by the production
+        # extract path rather than a side script, so an artifact on disk can
+        # only ever be the one this extractor actually produced.
+        self.write_jsonl(points)
+        self.write_coverage(result, len(page_files))
+        return result
+
+
+    def write_jsonl(self, points: list[GrammarPoint]) -> pathlib.Path:
+        """Write this source's normalized records as JSONL beside its bytes."""
+        from ..pipeline import point_to_json
+
+        path = self.input_dir / JSONL_NAME
+        path.write_text(
+            "".join(dump_json(point_to_json(point)) + "\n" for point in points),
+            encoding="utf-8",
+        )
+        return path
+
+    def write_coverage(self, result: ExtractResult, locked_pages: int) -> pathlib.Path:
+        """Write the report naming every locked page imported or skipped."""
+        path = self.input_dir / COVERAGE_NAME
+        path.write_text(render_coverage(result, locked_pages), encoding="utf-8")
+        return path
+
+
+def _reason_counts(skips: list[dict[str, object]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for skip in skips:
+        reason = str(skip["reason"])
+        counts[reason] = counts.get(reason, 0) + 1
+    return dict(sorted(counts.items()))
+
+
+def render_coverage(result: ExtractResult, locked_pages: int) -> str:
+    """Render IMABI's coverage report from one extraction result.
+
+    Fails closed when imported + skipped does not equal the locked pages read,
+    so a report that silently lost a page cannot be written.
+    """
+    stats = result.stats
+    imported = int(stats["importedLessons"])
+    skips: list[dict[str, object]] = list(stats["skips"])  # type: ignore[arg-type]
+    if imported + len(skips) != locked_pages:
+        raise ValueError(
+            "imabi coverage does not account for every locked page: "
+            f"{imported} imported + {len(skips)} skipped != {locked_pages} locked"
+        )
+
+    lines = [
+        "# IMABI coverage report",
+        "",
+        f"Locked pages read: {locked_pages}",
+        f"Lessons imported: {imported}",
+        f"Pages skipped: {len(skips)}",
+        f"Example sentences: {stats['totalExamples']} "
+        f"({stats['examplesWithEnglish']} with an author-supplied English translation)",
+        f"Imported lessons carrying no numbered example: {stats['lessonsWithZeroExamples']}",
+        "",
+        f"Attribution: {stats['attribution']}",
+        f"Permission basis: {stats['permissionBasis']} "
+        "(see PERMISSION.json; no licence terms are asserted by this build)",
+        "",
+        "## Skipped pages, with reasons",
+        "",
+    ]
+    for reason, count in _reason_counts(skips).items():
+        lines.append(f"* {count} x {reason}")
+    lines.append("")
+    lines.append("| page id | title | slug | reason |")
+    lines.append("| --- | --- | --- | --- |")
+    for skip in sorted(skips, key=lambda s: int(s["pageId"])):  # type: ignore[arg-type]
+        title = str(skip["title"]).replace("|", "\\|") or "(no title)"
+        lines.append(
+            f"| {skip['pageId']} | {title} | {skip['slug']} | {skip['reason']} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
 
 
 __all__ = [
     "ImabiExtractor",
     "META_SLUGS",
     "META_SLUG_PREFIX",
+    "META_PAGE_IDS",
+    "JSONL_NAME",
+    "COVERAGE_NAME",
     "ATTRIBUTION",
+    "PERMISSION_BASIS",
     "strip_html",
     "extract_examples",
+    "skip_reason",
+    "render_coverage",
 ]
