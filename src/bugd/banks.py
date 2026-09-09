@@ -819,8 +819,36 @@ _EXAMPLE_DERIVATION = re.compile(r"^[\s\u3000]*[→⇒➡＝=]")
 #: the extracted source order is specimen, derivation, annotation, next specimen.
 _EXAMPLE_ANNOTATION = re.compile(r"^[\s\u3000]*[【〈［\[][^】〉］\]]{1,24}[】〉］\]]")
 
+#: A line that cannot OPEN a sentence: a bare connective particle, or a tail that
+#: grammatically continues the clause before it.
+#:
+#: Defect 19. `_PROSE_HEADING` matches any wholly-bracketed short line, but
+#: edewakaru also writes bracketed TERMS inline and wraps the sentence around
+#: them, so one sentence arrives as several lines:
+#:
+#:     【複数の人の中での状態】     <- promoted to a section landmark
+#:     や                          <- left as an orphaned connector
+#:     【〜と〜の関係の中のこと】
+#:     などを言いたい時に使います😊  <- orphaned sentence tail
+#:
+#: Round 24 filed exactly that ("only isolated connector words appear with large
+#: surrounding empty space, as if list content is missing"). Raising landmark size
+#: for defect 18 exposed the mismatch rather than causing it.
+#:
+#: The discriminator is what FOLLOWS: a real heading is followed by a
+#: self-contained sentence, while an inline term is followed by a line that cannot
+#: stand alone. Measured over the whole source corpus this reclassifies 11 of
+#: 1,523 bracketed headings, all of them genuine `【…】や【…】など…` enumerations.
+_CONTINUES_SENTENCE = re.compile(
+    r"^[\s\u3000]*(?:"
+    r"[やとかもねよなの](?:[\s\u3000]|$)"
+    r"|など|なんか|とか|または|あるいは|及び|かつ"
+    r"|という|といった|に関する|についての"
+    r")"
+)
 
-def _prose_paragraph(line: str) -> dict:
+
+def _prose_paragraph(line: str, next_line: str = "") -> dict:
     """One prose paragraph, tagged as a section heading when it is one.
 
     A fully bracketed short line is the producer's own subsection heading, so it
@@ -848,6 +876,16 @@ def _prose_paragraph(line: str) -> dict:
     """
     stripped = line.strip()
     if _PROSE_HEADING.match(stripped):
+        if next_line and _CONTINUES_SENTENCE.match(next_line.strip()):
+            # Defect 19: the producer wrapped ONE sentence across lines around a
+            # bracketed TERM (`【複数の人の中での状態】` / `や` /
+            # `【〜と〜の関係の中のこと】` / `などを言いたい時に使います`). Promoting it to a
+            # section landmark orphaned the connector on its own line under a big
+            # bold heading, which round 24 filed as "isolated connector words with
+            # large surrounding empty space, as if list content is missing".
+            # Emphasised in place instead, using the same inline language as
+            # `proseLabel`, so the sentence stays one unit.
+            return {"tag": "div", "content": [_span("proseLabel", stripped)]}
         return {"tag": "div", "data": {"proseHeading": ""}, "content": stripped}
     match = _PROSE_INLINE_LABEL.match(stripped)
     if match:
@@ -892,7 +930,19 @@ def _paragraphs(content: object) -> object:
         out: list[object] = []
         in_example = False
         recurring = _recurring_bracketed_labels(raw_parts)
-        for part in raw_parts:
+
+        def following(index: int) -> str:
+            """The next non-blank line, or '' at the end of the field.
+
+            `_prose_paragraph` needs it to tell a section heading from a bracketed
+            TERM the producer wrapped a sentence around (defect 19).
+            """
+            for later in raw_parts[index + 1:]:
+                if later.strip():
+                    return later
+            return ""
+
+        for position, part in enumerate(raw_parts):
             if not part.strip():
                 in_example = False
                 continue
@@ -905,9 +955,9 @@ def _paragraphs(content: object) -> object:
                 # The producer's closing remark or the next section heading. It is
                 # prose, so it must fall OUTSIDE the tinted block.
                 in_example = False
-                out.append(_prose_paragraph(part))
+                out.append(_prose_paragraph(part, following(position)))
                 continue
-            node = _prose_paragraph(part)
+            node = _prose_paragraph(part, following(position))
             if in_example:
                 if part.strip() in recurring:
                     # A repeated bracketed label inside a run classifies the

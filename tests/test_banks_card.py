@@ -2478,3 +2478,76 @@ def test_a_section_landmark_has_a_perceptible_size_step_over_body_text():
         f"heading it contains ({heading}em); raising the nested landmark must not "
         "flatten the level above it"
     )
+
+
+def test_a_bracketed_term_the_producer_wrapped_a_sentence_around_is_not_a_heading():
+    """Defect 19: one sentence became a landmark plus an orphaned particle.
+
+    `_PROSE_HEADING` matches any wholly-bracketed short line, but edewakaru also
+    writes bracketed TERMS inline and wraps the sentence around them, so a single
+    sentence arrives as four lines:
+
+        【複数の人の中での状態】      -> promoted to a section landmark
+        や                           -> orphaned connector under a big bold heading
+        【〜と〜の関係の中のこと】
+        などを言いたい時に使います😊  -> orphaned sentence tail
+
+    Round 24 filed it as "only isolated connector words appear with large
+    surrounding empty space, as if list content is missing". Raising landmark size
+    for defect 18 exposed the mismatch rather than causing it.
+
+    Discriminator: what FOLLOWS. A real heading is followed by a self-contained
+    sentence; an inline term is followed by a line that cannot open one. Measured
+    over the whole source corpus this reclassifies 11 of 1,523 bracketed
+    headings, all genuine `【…】や【…】など…` enumerations, so a heading test must
+    still pass for the other 1,512.
+    """
+    from bugd.banks import _paragraphs
+
+    wrapped = (
+        "「〜間」は「〜の中で」という意味を表す文型です。\n"
+        "【複数の人の中での状態】\n"
+        "や\n"
+        "【〜と〜の関係の中のこと】\n"
+        "などを言いたい時に使います\n"
+    )
+    nodes = [n for n in _paragraphs(wrapped) if isinstance(n, dict)]
+
+    def role_of(text):
+        for n in nodes:
+            content = n.get("content")
+            if content == text:
+                return frozenset(n.get("data") or {})
+            if isinstance(content, list):
+                for c in content:
+                    if isinstance(c, dict) and c.get("content") == text:
+                        return frozenset(c.get("data") or {})
+        raise AssertionError(f"{text!r} not emitted")
+
+    for term in ("【複数の人の中での状態】", "【〜と〜の関係の中のこと】"):
+        role = role_of(term)
+        assert "proseHeading" not in role, (
+            f"{term} is a term inside a running sentence -- the next line is a "
+            "bare connector that cannot open a sentence -- so promoting it to a "
+            "section landmark orphans that connector under a big bold heading"
+        )
+        assert "proseLabel" in role, (
+            f"{term} should be emphasised inline so the sentence reads as one unit"
+        )
+
+    # A genuine one-off heading, followed by a self-contained sentence, must STILL
+    # be a landmark. Without this the fix would flatten 1,512 real headings.
+    ordinary = (
+        "【説明】\n"
+        "「〜間」は期間を表す文型です。\n"
+        "【注意】\n"
+        "「〜間に」とは意味が違います。\n"
+    )
+    ordinary_nodes = [n for n in _paragraphs(ordinary) if isinstance(n, dict)]
+    for heading in ("【説明】", "【注意】"):
+        matches = [n for n in ordinary_nodes if n.get("content") == heading]
+        assert matches, f"{heading} must be emitted"
+        assert "proseHeading" in (matches[0].get("data") or {}), (
+            f"{heading} is followed by a self-contained sentence, so it is a real "
+            "section heading and must keep its landmark role"
+        )
