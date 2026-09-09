@@ -343,18 +343,6 @@
     },
     {
       "cluster": "D",
-      "source": "dojg",
-      "source_id": "言うまでもない",
-      "sense_index": 1,
-      "field": "examples",
-      "disposition": "drop_example",
-      "verbatim": "固定観念が有害なのは言うまでありません。",
-      "issue": "Missing も in the example sentence; the polite form must be 言うまでもありません, so as written the sentence is ungrammatical and does not show the target pattern.",
-      "second_opinion": "CONFIRMED",
-      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
-    },
-    {
-      "cluster": "D",
       "source": "donna_toki",
       "source_id": "とともに",
       "sense_index": 4,
@@ -440,30 +428,6 @@
     {
       "cluster": "D",
       "source": "edewakaru",
-      "source_id": "にあたって",
-      "sense_index": 1,
-      "field": "examples",
-      "disposition": "drop_example",
-      "verbatim": "イベントを行うの前に、一言あいさつをさせていただきます",
-      "issue": "The paraphrase gloss is ungrammatical: a dictionary-form verb before 前に takes no の (行う前に, not 行うの前に). The parallel paraphrases in the same contribution correctly write 「〜する前に」.",
-      "second_opinion": "CONFIRMED",
-      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
-    },
-    {
-      "cluster": "D",
-      "source": "edewakaru",
-      "source_id": "にあたり",
-      "sense_index": 1,
-      "field": "examples",
-      "disposition": "drop_example",
-      "verbatim": "→イベントを行うの前に、一言あいさつをさせていただきます",
-      "issue": "The paraphrase is ungrammatical: a plain verb before 前に takes no の (行う前に), so 「行うの前に」 is incorrect Japanese in a line meant to model the pattern's meaning.",
-      "second_opinion": "CONFIRMED",
-      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
-    },
-    {
-      "cluster": "D",
-      "source": "edewakaru",
       "source_id": "にかかわらず",
       "sense_index": 1,
       "field": "explanation",
@@ -534,18 +498,6 @@
       "disposition": "drop_example",
       "verbatim": "→もっとちゃんと勉強しておけ",
       "issue": "The paraphrase reads as a plain imperative ('study properly!') rather than the regret meaning 「〜しておけばよかった」 stated in the explanation; the same truncation occurs in 「→傘を持ってくれ」 and 「→昨日買っとけ」, which a reader would take as commands/requests, contradicting the sense's own meaning field 「〜すればよかった」.",
-      "second_opinion": "CONFIRMED",
-      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
-    },
-    {
-      "cluster": "D",
-      "source": "edewakaru",
-      "source_id": "弾みで",
-      "sense_index": 1,
-      "field": "examples",
-      "disposition": "drop_example",
-      "verbatim": "転んだ弾みに、たまごを割ってしまった\n→転んだことで、スマホを壊してしまった",
-      "issue": "The paraphrase does not match the example sentence: the original says an egg was broken (たまごを割って) but the gloss/paraphrase says a smartphone was broken (スマホを壊して). A reader would notice this contradiction.",
       "second_opinion": "CONFIRMED",
       "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
     },
@@ -930,18 +882,6 @@
       "disposition": "drop_example",
       "verbatim": "レビューが低く、見るに当たらないそうです。",
       "issue": "「見るに当たらない」is unnatural; the pattern expresses 'there is no need to / it is not appropriate to (react that way)' and attaches to evaluative/emotional verbs (驚く・非難する・感心する), not to 見る in the sense of 'not worth watching', for which Japanese uses 見るに足らない/見る価値がない.",
-      "second_opinion": "CONFIRMED",
-      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
-    },
-    {
-      "cluster": "D",
-      "source": "nihongo_net",
-      "source_id": "にほかなる",
-      "sense_index": 1,
-      "field": "examples",
-      "disposition": "drop_example",
-      "verbatim": "彼がN1に合格にできたのは、努力の結果にほかならない。",
-      "issue": "「合格にできた」is ungrammatical; the verb form should be 「合格できた」(or 「合格したのは」). The stray に after 合格 makes the example sentence incorrect Japanese.",
       "second_opinion": "CONFIRMED",
       "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored."
     },
@@ -2269,6 +2209,76 @@
       "justification": "Self-contradictory / incorrect clause removed in place (orphaned boundary punctuation cleaned); the remaining publisher text is left verbatim — no paraphrase or authored replacement.",
       "superseded_by": "UGD-11d-B correction B9 (HedgeAbsolute) in src/bugd/source_corrections.py",
       "reason": "Both cards found the same defect: nihongo_no_sensei states 「後件には否定形が呼応します。」 as an absolute rule while its own examples are affirmative. UGD-11d-B resolves it at extraction by hedging with attribution (「後件には否定形が呼応する傾向があります。（ただし当辞書の例文にも肯定形の後件が見られます）」), which preserves the real tendency the source observed instead of deleting the sentence. This remove_span is therefore retired as the weaker remedy for the same finding, not dropped as invalid."
+    },
+    {
+      "cluster": "D",
+      "source": "dojg",
+      "source_id": "言うまでもない",
+      "sense_index": 1,
+      "field": "examples",
+      "disposition": "drop_example",
+      "verbatim": "固定観念が有害なのは言うまでありません。",
+      "issue": "Missing も in the example sentence; the polite form must be 言うまでもありません, so as written the sentence is ungrammatical and does not show the target pattern.",
+      "second_opinion": "CONFIRMED",
+      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored.",
+      "superseded_by": "UGD-11c-C structure_corrections.json (repair-in-place instead of drop)",
+      "reason": "UGD-11c-C repairs the same typo in place (examples 言うまでありません -> 言うまでもありません), so the sentence is now grammatical and present as ex3. Dropping it would delete a corrected example."
+    },
+    {
+      "cluster": "D",
+      "source": "edewakaru",
+      "source_id": "にあたって",
+      "sense_index": 1,
+      "field": "examples",
+      "disposition": "drop_example",
+      "verbatim": "イベントを行うの前に、一言あいさつをさせていただきます",
+      "issue": "The paraphrase gloss is ungrammatical: a dictionary-form verb before 前に takes no の (行う前に, not 行うの前に). The parallel paraphrases in the same contribution correctly write 「〜する前に」.",
+      "second_opinion": "CONFIRMED",
+      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored.",
+      "superseded_by": "UGD-11c-C structure_corrections.json (repair-in-place instead of drop)",
+      "reason": "UGD-11c-C repairs the same defect in place (examples イベントを行うの前に -> イベントを行う前に); the sentence is now correct as ex4. Dropping it would delete a corrected example."
+    },
+    {
+      "cluster": "D",
+      "source": "edewakaru",
+      "source_id": "にあたり",
+      "sense_index": 1,
+      "field": "examples",
+      "disposition": "drop_example",
+      "verbatim": "→イベントを行うの前に、一言あいさつをさせていただきます",
+      "issue": "The paraphrase is ungrammatical: a plain verb before 前に takes no の (行う前に), so 「行うの前に」 is incorrect Japanese in a line meant to model the pattern's meaning.",
+      "second_opinion": "CONFIRMED",
+      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored.",
+      "superseded_by": "UGD-11c-C structure_corrections.json (repair-in-place instead of drop)",
+      "reason": "Same defect and same UGD-11c-C repair as edewakaru/にあたって (the two rows share the example set)."
+    },
+    {
+      "cluster": "D",
+      "source": "edewakaru",
+      "source_id": "弾みで",
+      "sense_index": 1,
+      "field": "examples",
+      "disposition": "drop_example",
+      "verbatim": "転んだ弾みに、たまごを割ってしまった\n→転んだことで、スマホを壊してしまった",
+      "issue": "The paraphrase does not match the example sentence: the original says an egg was broken (たまごを割って) but the gloss/paraphrase says a smartphone was broken (スマホを壊して). A reader would notice this contradiction.",
+      "second_opinion": "CONFIRMED",
+      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored.",
+      "superseded_by": "UGD-11c-C structure_corrections.json (repair-in-place instead of drop)",
+      "reason": "UGD-11c-C repairs the mismatched paraphrase in place (examples スマホを壊してしまった -> たまごを割ってしまった), so the specimen and its → rephrasing now agree. Dropping it would delete a corrected example."
+    },
+    {
+      "cluster": "D",
+      "source": "nihongo_net",
+      "source_id": "にほかなる",
+      "sense_index": 1,
+      "field": "examples",
+      "disposition": "drop_example",
+      "verbatim": "彼がN1に合格にできたのは、努力の結果にほかならない。",
+      "issue": "「合格にできた」is ungrammatical; the verb form should be 「合格できた」(or 「合格したのは」). The stray に after 合格 makes the example sentence incorrect Japanese.",
+      "second_opinion": "CONFIRMED",
+      "justification": "Defective example sentence (ungrammatical / typo'd / does not contain its own grammar point's surface form). Per fix policy #2 a defective example is dropped; the source keeps its other well-formed examples and no replacement text is authored.",
+      "superseded_by": "UGD-11c-C structure_corrections.json (repair-in-place instead of drop)",
+      "reason": "UGD-11c-C repairs the same conjugation defect in place (examples 合格にできた -> 合格できた); the sentence is now correct as ex4. Dropping it would delete a corrected example."
     }
   ]
 }
