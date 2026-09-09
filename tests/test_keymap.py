@@ -574,23 +574,52 @@ def test_malformed_keymap_payloads_fail_closed(payload: object) -> None:
 # Real-corpus properties. Pinned: a moved count is a review event.
 # --------------------------------------------------------------------------
 
+#: The pinned corpus counts below are properties of the WHOLE corpus, so these
+#: tests are only meaningful when every contributing source has been extracted.
+#: Gating on "any *.json exists" made a single-source extraction (e.g. `bugd.cli
+#: --source yokubi extract` while iterating on one extractor) report 7 loud
+#: failures such as `assert 132 == 4972`, which read as keymap defects but were
+#: only a partial corpus. Require the full set, and skip with a message naming
+#: exactly which sources are missing.
+CORPUS_SOURCES = (
+    "dojg",
+    "donna_toki",
+    "edewakaru",
+    "nihongo_net",
+    "nihongo_no_sensei",
+)
+
+
+def _missing_corpus_sources() -> list[str]:
+    if not EXTRACTED.is_dir():
+        return list(CORPUS_SOURCES)
+    return [name for name in CORPUS_SOURCES if not (EXTRACTED / f"{name}.json").is_file()]
+
+
 pytestmark_corpus = pytest.mark.skipif(
-    not EXTRACTED.is_dir() or not list(EXTRACTED.glob("*.json")),
-    reason="normalized sources not extracted; run `make extract`",
+    bool(_missing_corpus_sources()),
+    reason=(
+        "pinned counts need the full corpus; missing extracted sources: "
+        f"{', '.join(_missing_corpus_sources()) or 'none'} (run `make extract`)"
+    ),
 )
 
 
 @pytest.fixture(scope="module")
 def corpus() -> dict[str, object]:
-    if not EXTRACTED.is_dir() or not list(EXTRACTED.glob("*.json")):
-        pytest.skip("normalized sources not extracted; run `make extract`")
+    missing = _missing_corpus_sources()
+    if missing:
+        pytest.skip(
+            "pinned counts need the full corpus; missing extracted sources: "
+            f"{', '.join(missing)} (run `make extract`)"
+        )
     return build_keymap(EXTRACTED)
 
 
 @pytestmark_corpus
 def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     report = corpus["report"]
-    assert report["corpus"]["rows"] == 4972
+    assert report["corpus"]["rows"] == 5104
     assert report["corpus"]["declaredAliasRows"] == 1167
     # 73, from 71 and originally 63: UGD-14 stopped shipping the edewakaru
     # blog-ring footer (`にほんブログ村` / `――以上――` / `語学(日本語)ランキング`) as
@@ -612,11 +641,24 @@ def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     # (`にくい#sense6`, `やすい#sense6`) were ordinal renumbering: their nihongo_net
     # contributor now sits in `#sense5`.
     assert report["corpus"]["duplicateRowsCollapsed"] == 73
-    assert report["corpus"]["substantiveRows"] == 3732
-    assert report["tierA"]["bijectiveBuckets"] == 570
-    assert report["tierA"]["refusedCollisionBuckets"] == 179
-    assert report["tierB"]["accepted"] == 60
-    assert len(corpus["points"]) == 2609
+    # 3732 -> 3864: UGD-04 landed the Yokubi source (132 grammar points, one per
+    # Japanese headword a lesson title itself declares). Verified additive, not
+    # disruptive: rows +132, substantiveRows +132, declaredAliasRows and
+    # duplicateRowsCollapsed both unchanged, and the 3,732 pre-Yokubi contributor
+    # identities are ALL still present with zero lost and zero non-Yokubi gained.
+    #
+    # 38 of those identities do change canonical KEY, which is the documented
+    # Tier A behaviour rather than a defect: Yokubi contributes headwords that
+    # already exist in other sources (`でも`, `な`, `わ`, `うちに`, `ために`, `甲斐`),
+    # so buckets that used to be bijective become cross-source collisions and
+    # gain a sense disambiguator (`でも` -> `でも#sense1`). Hence bijectiveBuckets
+    # +12 and refusedCollisionBuckets +6. tierB.accepted drops 60 -> 59 because
+    # one variant link now fails a guard, i.e. the matcher folds LESS, never more.
+    assert report["corpus"]["substantiveRows"] == 3864
+    assert report["tierA"]["bijectiveBuckets"] == 582
+    assert report["tierA"]["refusedCollisionBuckets"] == 185
+    assert report["tierB"]["accepted"] == 59
+    assert len(corpus["points"]) == 2709
 
 
 @pytestmark_corpus
