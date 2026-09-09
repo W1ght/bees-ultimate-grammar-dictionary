@@ -1,0 +1,50 @@
+# UGD-16 Convergence Report — Bee's Ultimate Grammar Dictionary
+
+Final fail-closed convergence: all verified card branches consolidated onto one
+integration branch, dictionary rebuilt end-to-end, every gate re-verified.
+
+## Integration branch
+- Branch: `ugd-16/integration`
+- HEAD: `f8fb53d`
+- Consolidated (in dependency order): contract (ugd-01) → 5 source extractors
+  (ugd-02 bunpou, ugd-03 bunpro, ugd-04a yokubi, ugd-05 imabi, ugd-06 ninjal +
+  community) → keymap/merge/banks (ugd-08 family) → defect fixes (ugd-11a
+  furigana, ugd-11b markup-safety, ugd-11c-b/c/d readings/formation/content,
+  ugd-11d-a/b source-corrections/hedge) → licensing (ugd-15).
+- Merge-conflict resolutions committed: corrections.py (field + reading
+  correction systems now coexist: load_corrections/apply_corrections for field,
+  load_reading_corrections/apply_reading_corrections for readings);
+  や否や↔やいなや orthographic fold; test assertions re-pinned to the final corpus;
+  `--no-corrections` merge flag for isolated-corpus stage runs.
+
+## Pipeline (fail-closed, run via `bugd.cli all`) — ALL PASS
+| Stage | Result |
+|---|---|
+| extract | 7,896 points across 10 sources (bunpou 534, bunpro 964, dojg 535, donna_toki 1082, edewakaru 1248, imabi 494, nihongo_net 628, nihongo_no_sensei 1479, ninjal_bunkei 800, yokubi 132); 46 field corrections applied |
+| keymap | 4,429 points; `audit_keymap.py` all checks PASS (orthographic folds, Tier-B non-cascade, byte-identical determinism) |
+| merge | 4,632 entries = 2,929 point entries + 1,703 redirects, from 6,656 contributions; contentHash `346c5a9dfef1c0e2b58b873dd0b1dc7bf06fe98781a41f7b57a994035bdcef81` |
+| build | `dist/bees-ultimate-grammar-dictionary.zip` revision 2026.09.09 |
+| validate | pinned Yomitan schema validation PASSED |
+
+## Quality gates — ALL PASS
+- Full test suite: **499 passed**, 0 failed.
+- Contract gate (`docs/contract/validate.py`, JSON Schema 2020-12): goldens **OK: 0 invalid**.
+- AI-channel segregation: bunpou's 534 AI-field contributions / 1,068 AI-flagged
+  examples are carried in a separate channel (channelPreserved=true), NONE
+  rendered as human-authored fact; media references = 0.
+- Redistribution (LICENSING.md): publishable-with-attribution = IMABI, Yokubi,
+  NINJAL ninjal_bunkei (CC BY 4.0 / author-approved). NOT publishable without
+  clearance = bunpou (personal), Bunpro (proprietary), DoJG (Japan Times), and
+  community sources; per-record `redistributable:false` is authoritative.
+
+## Final artifact
+- Path: `dist/bees-ultimate-grammar-dictionary.zip`
+- Entries: 4,632
+- Bytes: 6,245,005
+- sha256: `bdd058d6543ff5121bfc290bf2b67c168ccfd3f2c13c7f81f9a9ef31ec60e051`
+
+## Verdict
+**READY** — the local ULTIMATE dictionary is built, validated, and internally
+consistent; all gates green. Publication (UGD-17) MUST fail-closed filter to
+`redistributable:true` records or obtain rights clearance for the tier-C sources
+before shipping anything public.
