@@ -73,9 +73,16 @@ def run_extract(
     entry rather than a laundered rewrite. Application is fail-closed: a
     correction whose anchor no longer matches its source raises, so a drifted
     source can never silently ship an un-reviewed edit.
+
+    The registry populates itself on first query: `all_extractors()` calls
+    `load_source_modules()`, which imports every source module so its
+    `@register_extractor` runs. Without that the registry is empty, the stage
+    writes zero artifacts, and the build silently reuses a stale
+    `data/extracted/*.json` -- the cached-pre-fix-text trap.
     """
     from . import corrections as corrections_module
     from .sources import all_extractors, get_extractor
+
 
     extracted_dir.mkdir(parents=True, exist_ok=True)
     classes = [get_extractor(name) for name in only] if only else all_extractors()
@@ -87,7 +94,14 @@ def run_extract(
     written: dict[str, int] = {}
     corrected_total = 0
     for cls in classes:
-        result = cls(sources_dir / cls.name).extract()
+        source_dir = sources_dir / cls.name
+        if not only and not source_dir.is_dir():
+            # A registered source whose raw bytes have not been acquired into
+            # data/sources/<name>/ is simply not built yet -- skip it rather than
+            # failing the whole stage on a missing lock. An explicit `--source`
+            # request still runs so a typo or missing acquisition surfaces loudly.
+            continue
+        result = cls(source_dir).extract()
         points, applied = corrections_module.apply_corrections(
             result.points, overlay, source=cls.name
         )
@@ -95,6 +109,7 @@ def run_extract(
         stats = dict(result.stats)
         if applied:
             stats["corrections"] = applied
+
         payload = {
             "source": result.source,
             "label": cls.label or cls.name,

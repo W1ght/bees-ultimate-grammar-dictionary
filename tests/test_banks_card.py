@@ -371,6 +371,74 @@ def test_prose_keeps_the_break_before_a_list_enumerator():
     assert html_to_content("about\n2 volumes") == "about 2 volumes"
 
 
+def test_prose_keeps_the_break_between_wave_dash_pattern_list_items():
+    """A `〜`-notation cross-reference list is one item per line, not a run-on.
+
+    UGD-08c filed the 「もの」シリーズ list twice on たい (findings 8, 11): the source
+    ships one pattern per line, each opening with the corpus's WAVE DASH, and
+    `_paragraphize` soft-joined them into `〜たものだ〜ないものだろうか〜ないものは〜ない…`.
+    This is the `〜`-list sibling of `_LIST_BREAK`'s numbered lists. Measured over
+    the corpus: 750 runs of two or more such lines / 3,588 items / 665 fields.
+
+    The rule fires only when BOTH adjacent lines are wave-dash pattern notation, so
+    a single `〜X` reference the producer wrapped after a prose sentence is spared.
+    """
+    from bugd.richtext import html_to_content
+
+    # The reported もの-series list: every adjacent pattern-line pair keeps its break.
+    assert html_to_content(
+        "〜たものだ\n〜ないものだろうか\n〜もの・〜んだもの\n〜ものか"
+    ) == "〜たものだ\n〜ないものだろうか\n〜もの・〜んだもの\n〜ものか"
+    # The fullwidth tilde spelling of the placeholder is the same list shape.
+    assert html_to_content("～ものなら\n～ものの") == "～ものなら\n～ものの"
+
+    # A single reference the producer wrapped AFTER a prose sentence still
+    # collapses: the first line is not a pattern-list line, so the both-sides guard
+    # spares it and Japanese joins with nothing.
+    assert html_to_content("この文型は\n〜くらいと似ています") == "この文型は〜くらいと似ています"
+    # Inline references inside one sentence are one line and untouched.
+    assert (
+        html_to_content("ほとんどの文型は「〜ものなら」「〜もので」のように決まっています。")
+        == "ほとんどの文型は「〜ものなら」「〜もので」のように決まっています。"
+    )
+    # A wave-opening line that ends in sentence punctuation is NOT a pattern-list
+    # item (the `！` disqualifies it), so the pattern-list rule does not fire; the
+    # break is decided by the ordinary sentence-end rule, which keeps it.
+    assert html_to_content("〜だこと！\nと言います") == "〜だこと！\nと言います"
+    # Two wave-opening prose sentences (both end in 。) are not pattern-list items,
+    # so the pattern-list rule does not glue-or-split them; the sentence-end rule
+    # keeps each on its own line.
+    assert html_to_content("〜ごとし。\n〜ごとく。") == "〜ごとし。\n〜ごとく。"
+
+
+def test_prose_keeps_the_break_between_stem_sharing_parallel_examples():
+    """Consecutive example sentences that restart a shared stem stay separate.
+
+    edewakaru writes some ［例］ runs as parallel example sentences varying one slot
+    of a shared opening, each split further into node-lines so the next example's
+    first node is exactly the stem the previous one opened with. Neither sentence
+    ends in punctuation, so `_paragraphize` Japanese-joined them into one run
+    (`…計画を実行した彼は法律に反する計画を実行した`) -- the sole residual run-on the UGD-08c
+    gate still flagged on に反して after the first three fixes.
+
+    A soft wrap whose NEXT line is a >=3-char Japanese leading prefix of the
+    CURRENT (fully-joined) line is a fresh parallel example, so the break survives.
+    """
+    from bugd.richtext import html_to_content
+
+    # The reported に反して parallel set: each variant restarts `彼は法律`.
+    assert html_to_content(
+        "彼は法律\nに反して、計画を実行した\n彼は法律\nに反する計画を実行した"
+    ) == "彼は法律に反して、計画を実行した\n彼は法律に反する計画を実行した"
+
+    # An ordinary single sentence wrapped mid-way still joins: the continuation is
+    # NOT a leading prefix of the sentence so far.
+    assert html_to_content("友達を待っている\n間、音楽を聞いた") == "友達を待っている間、音楽を聞いた"
+    # A two-character shared opening (a bare particle `私は`) is below the stem
+    # floor, so two unrelated sentences are not split apart.
+    assert html_to_content("私は学生\nですが働いています") == "私は学生ですが働いています"
+
+
 def test_prose_paragraph_sentinel_cannot_be_smuggled_in_by_a_source():
     """The break sentinel must not be forgeable from source bytes."""
     from bugd.richtext import html_to_content
@@ -959,6 +1027,78 @@ def test_the_in_prose_example_run_ends_at_the_producers_closing_remark():
     assert _ends_example_run("一緒に覚えておきましょう")
 
 
+def test_the_example_run_stays_boxed_across_its_whole_set():
+    """Every specimen of one ［例］ run gets the box, not just the first.
+
+    UGD-08c filed inconsistent boxing three times (findings 3, 6, 7): on あまり and
+    くらい some example runs sat in the tinted well and others rendered as plain
+    prose. Three producer shapes closed the run early:
+
+    * the FIRST content line ends like a sentence (`差し支えなければ…ですか？`), so the
+      run closed on its own opening line -- 69 runs / 62 edewakaru fields;
+    * a `【「X」は動詞】` per-example annotation between two circled examples read as a
+      section heading and closed the run -- 89 occurrences / 27 fields;
+    * enumerator-less parallel example sentences (`学校まで、どのくらいかかるの？`) each end
+      in `？`, so `_EXAMPLE_RUN_CLOSER` dropped the whole set.
+
+    The property: within one run, every specimen, its `→` derivation and its
+    per-example `【…】` annotation carry `inlineExample`, and only the producer's
+    genuine closing remark / section heading falls outside.
+    """
+    from bugd.banks import _ends_example_run, _paragraphs
+
+    # 3c: the first content line is a specimen even when it ends like a sentence.
+    assert _ends_example_run("差し支えなければ、お名前を教えていただけますか？", is_first=True) is False
+    # But the same line as a NON-first boundary followed by a heading still closes.
+    assert _ends_example_run(
+        "「くらい」の用法はたくさんあります。", next_line="【関連記事】"
+    ) is True
+
+    # 3b: a bracketed annotation followed by another example item keeps the run open;
+    # a real section heading followed by prose closes it.
+    assert _ends_example_run("【「持つ」は動詞】", next_line="②この本はあまりおもしろくない") is False
+    assert _ends_example_run("【関連文型】", next_line="「あまり」はN５の文型です") is True
+
+    # 3c: a parallel example variant sharing a leading stem with its neighbour is
+    # not the closing remark; the LAST variant is kept via the previous-line stem.
+    assert _ends_example_run(
+        "学校まで、どのくらいかかるの？", next_line="学校まで、どれくらいかかるの？"
+    ) is False
+    assert _ends_example_run(
+        "学校まで、何時間くらいかかるの？",
+        prev_line="学校まで、どれくらいかかるの？",
+        next_line="「〜くらい」には、いくつかの用法があります😉",
+    ) is False
+    # A closing remark that merely ends like a sentence and shares no stem closes.
+    assert _ends_example_run(
+        "「〜くらい」には、いくつかの用法があります😉",
+        prev_line="学校まで、何時間くらいかかるの？",
+        next_line="【関連記事】",
+    ) is True
+
+    # End to end through _paragraphs: the enumerator-less parallel set is fully boxed
+    # and the closing remark plus headings fall outside.
+    nodes = _paragraphs(
+        "「〜くらい」は「だいたい〜」という意味です。\n"
+        "［例］\n"
+        "学校まで、どのくらいかかるの？\n"
+        "学校まで、どれくらいかかるの？\n"
+        "学校まで、何時間くらいかかるの？\n"
+        "「〜くらい」には、いくつかの用法がありますので復習しておきましょう😉\n"
+        "【関連記事】"
+    )
+    roles = [tuple(n.get("data") or {}) for n in nodes]
+    assert roles == [
+        (),                  # the lead-in prose
+        ("exampleLabel",),   # ［例］
+        ("inlineExample",),  # 学校まで … どの
+        ("inlineExample",),  # 学校まで … どれ
+        ("inlineExample",),  # 学校まで … 何時間  <- previously fell out of the box
+        (),                  # the producer's closing remark
+        ("proseHeading",),   # 【関連記事】
+    ]
+
+
 def test_a_producer_section_marker_before_the_first_speaker_is_not_a_turn():
     """edewakaru writes `［例］ A：…B：…` and `（デパートで）客：…`.
 
@@ -996,6 +1136,281 @@ def test_dialogue_examples_reach_the_built_card_as_separate_lines():
     blob = json.dumps(row, ensure_ascii=False)
     assert "\u2003\u2003" not in blob
     assert '"br"' in blob
+
+
+# --------------------------------------------- UGD-08b per-source JLPT level
+
+
+def _source_disclosures(row: list) -> list[dict]:
+    """Every `sourceBlock` disclosure in a built row, in render order."""
+    found: list[dict] = []
+
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("tag") == "details" and "sourceBlock" in (node.get("data") or {}):
+                found.append(node)
+            walk(node.get("content"))
+        elif isinstance(node, list):
+            for child in node:
+                walk(child)
+
+    walk(row[5])
+    return found
+
+
+def _levels_in(node) -> list[str]:
+    """Every `jlpt`-role value inside a node subtree, in render order."""
+    found: list[str] = []
+
+    def walk(current):
+        if isinstance(current, dict):
+            if "jlpt" in (current.get("data") or {}):
+                content = current.get("content")
+                if isinstance(content, str):
+                    found.append(content)
+            walk(current.get("content"))
+        elif isinstance(current, list):
+            for child in current:
+                walk(child)
+
+    walk(node)
+    return found
+
+
+def _summary_of(disclosure: dict) -> dict:
+    return disclosure["content"][0]
+
+
+def test_each_source_states_its_own_jlpt_level_inside_its_disclosure():
+    """A cross-source level disagreement must be readable, not collapsed.
+
+    158 unified entries carry more than one level, each attributed to a named
+    source. The compact badge is deliberately ONE line and takes the first
+    contribution that supplies a level, so before this the `あまり` card showed a
+    single badge while `N2` and `N3` appeared nowhere in the packaged bytes — a
+    learner reading the 絵でわかる日本語 section could not tell that source called
+    it N2 while 毎日のんびり日本語教師 called it N3.
+
+    Neither level is reconciled, voted on, or preferred: both statements are true
+    about their own source, so each is stated where that source speaks.
+    """
+    n2 = _point(source="edewakaru", source_id="a", jlpt="N2", explanation="Ede.",
+                provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]})
+    n3 = _point(source="dojg", source_id="b", jlpt="N3", explanation="DoJG.")
+    row = build_term_entry(MergedEntry(expression="あまり", contributions=[n2, n3]), 1)
+
+    by_source = {
+        _summary_of(d)["content"][0]["content"]: _levels_in(d["content"][1:])
+        for d in _source_disclosures(row)
+    }
+
+    assert by_source == {
+        SOURCE_LABELS["edewakaru"]: ["N2"],
+        SOURCE_LABELS["dojg"]: ["N3"],
+    }
+
+
+def test_a_source_disclosure_states_its_level_exactly_once():
+    """One source, several senses: the level belongs to the SOURCE, not each sense.
+
+    Measured over the corpus, 160 of 207 multi-sense disclosures repeat the same
+    level on every sense inside them (max repeats: 2 on 128, 3 on 23, 4 on 9). A
+    per-sense badge would therefore stack the identical string up to four times
+    inside one disclosure while adding no information.
+    """
+    senses = [
+        _point(source_id="a", jlpt="N3", meaning="one", explanation="One."),
+        _point(source_id="b", jlpt="N3", meaning="two", explanation="Two."),
+        _point(source_id="c", jlpt="N3", meaning="three", explanation="Three."),
+    ]
+    row = build_term_entry(MergedEntry(expression="ない", contributions=senses), 1)
+
+    disclosures = _source_disclosures(row)
+    assert len(disclosures) == 1
+    assert _levels_in(disclosures[0]["content"][1:]) == ["N3"]
+
+
+def test_one_source_disagreeing_with_itself_shows_both_of_its_levels():
+    """A source that ships two levels for one form must not silently lose one.
+
+    `あまり` really does carry N2 AND N5 from edewakaru alone. Deduplicating per
+    source must collapse REPEATS, never distinct assertions, and the order is the
+    source's own contribution order rather than a sort.
+    """
+    senses = [
+        _point(source_id="a", jlpt="N5", meaning="not much", explanation="One."),
+        _point(source_id="b", jlpt="N2", meaning="excessively", explanation="Two."),
+    ]
+    row = build_term_entry(MergedEntry(expression="あまり", contributions=senses), 1)
+
+    disclosures = _source_disclosures(row)
+    assert len(disclosures) == 1
+    assert _levels_in(disclosures[0]["content"][1:]) == ["N5", "N2"]
+
+
+def test_a_source_asserting_only_a_level_still_gets_to_say_it():
+    """7 of the 158 conflicts hid behind a source that renders no prose.
+
+    On `たい`, `で`, `方`, `もう`, `てはいけない`, `たらどうですか` and
+    `を余儀なくされる` the DISAGREEING source ships a level (and at most a meaning
+    or structure the compact block already absorbed), so it produced no
+    disclosure at all and its level was unreachable. A level is a substantive
+    claim about the point, so it earns the source a disclosure of its own.
+    """
+    rich = _point(source="dojg", source_id="a", jlpt="N2", explanation="Rich.")
+    level_only = _point(
+        source="nihongo_net",
+        source_id="b",
+        jlpt="N5",
+        meaning=None,
+        structure=None,
+        explanation=None,
+        examples=(),
+        provenance={"sourceLabel": "日本語NET JLPT文法解説まとめ"},
+    )
+    row = build_term_entry(MergedEntry(expression="たい", contributions=[rich, level_only]), 1)
+
+    by_source = {
+        _summary_of(d)["content"][0]["content"]: _levels_in(d["content"][1:])
+        for d in _source_disclosures(row)
+    }
+    assert by_source == {
+        SOURCE_LABELS["dojg"]: ["N2"],
+        "日本語NET JLPT文法解説まとめ": ["N5"],
+    }
+
+
+def test_a_source_with_no_level_and_no_substance_earns_no_disclosure():
+    """The level is what makes a bare record worth a row — not the record itself.
+
+    Contract invariant 6 forbids a card whose only visible content is the Sources
+    disclosure, and invariant 4 forbids a row carrying BOTH a sourceBlock and a
+    compact fallback. Admitting substance-less records wholesale would break
+    both, so admission is gated on the level itself.
+    """
+    bare = _point(
+        source="edewakaru", source_id="b", jlpt=None, meaning=None, structure=None,
+        explanation=None, examples=(),
+        provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]},
+    )
+    rich = _point(source="dojg", source_id="a", explanation="Rich.")
+    row = build_term_entry(MergedEntry(expression="x", contributions=[rich, bare]), 1)
+
+    labels = [
+        _summary_of(d)["content"][0]["content"] for d in _source_disclosures(row)
+    ]
+    assert labels == [SOURCE_LABELS["dojg"]]
+
+
+def test_the_level_row_is_the_only_thing_this_change_adds_to_a_card():
+    """Containment: the level row must not perturb the rest of the card.
+
+    This change touched the disclosure builder that every card goes through, so a
+    regression here would silently reshape 2,441 cards. When the beauty gate
+    returned 13 must-fix findings, this property is what allowed them to be
+    attributed to the corpus rather than to this card: strip every `sourceLevel`
+    node from the rendered output and the result must be exactly what the renderer
+    produced before, with no reordering, no lost sense, and no changed prose.
+
+    Asserted against the production composer rather than a fixture diff, so it
+    keeps biting if `_source_blocks` is refactored.
+    """
+    def strip(node):
+        if isinstance(node, list):
+            return [
+                strip(item) for item in node
+                if not (isinstance(item, dict) and "sourceLevel" in (item.get("data") or {}))
+            ]
+        if isinstance(node, dict):
+            copy = dict(node)
+            if "content" in copy:
+                copy["content"] = strip(copy["content"])
+            return copy
+        return node
+
+    points = [
+        _point(source="dojg", source_id="a", jlpt="N3", meaning="one", explanation="One."),
+        _point(source="dojg", source_id="b", jlpt="N2", meaning="two", explanation="Two."),
+        # Four senses from one source, i.e. exactly SENSES_PER_SOURCE, so a
+        # truncation introduced alongside the level row cannot hide here (a
+        # mutation dropping the bound to 3 survived a 2-sense fixture).
+        _point(source="dojg", source_id="c", meaning="three", explanation="Three."),
+        _point(source="dojg", source_id="d", meaning="four", explanation="Four."),
+        _point(source="edewakaru", source_id="e", jlpt="N5", explanation="Five.",
+               provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]}),
+    ]
+    entry = MergedEntry(expression="あまり", contributions=points)
+
+    with_levels = build_term_entry(entry, 1)
+    without = [_point(**{**dict(
+        source=p.source, source_id=p.source_id, expression=p.expression,
+        reading=p.reading, meaning=p.meaning, structure=p.structure,
+        explanation=p.explanation, examples=p.examples, provenance=p.provenance,
+    ), "jlpt": None}) for p in points]
+    baseline = build_term_entry(MergedEntry(expression="あまり", contributions=without), 1)
+
+    # The compact badge is fed by point.jlpt too, so compare below the fold only.
+    stripped = strip(with_levels[5][0]["content"]["content"][1:])
+    assert stripped == baseline[5][0]["content"]["content"][1:]
+    # ...and the levels really were there to strip.
+    assert _levels_in(with_levels[5][0]["content"]["content"][1:]) == ["N3", "N2", "N5"]
+    # ...and every sense the bound allows still rendered its own body.
+    blob = json.dumps(with_levels, ensure_ascii=False)
+    for body in ("One.", "Two.", "Three.", "Four.", "Five."):
+        assert blob.count(body) == 1, f"{body} rendered {blob.count(body)}x"
+
+
+def test_a_per_source_level_never_replaces_the_compact_badge():
+    """The compact block stays one line; the disclosures are the added surface."""
+    n2 = _point(source="edewakaru", source_id="a", jlpt="N2", explanation="Ede.",
+                provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]})
+    n3 = _point(source="dojg", source_id="b", jlpt="N3", explanation="DoJG.")
+    row = build_term_entry(MergedEntry(expression="あまり", contributions=[n2, n3]), 1)
+
+    compact = row[5][0]["content"]["content"][0]
+    assert "compact" in compact["data"]
+    assert _levels_in(compact) == ["N2"]
+
+
+def test_a_per_source_level_is_labelled_so_a_bare_code_is_not_ambiguous():
+    """`N2` alone inside a body of prose does not say what it measures.
+
+    Above the fold the badge sits in a metadata row beside the construction chip
+    and reads as card metadata. Inside a source's disclosure it would be a bare
+    two-character code in running text, so it is introduced by the source's own
+    claim.
+    """
+    point = _point(jlpt="N3", explanation="Prose.")
+    row = build_term_entry(MergedEntry(expression="x", contributions=[point]), 1)
+
+    disclosure = _source_disclosures(row)[0]
+    blob = json.dumps(disclosure, ensure_ascii=False)
+    assert "sourceLevel" in blob
+    assert "JLPT" in blob
+
+
+def test_the_per_source_level_row_is_visually_subordinate_to_the_prose():
+    """It is provenance about the source's claim, not the claim itself.
+
+    A per-source level set at body size and weight would compete with the
+    explanation it annotates on 158 cards, so it is declared quieter and smaller
+    while still clearing the card's contrast floor via `--bugd-muted` (which the
+    de-emphasis-token test already gates at 4.5:1 on the card's own surfaces).
+    """
+    import re
+
+    from conftest import resolve_space_tokens
+
+    css = resolve_space_tokens(STYLES_CSS)
+    rule = re.search(r"\[data-sc-source-level\]\s*\{([^}]*)\}", css)
+    assert rule, "the per-source level row needs its own rule"
+    block = rule.group(1)
+
+    size = re.search(r"font-size:\s*([0-9.]+)em", block)
+    assert size and float(size.group(1)) < 1.0, (
+        f"a provenance row must not be body size (got {block!r})"
+    )
+    assert "var(--bugd-muted)" in block
 
 
 # ------------------------------------------------------ UGD-14 visual gate

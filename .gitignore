@@ -10,6 +10,7 @@ SHA256SUMS
 !/data/sources/.gitkeep
 /data/extracted/
 /data/merged/
+/data/merge/
 /cache/
 
 # Python

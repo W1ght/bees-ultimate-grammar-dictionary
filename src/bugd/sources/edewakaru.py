@@ -153,27 +153,49 @@ class EdewakaruExtractor(CommunityBankExtractor):
 def _numbered_examples(
     body: str | None, highlights: tuple[str, ...]
 ) -> tuple[Example, ...]:
-    """Collect circled-digit examples, keeping each `→` rephrasing attached."""
+    """Collect circled-digit examples, keeping each `→` rephrasing attached.
+
+    `read_term_bank` puts every glossary node on its own line, so when the
+    producer's `→` rephrasing OPENS with a bold span the arrow is left alone on
+    its line (`…泣いてしまった` / `→` / `とても` / `嬉しい` / …) and the words that
+    follow it are the paraphrase, not a continuation of the specimen. The earlier
+    logic only started a rephrasing when text sat on the SAME line as the arrow,
+    so a bare `→` was dropped and every following line glued onto the specimen —
+    `嬉しさのあまり泣いてしまったとても嬉しいので泣いてしまった`, the exact run-on the
+    UGD-08c beauty round filed five times (findings 1, 2, 4, 5, 13). Measured over
+    edewakaru's four banks: 158 arrow-alone lines across 61 example fields; the
+    3,779 arrows carrying their own text are unaffected.
+
+    So the arrow toggles a rephrasing accumulator: once a `→` is seen, later
+    continuation lines extend the CURRENT rephrasing rather than the specimen, and
+    a following `→` opens the next rephrasing. A circled digit closes the example.
+    """
     if not body:
         return ()
     examples: list[Example] = []
     sentence: str | None = None
     rephrasings: list[str] = []
+    #: True once a `→` has opened a rephrasing for the current specimen. While set,
+    #: an unmarked continuation line extends the last rephrasing, not the sentence.
+    in_rephrasing = False
 
     def flush() -> None:
-        nonlocal sentence
+        nonlocal sentence, in_rephrasing
         if sentence:
             japanese = clean(sentence)
             if japanese:
                 text = japanese
                 for rephrasing in rephrasings:
-                    text += f"\n→{rephrasing}"
+                    cleaned = clean(rephrasing)
+                    if cleaned:
+                        text += f"\n→{cleaned}"
                 marked = tuple(marker for marker in highlights if marker in japanese)
                 # `english` stays None: the rephrasing is Japanese, and this
                 # build never machine-translates.
                 examples.append(Example(japanese=text, english=None, highlight=marked))
         sentence = None
         rephrasings.clear()
+        in_rephrasing = False
 
     for line in body.split("\n"):
         if not line.strip():
@@ -182,10 +204,15 @@ def _numbered_examples(
             flush()
             sentence = _CIRCLED.sub("", line).strip()
         elif _REPHRASING.match(line) and sentence:
-            rephrasing = clean(_REPHRASING.sub("", line))
-            if rephrasing:
-                rephrasings.append(rephrasing)
-        elif sentence and not rephrasings:
+            # A `→` opens a NEW rephrasing whether or not it carries its own text.
+            # A bare arrow (the paraphrase begins with a bold span on the next
+            # line) still starts one, so the words after it accumulate here rather
+            # than fusing onto the specimen.
+            rephrasings.append(_REPHRASING.sub("", line).strip())
+            in_rephrasing = True
+        elif in_rephrasing:
+            rephrasings[-1] += line.strip()
+        elif sentence:
             sentence += line.strip()
     flush()
     return tuple(examples)

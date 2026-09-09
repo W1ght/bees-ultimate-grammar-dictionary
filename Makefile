@@ -31,10 +31,10 @@ export SOURCE_DATE_EPOCH := 0
 
 ZIP := build/bees-ultimate-grammar-dictionary.zip
 
-.PHONY: all extract keymap merge build validate validate-node test scan-polarity clean help
+.PHONY: all extract keymap merge build validate validate-node audit-packaged test scan-polarity clean help
 
 help:
-	@printf 'targets: extract keymap merge build validate validate-node test scan-polarity all clean\n'
+	@printf 'targets: extract keymap merge build validate validate-node audit-packaged test scan-polarity all clean\n'
 
 extract:
 	$(PY) -m bugd.cli extract
@@ -58,6 +58,14 @@ build:
 
 validate:
 	$(PY) -m bugd.cli validate
+
+# Packaged-bytes audits. `validate` proves the archive matches Yomitan's pinned
+# schemas; these prove it carries the WORK -- per-source attribution, working
+# redirects, and each source's own JLPT level on the 158 entries whose sources
+# disagree. A gate that is never run is not a gate, so both are targets.
+audit-packaged:
+	$(PY) scripts/audit_packaged_merge.py
+	$(PY) scripts/audit_packaged_jlpt.py
 
 # Independent Node/ajv cross-check of the same artifact against the same pinned
 # schemas. Requires `npm install`.
