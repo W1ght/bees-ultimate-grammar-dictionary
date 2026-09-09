@@ -25,6 +25,7 @@ import re
 from ..jsonio import MalformedPayload, dump_json
 from ..model import Example, GrammarPoint
 from .base import Extractor, ExtractResult, load_source_lock
+from .polarity_repair import repair_point
 from .yomitan_bank import TermRow, read_term_bank
 
 #: Per-source JSONL lands beside the locked bytes so a reviewer can read one
@@ -186,6 +187,20 @@ class CommunityBankExtractor(Extractor):
             points.append(point)
 
         points = self.finalize(points)
+        # Repair headwords the publisher flipped to the affirmative in the
+        # `expression` column while its own `reading` still spells the fixed
+        # negative. Fail-closed and driven by the source's own reading; see
+        # bugd.sources.polarity_repair. Applied after finalize so a source's
+        # cross-row post-processing sees the publisher's original surfaces first.
+        repaired_points: list[GrammarPoint] = []
+        repaired = 0
+        for point in points:
+            fixed = repair_point(point)
+            if fixed is not point and fixed.expression != point.expression:
+                repaired += 1
+            repaired_points.append(fixed)
+        points = repaired_points
+
         self.write_jsonl(points)
         return ExtractResult(
             source=self.name,
@@ -195,6 +210,7 @@ class CommunityBankExtractor(Extractor):
                 "bankRows": len(rows),
                 "points": len(points),
                 "skipped": skipped,
+                "polarityRepaired": repaired,
                 "members": list(self.members),
                 "licenseTier": self.license_tier,
                 "redistributable": self.redistributable,
