@@ -12,11 +12,11 @@ entries that conform to this contract.
 
 - Total term-bank rows: **2419**, `sequence` min 1 / max 2419 / distinct 2419 / contiguous.
 - `root lang="ja"`: 2419 (every card root carries `lang=ja`).
-- Root child kinds after the compact block: `listedOnly` 109, `details` 2419,
-  `sourceBlock` 3661, `crossref` 242.
+- Root child kinds after the compact block: `listedOnly` 109,
+  `sourceBlock` 3661, `crossref` 242. (Per-source `sourceBlock`s are the only
+  `details` children; there is no separate trailing attribution `details`.)
 - `reading` non-empty on 866 rows; `reading == expression` never occurs (0).
 - `score` is always 0; no `tags` and no `termTags` are ever populated.
-- Attribution summary text is `"Sources"` on all 2419 rows.
 - JLPT distribution: N1 519, N2 430, N3 451, N4 136, N5 58.
 
 ## Term-bank row shape (Yomitan term bank v3)
@@ -64,9 +64,7 @@ div role=grammarCard  lang=ja          (root, 2419)
 │        ├─ ul  role=patterns          (1201) → li role=pattern (6479)
 │        └─ ul  role=examples          (4102) → li role=example → span role=ja[/en]
 ├─ div role=crossref                   (242)  → text + a  (redirect to related point)
-├─ div role=listedOnly lang=en         (109)  → text,a,text (external-link-only entries)
-└─ details role=attribution            (2419; last child, data-less)
-   └─ summary "Sources" + per-source credit
+└─ div role=listedOnly lang=en         (109)  → text,a,text (external-link-only entries)
 ```
 
 Node key sets are fixed per (tag, role) — see `evidence/node_shapes.txt`. Ruby is
@@ -77,11 +75,14 @@ plain text.
 
 1. Exactly one root `div role=grammarCard`, `lang=ja`, per row (2419).
 2. Compact ordering: `meaning` MUST precede `metarow` (0 violations allowed).
-3. The LAST root child is always a data-less `details` (the attribution block);
-   it never carries a data role. `details` are never shipped `open`.
+3. The LAST root child is a `sourceBlock`, `crossref`, or `listedOnly` — never a
+   data-less attribution `details`; there is no trailing "Sources" block. All
+   `details` are shipped closed (never `open`).
 4. A row MUST NOT have BOTH a `sourceBlock` and a compact fallback.
 5. A row MUST NOT have both `crossref` and `listedOnly`.
-6. No card may have the Sources disclosure as its ONLY visible content (0 allowed).
+6. No card may be empty or render as attribution-only: every card MUST carry at
+   least one substantive child (a `sourceBlock`, `crossref`, or `listedOnly`);
+   0 empty/attribution-only cards allowed.
 7. `metarow` contains only `jlpt` and/or `structure` roles.
 8. `sourceBlock` has exactly 2 children (summary + body).
 9. External anchors are allowed only in `grammarCard > listedOnly` context
@@ -91,17 +92,18 @@ plain text.
 
 333 rows have an empty compact block; 320 of those carry a fallback
 (`crossref` or `listedOnly`) so the card is never blank. The remaining **13**
-known exceptions have an empty compact but DO render a `sourceBlock`+`details`
+known exceptions have an empty compact but DO render a `sourceBlock`
 (so they are non-blank): かしら, しい, だい, ちょっと, つまらないものですが,
 なんで, よね？, 所, 汚す, 汚れる, 決して, 濡らす, 濡れる. These 13 are accepted
 and MUST remain non-blank via their sourceBlock. New/changed sources MUST NOT
-introduce a card whose only visible content is the Sources disclosure.
+introduce a blank or attribution-only card.
 
 ## Per-source attribution & AI-field handling
 
 - Each contributing source renders its own `details role=sourceBlock` with a
   `span role=sourceName` badge (e.g. `DoJG 日本語文法辞典(全集)`), so provenance is
-  visible per sense, and the trailing `attribution` block lists all sources.
+  visible per sense. The per-source `sourceName` badge IS the attribution — no
+  separate trailing attribution block is emitted.
 - AI-generated fields (from 文法.apkg) MUST be segregated into their own
   sourceBlock and clearly labelled as AI-generated in the `sourceName` badge;
   they are never merged into a human source's sense. AI disclosure lives in the

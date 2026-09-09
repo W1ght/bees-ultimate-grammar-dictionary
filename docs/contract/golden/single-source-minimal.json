@@ -55,27 +55,6 @@
               "sourceBlock": ""
             },
             "tag": "details"
-          },
-          {
-            "content": [
-              {
-                "content": "Sources",
-                "tag": "summary"
-              },
-              {
-                "content": [
-                  {
-                    "content": "Contributed by DoJG 日本語文法辞典(全集).",
-                    "data": {
-                      "attribution": ""
-                    },
-                    "tag": "div"
-                  }
-                ],
-                "tag": "div"
-              }
-            ],
-            "tag": "details"
           }
         ],
         "data": {

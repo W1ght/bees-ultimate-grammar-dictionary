@@ -363,27 +363,6 @@
               "sourceBlock": ""
             },
             "tag": "details"
-          },
-          {
-            "content": [
-              {
-                "content": "Sources",
-                "tag": "summary"
-              },
-              {
-                "content": [
-                  {
-                    "content": "Contributed by 絵でわかる日本語.",
-                    "data": {
-                      "attribution": ""
-                    },
-                    "tag": "div"
-                  }
-                ],
-                "tag": "div"
-              }
-            ],
-            "tag": "details"
           }
         ],
         "data": {

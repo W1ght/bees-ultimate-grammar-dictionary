@@ -108,14 +108,26 @@ def test_card_composition_renders_the_frozen_contract(sample_point):
     assert root["data"] == {CARD_ROOT_ROLE: ""}
 
     children = root["content"]
-    # Compact first, attribution last, disclosures in between.
+    # Compact first; all disclosures are per-source sourceBlocks. There is NO
+    # trailing data-less "Sources" attribution details — each sourceBlock is
+    # titled with its own source, so the source IS the attribution.
     assert children[0]["data"] == {"compact": ""}
-    assert children[-1]["tag"] == "details"
-    assert children[-1]["content"][0]["content"] == "Sources"
+    last = children[-1]
+    is_attribution = (
+        last.get("tag") == "details"
+        and not last.get("data")
+        and isinstance(last.get("content"), list)
+        and last["content"][0].get("content") == "Sources"
+    )
+    assert not is_attribution, "no trailing data-less 'Sources' attribution block"
+
+    # Every disclosure is a per-source sourceBlock (carries the sourceBlock role).
+    details_children = [c for c in children if c.get("tag") == "details"]
+    assert details_children, "a contributing source must produce a disclosure"
+    assert all("sourceBlock" in (d.get("data") or {}) for d in details_children)
 
     # Every disclosure is closed by default: `details` without `open`.
-    disclosures = [c for c in children if c.get("tag") == "details"]
-    assert disclosures, "a contributing source must produce a disclosure"
+    disclosures = details_children
     assert all("open" not in d for d in disclosures)
 
     # The compact line carries the meaning, construction badge, and JLPT.
