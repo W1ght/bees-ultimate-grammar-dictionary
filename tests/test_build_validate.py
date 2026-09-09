@@ -18,6 +18,7 @@ from bugd import (
 )
 from bugd.banks import (
     CARD_ROOT_ROLE,
+    COMPACT_MEANING_BUDGET,
     build_banks,
     build_index,
     build_tag_bank,
@@ -25,6 +26,7 @@ from bugd.banks import (
 )
 from bugd.jsonio import MalformedPayload, dump_json, load_json
 from bugd.merge import MergedEntry, merge_points
+from bugd.model import Example, GrammarPoint
 from bugd.package import ZIP_DATE, build_zip, package_members
 from bugd.pipeline import SchemaValidationError, run_build, run_validate, zip_name
 from bugd.styles import STYLES_CSS
@@ -86,12 +88,163 @@ def test_empty_corpus_yields_no_term_banks():
     assert build_banks([]) == {}
 
 
-def test_card_composition_is_still_open(sample_point):
+def test_card_composition_renders_the_frozen_contract(sample_point):
+    """The compact block, per-source disclosure, and attribution all render.
+
+    Replaces the scaffold's `NotImplementedError` placeholder now that card
+    composition has landed.
+    """
     entry = merge_points([sample_point])[0]
-    with pytest.raises(NotImplementedError):
-        build_term_entry(entry, 1)
-    with pytest.raises(NotImplementedError):
-        build_banks([entry])
+    row = build_term_entry(entry, 1)
+
+    # Positional term-bank shape.
+    assert row[0] == "そうです"
+    assert row[6] == 1
+    assert len(row[5]) == 1, "one canonical structured-content surface per entry"
+
+    card = row[5][0]
+    assert card["type"] == "structured-content"
+    root = card["content"]
+    assert root["data"] == {CARD_ROOT_ROLE: ""}
+
+    children = root["content"]
+    # Compact first, attribution last, disclosures in between.
+    assert children[0]["data"] == {"compact": ""}
+    assert children[-1]["tag"] == "details"
+    assert children[-1]["content"][0]["content"] == "Sources"
+
+    # Every disclosure is closed by default: `details` without `open`.
+    disclosures = [c for c in children if c.get("tag") == "details"]
+    assert disclosures, "a contributing source must produce a disclosure"
+    assert all("open" not in d for d in disclosures)
+
+    # The compact line carries the meaning, construction badge, and JLPT.
+    compact = json.dumps(children[0], ensure_ascii=False)
+    assert "hearsay; I hear that" in compact
+    assert "Verb[casual] + そうです" in compact
+    assert "N4" in compact
+
+
+def test_compact_meaning_is_bounded_on_a_sense_boundary():
+    """A long multi-sense gloss is shortened between senses, never mid-word."""
+    long_meaning = "; ".join(f"sense number {n} of the source gloss" for n in range(1, 8))
+    point = GrammarPoint(
+        source="fixture", source_id="1", expression="x", meaning=long_meaning
+    )
+    row = build_term_entry(merge_points([point])[0], 1)
+    compact = row[5][0]["content"]["content"][0]
+    rendered = compact["content"][0]["content"]
+    assert len(rendered) <= COMPACT_MEANING_BUDGET + 1  # +1 for the ellipsis
+    assert rendered.endswith("…")
+    # Cut on a sense boundary, so no partial sense is shown.
+    assert "sense number 1 of the source gloss" in rendered
+
+
+def test_a_table_structure_is_not_used_as_a_compact_badge():
+    """DoJG-style pipe tables become a Construction list, not a mangled chip."""
+    point = GrammarPoint(
+        source="fixture",
+        source_id="1",
+        expression="あえて",
+        meaning="daringly",
+        structure="あえて | Verb | |\n| あえて反対する | Someone dares to disagree |",
+    )
+    row = build_term_entry(merge_points([point])[0], 1)
+    children = row[5][0]["content"]["content"]
+    compact = json.dumps(children[0], ensure_ascii=False)
+    assert "|" not in compact, "raw table pipes must never reach the compact card"
+    assert "structure" not in compact, "a table is not a badge"
+    # The source's patterns are still shown, in that source's disclosure.
+    body = json.dumps(children[1], ensure_ascii=False)
+    assert "あえて反対する" in body
+    assert "pattern" in body
+
+
+def test_meaning_language_is_declared_from_the_text():
+    """Sources publish English AND Japanese meanings; the tag must match."""
+    english = GrammarPoint(source="s", source_id="1", expression="a", meaning="during; while")
+    japanese = GrammarPoint(source="s", source_id="2", expression="b", meaning="〜だけでもいいから")
+    for point, expected in ((english, "en"), (japanese, "ja")):
+        row = build_term_entry(merge_points([point])[0], 1)
+        span = row[5][0]["content"]["content"][0]["content"][0]
+        assert span["data"] == {"meaning": ""}
+        assert span["lang"] == expected
+
+
+def test_repeated_source_becomes_one_disclosure_with_labelled_senses():
+    """Many records from one source must not stack identical summary rows."""
+    points = [
+        GrammarPoint(
+            source="s",
+            source_id=str(n),
+            expression="ない",
+            meaning=f"sense {n}",
+            explanation=f"explanation {n}",
+            provenance={"sourceLabel": "One Source"},
+        )
+        for n in range(1, 6)
+    ]
+    row = build_term_entry(merge_points(points)[0], 1)
+    children = row[5][0]["content"]["content"]
+    disclosures = [c for c in children if c.get("tag") == "details" and c.get("data")]
+    assert len(disclosures) == 1, "one disclosure per SOURCE, not per record"
+    summary = json.dumps(disclosures[0]["content"][0], ensure_ascii=False)
+    assert summary.count("One Source") == 1
+    body = json.dumps(disclosures[0]["content"][1], ensure_ascii=False)
+    assert "senseLabel" in body
+
+
+def test_an_alias_only_entry_points_at_the_canonical_form():
+    """A spelling variant with no substance must not render as an empty card."""
+    point = GrammarPoint(
+        source="s",
+        source_id="1",
+        expression="相まって",
+        provenance={"aliasOf": "あいまって", "sourceLabel": "Src"},
+    )
+    row = build_term_entry(merge_points([point])[0], 1)
+    children = row[5][0]["content"]["content"]
+    crossref = next(c for c in children if c.get("data") == {"crossref": ""})
+    link = crossref["content"][1]
+    assert link["tag"] == "a"
+    assert link["href"] == "?query=あいまって&wildcards=off"
+    assert link["content"] == "あいまって"
+
+
+def test_a_listed_but_undescribed_headword_says_so_without_inventing_content():
+    point = GrammarPoint(
+        source="s",
+        source_id="1",
+        expression="おかわり",
+        provenance={
+            "sourceLabel": "絵でわかる日本語",
+            "producerLinks": ["http://www.edewakaru.com/archives/20231311.html"],
+        },
+    )
+    row = build_term_entry(merge_points([point])[0], 1)
+    children = row[5][0]["content"]["content"]
+    listed = next(c for c in children if c.get("data") == {"listedOnly": ""})
+    text = json.dumps(listed, ensure_ascii=False)
+    assert "without an explanation" in text
+    assert "edewakaru.com" in text
+
+
+def test_only_source_marked_substrings_are_highlighted():
+    """Highlighting is source-driven; the longest marker wins over a substring."""
+    point = GrammarPoint(
+        source="s",
+        source_id="1",
+        expression="あっての",
+        meaning="m",
+        examples=(
+            Example(japanese="過去があっての現在", highlight=("があっての", "あっての")),
+        ),
+    )
+    row = build_term_entry(merge_points([point])[0], 1)
+    body = json.dumps(row[5][0]["content"]["content"][1], ensure_ascii=False)
+    assert '"hl"' in body
+    # The longer marker is the one applied, not the nested shorter one.
+    assert "があっての" in body
 
 
 def test_build_banks_rejects_non_entries():
@@ -221,6 +374,69 @@ def test_styles_are_scoped_to_this_dictionarys_own_marker():
     assert "[data-sc-grammar-card]" in STYLES_CSS
     assert ":root" not in STYLES_CSS
     assert "forced-colors" in STYLES_CSS
+
+
+def test_summary_draws_its_own_disclosure_chevron():
+    """`display: flex` on a summary removes Chromium's ::marker.
+
+    Measured in real Yomitan 26.8.24.0: every summary reported
+    `list-style-type: disclosure-closed` while painting no marker and leaving
+    its first child at inset 0, so the source rows looked like static text.
+    Flex is what centres the 44px hit area, so the chevron must be an explicit
+    child box, the native markers must be suppressed so nothing paints twice,
+    and it must rotate on open.
+    """
+    assert "summary::before" in STYLES_CSS
+    assert "summary::-webkit-details-marker" in STYLES_CSS
+    assert "details[open] > summary::before" in STYLES_CSS
+    # currentColor keeps the chevron in forced-colors mode without a rule there.
+    assert "border-right: 2px solid currentColor" in STYLES_CSS
+    # A summary that is still `display: flex` without a drawn marker is the bug.
+    assert "list-style: none" in STYLES_CSS
+
+
+def test_summary_has_a_resting_boundary_not_only_a_hover_state():
+    """A control row must look like a control before the pointer arrives.
+
+    Round-2 review of the real host still called the rows out: the chevron alone
+    (measured 6.3px, pure black -- not grey) did not make a 13-row stack read as
+    interactive. The row carries its own surface at rest, and the enclosing
+    `details` draws the boundary so an OPEN disclosure keeps its revealed body
+    inside the box (round 6 filed three must-fix reports when the border closed
+    above the body and the attribution appeared to fall outside it).
+    """
+    assert "--bugd-well:" in STYLES_CSS
+    assert "--bugd-well-hover:" in STYLES_CSS
+    summary_block = STYLES_CSS.split("[data-sc-grammar-card] summary {", 1)[1].split("}", 1)[0]
+    assert "background: var(--bugd-well)" in summary_block
+    # The row's fill must not double as a boundary; the box owns that.
+    assert "border: 1px solid" not in summary_block
+    assert "var(--bugd-rule)" not in summary_block
+    # The edge is deliberately NOT --bugd-rule. At Yomitan's #eee a 1px edge on a
+    # white background is barely a pixel of contrast, and review kept reading an
+    # identically-bordered stack as "one row is boxed, the next has no boundary".
+    # The disclosure therefore owns a stronger token than the card's hairlines.
+    assert "--bugd-control-edge:" in STYLES_CSS
+    details_block = STYLES_CSS.split("[data-sc-grammar-card] details {", 1)[1].split("}", 1)[0]
+    assert "border: 1px solid var(--bugd-control-edge)" in details_block
+    # A double divider: the box's border plus a separate rule on the wrapper.
+    assert "border-top:" not in details_block
+    # forced-colors must drop the translucent fill, which is not a system colour.
+    forced = STYLES_CSS.split("@media (forced-colors: active)", 1)[1]
+    assert "--bugd-well: Canvas" in forced
+
+
+def test_metadata_chips_share_one_pill_radius():
+    """The JLPT badge and the construction chip must read as one chip family."""
+    assert "--bugd-pill:" in STYLES_CSS
+    assert STYLES_CSS.count("border-radius: var(--bugd-pill)") >= 2
+
+
+def test_forced_colors_does_not_paint_over_the_summary_label():
+    """A forced hover background would erase the label behind it."""
+    forced = STYLES_CSS.split("@media (forced-colors: active)", 1)[1]
+    assert "summary:hover" in forced
+    assert "background: transparent" in forced
 
 
 def test_merged_entry_is_the_only_bank_input():
