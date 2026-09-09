@@ -598,7 +598,22 @@ STYLES_CSS = """\
   line-height: 2;
 }
 
-[data-sc-ja] ruby > rt {
+/* Ruby annotations must sit ABOVE their base wherever ruby appears on the card,
+   not only inside example sentences. A ruby run inside a prose block inherits
+   that block's `white-space: pre-line` (see `[data-sc-prose]`), which lets a
+   multi-segment ruby such as `予<rt>よ</rt>想<rt>そう</rt>外<rt>がい</rt>` break
+   AFTER each base+annotation pair, stacking the pairs on separate lines. Once a
+   later pair falls onto its own line, its `rt` sits below the whole ruby box's
+   vertical middle -- the annotation reads as text under the word, not furigana
+   over it. `white-space: nowrap` keeps the ruby's segments on one line so every
+   `rt` stays over its base. Furigana runs are short (one word), so holding the
+   ruby whole does not overflow the popup; the surrounding sentence still wraps
+   between ruby runs. */
+[data-sc-grammar-card] ruby {
+  white-space: nowrap;
+}
+
+[data-sc-grammar-card] ruby > rt {
   font-size: 0.55em;
   /* Keep furigana visually attached to its base text. */
   line-height: 1.1;
@@ -860,6 +875,17 @@ STYLES_CSS = """\
      sentence-length `[data-sc-hl-long]` — because a wrapped grammar point is
      legible and an overflowing one is not. */
   [data-sc-hl] {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  /* A bracketed prose lead-in (`【Ｎ１文法】`) is held on one line in a wide popup
+     so it works as a scanning anchor (see `[data-sc-prose-label]`), but a large
+     bracket run -- especially at the browser's 200% text-zoom (WCAG 1.4.4) --
+     can be wider than the whole card and then extends it, forcing horizontal
+     scroll. In a phone-width popup containment wins over the scanning nicety, the
+     same trade the highlight above makes: a wrapped label is legible, an
+     overflowing one clips. */
+  [data-sc-prose-label] {
     white-space: normal;
     overflow-wrap: anywhere;
   }

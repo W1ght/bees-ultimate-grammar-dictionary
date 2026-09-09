@@ -107,7 +107,14 @@ def test_long_unbreakable_runs_wrap_rather_than_extend(renderer, card, styles_cs
         card(RICH), styles_css=styles_css, viewport=viewport("narrow")
     )
     rendered.open_all_details()
-    root_width = rendered.box(sel.ROOT).width
+    # The width a run must fit inside is the popup's own frame. Yomitan wraps
+    # every structured-content card in a `span.structured-content` whose
+    # `display: inline` collapses the card root's border box to 0 in this
+    # harness (the real popup stretches it via a flex content-body the bare
+    # harness page has no equivalent of), so the root box is not a usable
+    # width bound -- the frame is, and it is exactly the surface the whole-card
+    # overflow report below measures against.
+    frame_width = rendered.frame_box().width
     breakable_roles = [sel.EXAMPLE_JA, sel.EXPLANATION, sel.STRUCTURE]
     checked = 0
     for role in breakable_roles:
@@ -115,12 +122,12 @@ def test_long_unbreakable_runs_wrap_rather_than_extend(renderer, card, styles_cs
             continue
         checked += 1
         widths = [round(box.width, 1) for box in rendered.boxes(role)]
-        too_wide = [w for w in widths if w > root_width + OVERFLOW_TOLERANCE_PX]
+        too_wide = [w for w in widths if w > frame_width + OVERFLOW_TOLERANCE_PX]
         wrap = rendered.computed(role, "overflow-wrap")
         white_space = rendered.computed(role, "white-space")
         overflow = rendered.computed(role, "overflow")
         assert not too_wide, (
-            f"{role} runs are wider than the card root ({root_width}px): "
+            f"{role} runs are wider than the popup frame ({frame_width}px): "
             f"{too_wide}; overflow-wrap={wrap!r} white-space={white_space!r}. "
             "A long run must wrap, not extend the card."
         )

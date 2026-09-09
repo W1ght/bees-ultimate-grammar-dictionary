@@ -286,9 +286,9 @@ def test_dictionary_styles_reach_the_card_through_yomitan_scoping(
         "the card root has no resolved line-height, so the dictionary "
         "stylesheet did not apply at all after Yomitan's scoping"
     )
-    assert abs(float(line_height.removesuffix("px")) - font_size * 1.5) < 0.5, (
+    assert abs(float(line_height.removesuffix("px")) - font_size * 1.65) < 0.5, (
         f"card root line-height is {line_height} at font-size {font_size}px; "
-        "the shipped 1.5 declaration is not in effect"
+        "the shipped 1.65 declaration is not in effect"
     )
 
 
