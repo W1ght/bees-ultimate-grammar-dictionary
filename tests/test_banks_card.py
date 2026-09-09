@@ -1191,7 +1191,12 @@ def test_the_level_row_is_the_only_thing_this_change_adds_to_a_card():
     points = [
         _point(source="dojg", source_id="a", jlpt="N3", meaning="one", explanation="One."),
         _point(source="dojg", source_id="b", jlpt="N2", meaning="two", explanation="Two."),
-        _point(source="edewakaru", source_id="c", jlpt="N5", explanation="Three.",
+        # Four senses from one source, i.e. exactly SENSES_PER_SOURCE, so a
+        # truncation introduced alongside the level row cannot hide here (a
+        # mutation dropping the bound to 3 survived a 2-sense fixture).
+        _point(source="dojg", source_id="c", meaning="three", explanation="Three."),
+        _point(source="dojg", source_id="d", meaning="four", explanation="Four."),
+        _point(source="edewakaru", source_id="e", jlpt="N5", explanation="Five.",
                provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]}),
     ]
     entry = MergedEntry(expression="あまり", contributions=points)
@@ -1209,6 +1214,10 @@ def test_the_level_row_is_the_only_thing_this_change_adds_to_a_card():
     assert stripped == baseline[5][0]["content"]["content"][1:]
     # ...and the levels really were there to strip.
     assert _levels_in(with_levels[5][0]["content"]["content"][1:]) == ["N3", "N2", "N5"]
+    # ...and every sense the bound allows still rendered its own body.
+    blob = json.dumps(with_levels, ensure_ascii=False)
+    for body in ("One.", "Two.", "Three.", "Four.", "Five."):
+        assert blob.count(body) == 1, f"{body} rendered {blob.count(body)}x"
 
 
 def test_a_per_source_level_never_replaces_the_compact_badge():
