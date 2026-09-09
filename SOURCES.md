@@ -48,3 +48,28 @@ Prefer finding an EXISTING Yomitan dict / Anki deck before re-scraping from scra
 - Preserve per-source label on every merged entry.
 - Redistribution/licensing check is a SEPARATE gate; does not block core build.
 - Local-only unless user asks to publish (user policy).
+
+## Reference data (validation gates, not dictionary content)
+
+### KANJIDIC2 — per-kanji reading gate
+- Source: KANJIDIC2, Electronic Dictionary Research and Development Group (EDRDG),
+  licence CC BY-SA 4.0. https://www.edrdg.org/wiki/index.php/KANJIDIC_Project
+- Used only by the reading gate (`src/bugd/readings.py`) to check that a
+  contribution's `reading` is a structurally possible kana rendering of its own
+  written form. It is NOT dictionary content and ships as a distilled asset, not
+  the full XML.
+- Distilled asset: `src/bugd/data/kanji_readings.json` (on/kun/nanori readings
+  only, hiragana; 13,108 kanji). Its `_provenance` block pins the upstream XML.gz
+  `sha256` and `databaseVersion`; the asset is byte-reproducible from that pinned
+  source via `python scripts/distil_kanjidic.py <kanjidic2.xml.gz> src/bugd/data/kanji_readings.json`
+  (stdlib-only, no third-party dependency).
+- Pinned upstream: kanjidic2.xml.gz, sha256
+  `dccb9cf78b3a56d139350939cec2afe4efd866eff213f9be8cd0dd5cbdcfead6`,
+  database version `2026-251`.
+
+### Reading corrections (UGD-11c-B)
+- `data/corrections/readings.json` is an evidence-backed overlay correcting nine
+  upstream publisher readings that are impossible/wrong for their written form.
+  Applied deterministically at merge (contribution level, keymap-preserving),
+  fail-closed if any correction matches no row. Each entry cites its evidence;
+  none is invented. See the file's `_meta` block.

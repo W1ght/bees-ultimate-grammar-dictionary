@@ -20,6 +20,11 @@ import shutil
 from . import DICTIONARY_SLUG, YOMITAN_SCHEMA_REVISION
 from . import unify
 from .banks import build_banks, build_index, build_tag_bank
+from .corrections import (
+    DEFAULT_CORRECTIONS_PATH,
+    DEFAULT_READINGS_PATH,
+    load_reading_corrections,
+)
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .merge import MergedEntry, merge_points
 from .model import Example, GrammarPoint
@@ -138,6 +143,7 @@ def run_merge(
     merged_dir: pathlib.Path = DEFAULT_MERGED_DIR,
     keymap_path: pathlib.Path | None = None,
     unified_path: pathlib.Path | None = None,
+    corrections_path: pathlib.Path | None = DEFAULT_READINGS_PATH,
 ) -> dict[str, object]:
     """Merge every extracted artifact into the one unified corpus.
 
@@ -150,13 +156,25 @@ def run_merge(
     `data/merge/unified.jsonl` is the reviewable artifact; `data/merged/corpus.json`
     is its projection onto the bank generator's input contract, so the renderer
     keeps consuming the stage boundary it was written against.
+
+    `corrections_path` locates the evidence-backed reading-correction overlay,
+    applied to the assembled contributions. It defaults to the canonical overlay
+    (`data/corrections/readings.json`); pass `None` to merge with no corrections
+    (used by callers that build an isolated corpus the canonical overlay does not
+    describe). The overlay is keyed to a specific extraction and fails closed if a
+    correction matches no row, so it must not be pointed at an unrelated corpus.
     """
     keymap_path = keymap_path or unify.DEFAULT_KEYMAP_PATH
     unified_path = unified_path or unify.DEFAULT_UNIFIED_PATH
 
     rows, labels = unify.load_extracted(extracted_dir)
     keymap = unify.load_keymap(keymap_path)
-    unified, stats = unify.unify(rows, keymap, labels)
+    corrections = (
+        load_reading_corrections(corrections_path)
+        if corrections_path is not None
+        else []
+    )
+    unified, stats = unify.unify(rows, keymap, labels, corrections=corrections)
 
     byte_count, digest = unify.write_unified(unified, unified_path)
     stats["artifact"] = {

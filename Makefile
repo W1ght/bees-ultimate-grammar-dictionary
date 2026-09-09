@@ -52,6 +52,8 @@ keymap:
 merge:
 	$(PY) -m bugd.cli merge
 	$(PY) scripts/audit_unified.py
+	$(PY) scripts/audit_readings.py
+	$(PY) scripts/resolve_reading_disagreements.py
 
 build:
 	$(PY) -m bugd.cli build

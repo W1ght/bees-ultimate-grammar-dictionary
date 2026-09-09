@@ -71,6 +71,7 @@ import typing
 from collections import Counter, defaultdict
 
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
+from .corrections import ReadingCorrection, StaleCorrection
 from .keymap import alias_targets, is_declared_alias, substance_hash
 from .model import JLPT_LEVELS, Example, GrammarPoint
 
@@ -556,13 +557,46 @@ def unify(
     rows: list[tuple[str, dict[str, object]]],
     keymap: Keymap,
     labels: dict[str, str],
+    *,
+    corrections: list[ReadingCorrection] | None = None,
 ) -> tuple[list[UnifiedEntry], dict[str, object]]:
     """Merge every source row into the one unified dataset.
 
     Returns `(entries, stats)`. Entries are ordered by headword then entry id, so
     the dataset is byte-reproducible for a given extraction and keymap.
+
+    `corrections` is the evidence-backed reading-correction overlay. It is applied
+    to the *assembled contributions*, not the raw rows, so the keymap's grouping
+    identity (which includes the reading) is unchanged and only the carried
+    reading is rewritten. It defaults to no corrections; the pipeline
+    (`bugd.pipeline.run_merge`) loads `data/corrections/readings.json` and passes
+    it in, keeping this function pure for callers that build their own rows.
+    Every supplied correction must match at least one contribution or
+    `StaleCorrection` is raised, so a stale overlay can never pass silently.
     """
+    corrections = list(corrections or ())
     ensure_consistent(rows, keymap)
+
+    # Byte-exact reading-correction lookup, keyed on the same tuple the overlay
+    # declares. Applied to assembled contributions below; `_correction_hits`
+    # records which corrections actually matched so a stale overlay fails closed.
+    correction_by_key: dict[tuple[str, str, str, str], ReadingCorrection] = {
+        c.match_key: c for c in corrections
+    }
+    correction_hits: set[tuple[str, str, str, str]] = set()
+
+    def _corrected(contribution: Contribution) -> Contribution:
+        key = (
+            contribution.source,
+            contribution.source_id,
+            contribution.expression,
+            contribution.reading or "",
+        )
+        correction = correction_by_key.get(key)
+        if correction is None:
+            return contribution
+        correction_hits.add(key)
+        return dataclasses.replace(contribution, reading=correction.to_reading)
 
     # 1. Bucket every assigned row by (axes, bucketKey), keeping producer order.
     grouped: dict[tuple[str, str, str], dict[str, list[tuple[str, dict[str, object]]]]] = (
@@ -597,11 +631,13 @@ def unify(
             point = keymap.points[canonical_key]
             members = by_key[canonical_key]
             contributions = [
-                build_contribution(
-                    source,
-                    record,
-                    canonical_key=canonical_key,
-                    source_label=labels.get(source, source),
+                _corrected(
+                    build_contribution(
+                        source,
+                        record,
+                        canonical_key=canonical_key,
+                        source_label=labels.get(source, source),
+                    )
                 )
                 for source, record in members
             ]
@@ -668,6 +704,14 @@ def unify(
                 signatures=tuple(sorted(signatures)),
             )
         )
+
+    # Fail closed on a stale overlay: every declared correction must have matched
+    # at least one assembled contribution. A correction that matched nothing means
+    # the extraction drifted or the correction is obsolete; ignoring it would let
+    # the overlay claim to fix a defect it no longer touches.
+    unmatched = [c for c in corrections if c.match_key not in correction_hits]
+    if unmatched:
+        raise StaleCorrection(unmatched)
 
     # 4. Redirect entries for every written form that is not a headword.
     redirects, redirect_stats = build_redirects(rows, entries, labels)

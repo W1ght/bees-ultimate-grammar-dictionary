@@ -218,6 +218,10 @@ def test_merge_consumes_extracted_artifacts(tmp_path, sample_point):
         merged_dir=tmp_path / "merged",
         keymap_path=_fixture_keymap(tmp_path, sample_point),
         unified_path=tmp_path / "unified.jsonl",
+        # The synthetic fixture corpus is not described by the canonical reading
+        # overlay; merge it with no corrections so the fail-closed stale-overlay
+        # gate (exercised in test_readings.py) does not fire on unrelated data.
+        corrections_path=None,
     )
     assert stats["points"] == 1
     assert stats["entries"] == 1

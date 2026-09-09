@@ -1,0 +1,270 @@
+"""Regression tests for the reading gate and the reading-correction overlay.
+
+These assert the *property* — a contribution reading must be a structurally
+possible kana rendering of its own written expression — not the nine specific
+strings UGD-11c-B corrected. The gate is deliberately a structural check (see
+`bugd.readings`); tests pin what it can and cannot claim so a future change that
+weakens it into silently passing an impossible reading, or into flagging a
+legitimate jukujikun/rendaku reading, fails here.
+"""
+
+from __future__ import annotations
+
+import pytest
+
+from bugd.corrections import (
+    ReadingCorrection,
+    StaleCorrection,
+    apply_reading_corrections,
+    load_reading_corrections,
+)
+from bugd.readings import has_kanji, is_plausible_reading
+
+
+# --------------------------------------------------------------------------
+# the property: plausible vs structurally impossible
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "expression, reading",
+    [
+        # straightforward on/kun coverage
+        ("結構", "けっこう"),
+        ("間に", "あいだに"),
+        ("込む", "こむ"),
+        ("の下で", "のもとで"),
+        ("の下で", "のしたで"),  # both した and もと are attested for 下
+        ("んな風", "んなふう"),
+        # rendaku / gemination / long-vowel allowances
+        ("気味", "ぎみ"),
+        ("通り", "どおり"),
+        ("離れ", "ばなれ"),
+        # jukujikun / gikun / ateji whole-run allowances
+        ("如何", "いかん"),
+        ("如何", "いかが"),
+        ("心地", "ここち"),
+        ("挙句", "あげく"),
+        ("甲斐", "かい"),
+        ("甲斐", "がい"),
+        # supplementary readings (colloquial 言=ゆう, classical 如=しく)
+        ("ように言う", "ようにゆう"),
+        ("に如くはない", "にしくはない"),
+        # inflection/particle tail may diverge from the reading
+        ("ても始まる", "てもはじまらない"),
+        ("には及ぶ", "にはおよばない"),
+        # reading == expression is always plausible (never rendered as furigana)
+        ("に決まっている", "に決まっている"),
+        ("その上", "その上"),
+        # no kanji: nothing to contradict
+        ("だけ", "だけ"),
+        ("わけにはいかない", "わけにはいかない"),
+        # empty / missing reading
+        ("結構", ""),
+        ("結構", None),
+    ],
+)
+def test_plausible_readings_pass(expression, reading):
+    assert is_plausible_reading(expression, reading)
+
+
+@pytest.mark.parametrize(
+    "expression, reading",
+    [
+        # 構 has no カ reading, so けっか cannot be produced from 結構 — this is the
+        # class the gate exists to catch. (結果 is けっか; 結構 is not.)
+        ("結構", "けっか"),
+        # synthetic structurally-impossible pairs (NOT any of the 9 corrected
+        # strings): a common kanji forced onto an unrelated reading.
+        ("水", "ひ"),        # 水 is みず/すい, never ひ
+        ("犬猫", "とりうお"),  # 犬=いぬ/けん, 猫=ねこ/びょう; とりうお is impossible
+        ("行く", "たべる"),   # 行 cannot read たべ
+        ("日本語", "えいご"),  # structurally impossible rendering
+    ],
+)
+def test_impossible_readings_fail(expression, reading):
+    assert not is_plausible_reading(expression, reading)
+
+
+def test_gate_is_structural_not_semantic():
+    """The gate catches structural impossibility, not wrong-sense readings.
+
+    Six of the nine UGD-11c-B defects carried a reading that is attested for the
+    kanji but wrong for the grammar point's sense (下=した where もと is meant).
+    The gate cannot and does not claim to catch those — only semantic review can.
+    This test pins that boundary so no one mistakes the gate for a semantic oracle.
+    """
+    # attested-but-wrong-sense: gate passes (correctly, structurally)
+    assert is_plausible_reading("の下で", "のしたで")
+    assert is_plausible_reading("如何", "いかが")
+    # genuinely impossible: gate fails
+    assert not is_plausible_reading("結構", "けっか")
+
+
+def test_has_kanji():
+    assert has_kanji("結構")
+    assert has_kanji("の下で")
+    assert not has_kanji("だけ")
+    assert not has_kanji("")
+
+
+# --------------------------------------------------------------------------
+# the correction overlay: shape, application, fail-closed on stale
+# --------------------------------------------------------------------------
+
+
+def test_shipped_overlay_targets_are_plausible():
+    """Every correction in the shipped overlay must produce a plausible reading.
+
+    A correction that swaps one impossible reading for another impossible one
+    would be worse than useless; this guards the overlay itself.
+    """
+    corrections = load_reading_corrections()
+    assert corrections, "the shipped reading-correction overlay is empty"
+    for c in corrections:
+        assert is_plausible_reading(c.expression, c.to_reading), (
+            f"correction {c.source}:{c.source_id} {c.from_reading!r}->{c.to_reading!r} "
+            f"produces an implausible reading"
+        )
+
+
+def _row(source, source_id, expression, reading):
+    return (
+        source,
+        {"source": source, "source_id": source_id, "expression": expression, "reading": reading},
+    )
+
+
+def test_apply_corrections_rewrites_matched_row():
+    rows = [
+        _row("edewakaru", "込む", "込む", "ごむ"),
+        _row("dojg", "結構", "結構", "けっこう"),  # already correct, untouched
+    ]
+    corrections = [
+        ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "test"),
+    ]
+    out, applied = apply_reading_corrections(rows, corrections)
+    assert out[0][1]["reading"] == "こむ"
+    assert out[1][1]["reading"] == "けっこう"
+    assert applied == [
+        {"source": "edewakaru", "source_id": "込む", "expression": "込む", "from": "ごむ", "to": "こむ"}
+    ]
+
+
+def test_apply_corrections_is_byte_exact_on_from():
+    """A correction only fires when the on-disk reading matches `from` exactly."""
+    rows = [_row("edewakaru", "込む", "込む", "こむ")]  # already correct
+    corrections = [ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "test")]
+    with pytest.raises(StaleCorrection):
+        apply_reading_corrections(rows, corrections)
+
+
+def test_stale_correction_fails_closed():
+    """A correction matching no row raises rather than passing silently."""
+    rows = [_row("dojg", "結構", "結構", "けっこう")]
+    corrections = [ReadingCorrection("dojg", "無い点", "無い点", "x", "y", "test")]
+    with pytest.raises(StaleCorrection, match="無い点"):
+        apply_reading_corrections(rows, corrections)
+
+
+# --------------------------------------------------------------------------
+# end-to-end: corrections applied through the merge, keymap identity preserved
+# --------------------------------------------------------------------------
+
+
+def _full_row(source, source_id, expression, reading):
+    return {
+        "source": source,
+        "source_id": source_id,
+        "expression": expression,
+        "variants": [],
+        "reading": reading,
+        "meaning": None,
+        "structure": None,
+        "nuance": None,
+        "explanation": None,
+        "notes": None,
+        "jlpt": None,
+        "examples": [],
+        "tags": [],
+        "ai_generated": {},
+        "provenance": {},
+    }
+
+
+def _unify_keymap(rows_to_keys, points):
+    from bugd.keymap import substance_hash
+    from bugd.unify import parse_keymap
+
+    return parse_keymap(
+        {
+            "schemaVersion": 1,
+            "assignments": [
+                {
+                    "source": source,
+                    "sourceId": record["source_id"],
+                    "substanceHash": substance_hash(record),
+                    "canonicalKey": key,
+                }
+                for source, record, key in rows_to_keys
+            ],
+            "points": points,
+        }
+    )
+
+
+def _point(canonical_key, bucket_key, expression):
+    return {
+        "canonicalKey": canonical_key,
+        "bucketKey": bucket_key,
+        "expression": expression,
+        "axes": {"variety": "standard", "era": "modern"},
+        "disambiguator": "",
+        "lookupForms": [expression],
+        "jlptLevels": [],
+        "observedRegisters": [],
+        "observedSignatures": [],
+        "contributors": [],
+        "sourceCount": 1,
+    }
+
+
+def test_unify_applies_correction_at_contribution_level():
+    """A defect reading is corrected in the emitted contribution, and the keymap
+    (which keys on the *original* reading) still resolves the row — proving the
+    correction is applied after alignment, not before it."""
+    from bugd.unify import unify
+
+    row = _full_row("edewakaru", "込む", "込む", "ごむ")  # the defect reading
+    keymap = _unify_keymap([("edewakaru", row, "込む")], [_point("込む", "込む", "込む")])
+    corrections = [ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "test")]
+
+    entries, _ = unify([("edewakaru", row)], keymap, {"edewakaru": "絵でわかる"}, corrections=corrections)
+
+    contribution = entries[0].contributions[0]
+    assert contribution.reading == "こむ"  # corrected
+    assert entries[0].reading == "こむ"     # entry furigana reflects the fix
+    assert is_plausible_reading(contribution.expression, contribution.reading)
+
+
+def test_unify_fails_closed_on_stale_correction():
+    """A correction that matches no assembled contribution fails the merge."""
+    from bugd.unify import unify
+
+    row = _full_row("edewakaru", "込む", "込む", "こむ")  # already correct
+    keymap = _unify_keymap([("edewakaru", row, "込む")], [_point("込む", "込む", "込む")])
+    corrections = [ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "test")]
+
+    with pytest.raises(StaleCorrection):
+        unify([("edewakaru", row)], keymap, {"edewakaru": "絵でわかる"}, corrections=corrections)
+
+
+def test_unify_without_corrections_is_verbatim():
+    """No corrections supplied ⇒ the reading is carried verbatim (faithful default)."""
+    from bugd.unify import unify
+
+    row = _full_row("edewakaru", "込む", "込む", "ごむ")
+    keymap = _unify_keymap([("edewakaru", row, "込む")], [_point("込む", "込む", "込む")])
+
+    entries, _ = unify([("edewakaru", row)], keymap, {"edewakaru": "絵でわかる"})
+    assert entries[0].contributions[0].reading == "ごむ"

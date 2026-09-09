@@ -452,9 +452,22 @@ def propose_variant_links(
     """Tier B: accept producer-attested variant edges that survive every guard.
 
     A candidate exists when a row declares a variant whose normalized key is
-    owned, inside the same partition, by exactly one row of exactly one *other*
-    source. That unambiguous-target requirement is itself a guard: a variant
-    pointing into a homograph fan is not a usable claim.
+    owned, inside the same partition, by *unambiguous* rows of one or more other
+    sources — each other source contributing exactly one row. That is itself a
+    guard: a variant pointing into a homograph fan (a source with two or more
+    senses on the key) is not a usable claim and is refused.
+
+    When several other sources own the target key they have already folded onto
+    one Tier-A point, so the target is still a single point. The link is allowed
+    to reach a multi-source target only on *reading-identity* evidence: the
+    declaring row and the target must share an identical kana reading, and no
+    target row may carry a *different* non-empty reading. This is the same
+    orthographic-pair evidence used for `今更`/`いまさら`; it just no longer
+    requires the target to happen to be owned by a single other source (`や否や`
+    declares the variant `やいなや`, whose point is owned by two sources). A
+    reciprocal-only claim is never allowed to fan across a multi-source target,
+    because a reciprocal declaration between *different* readings is weaker
+    evidence than shared kana.
 
     Guards, each measured against the real corpus:
 
@@ -480,12 +493,34 @@ def propose_variant_links(
                 for name, found in per_source.items()
                 if name != row.row_id.source
             }
-            if len(others) != 1:
+            if not others:
                 continue
-            (_, found), = others.items()
-            if len(found) != 1:
+            # A source contributing two or more rows to the key is a homograph fan:
+            # which sense does the variant claim mean? Unanswerable, so refuse.
+            if any(len(found) != 1 for found in others.values()):
                 continue
-            other = found[0]
+            reps = [found[0] for found in others.values()]
+            if len(reps) == 1:
+                other = reps[0]
+            else:
+                # The target key is owned by several sources that already fold onto
+                # one Tier-A point. Reach it only on reading-identity: the declaring
+                # row must share an identical kana reading with the point, and no
+                # member may carry a *different* non-empty reading. Members with an
+                # absent reading neither confirm nor contradict — they are the same
+                # folded point regardless (e.g. bunpou's `〜やいなや` ships no reading).
+                identity = row.reading_identity
+                if not identity:
+                    continue
+                matching = [rep for rep in reps if rep.reading_identity == identity]
+                conflicting = [
+                    rep
+                    for rep in reps
+                    if rep.reading_identity and rep.reading_identity != identity
+                ]
+                if not matching or conflicting:
+                    continue
+                other = min(matching, key=lambda rep: rep.row_id.sort_key)
 
             reciprocal = row.key in variant_keys(other.record)
             guard = _link_guard(row, other, key, degree, reciprocal)
