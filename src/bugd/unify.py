@@ -524,25 +524,36 @@ def _group_of(point: dict[str, object]) -> tuple[str, str, str]:
 
 
 def display_headword(form: str) -> str:
-    """Strip leading placeholder marks from a form used as the LOOKUP headword.
+    """Normalize a form for use as the emitted LOOKUP headword.
 
-    A leading `〜`/`～`/`~` is a producer's slot placeholder meaning "something
-    attaches here", not part of the written form -- `normalize.PLACEHOLDER_TILDES`
-    already documents this and `lookup_key` already discards them, which is why
-    stripping here cannot move any bucket's identity.
+    Two transforms, both about reachability rather than content:
 
-    It has to be stripped from the emitted headword too, because Yomitan's
-    `termsFind` matches from the START of the query text. A headword stored as
-    `〜あとで` is unreachable: the learner types `あとで` and the scan never
-    matches. Measured on the convergence artifact, 1,198 of 4,623 entries (26%)
-    were stored tilde-first and therefore unlookupable, against 0 in the
-    pre-convergence 5-source baseline -- the five source families landed by
-    UGD-16 publish their headwords with the placeholder attached, while the
-    original five did not.
+    1. **Strip leading placeholder marks.** A leading `〜`/`～`/`~` is a producer's
+       slot placeholder meaning "something attaches here", not part of the written
+       form -- `normalize.PLACEHOLDER_TILDES` already documents this and
+       `lookup_key` already discards them, which is why stripping here cannot move
+       any bucket's identity. It has to go from the emitted headword too, because
+       Yomitan's `termsFind` matches from the START of the query text: a headword
+       stored as `〜あとで` is unreachable, since the learner types `あとで` and the
+       scan never matches. Measured on the convergence artifact, 1,198 of 4,623
+       entries (26%) were stored tilde-first and therefore unlookupable, against 0
+       in the pre-convergence 5-source baseline -- the five source families landed
+       by UGD-16 publish their headwords with the placeholder attached, while the
+       original five stripped it in `yomitan_bank.TermRow`.
 
-    Only LEADING marks go: an interior tilde (`〜たりとも〜ない`) carries real
-    structure about where the second slot falls, and a form that is nothing but
-    placeholders is returned untouched rather than reduced to an empty string.
+       Only LEADING marks go: an interior tilde (`〜たりとも〜ない`) carries real
+       structure about where the second slot falls.
+
+    2. Nothing else. In particular a newline is NOT cut here. Exactly one row in
+       the corpus (`bunpou` `〜向けに\\n類似文型「〜向き」との違い`) glues a comparison
+       note onto its headword with a line break, and truncating it at this layer
+       collides it onto the genuine `向けに` point -- two `point` entries sharing a
+       headword with identical axes, which is a merge-identity defect rather than a
+       display one. Repairing a producer's headword belongs in the recorded
+       correction table, where the change is keyed, reviewable and replayable;
+       `display_headword` only removes marks that were never part of the form.
+
+    A form that reduces to nothing is returned untouched rather than emptied.
     """
     stripped = form.lstrip(PLACEHOLDER_TILDES + "\u3000 ")
     return stripped if stripped else form
@@ -894,6 +905,15 @@ def build_redirects(
 
         basis_counts[basis] += 1
         redirect_sources = sorted({source for source, _ in members})
+        # NOT display_headword'd, deliberately. A redirect exists because `form` is
+        # a DIFFERENT written form from its target; stripping the leading
+        # placeholder here collapses `〜あげく` onto the point `あげく` that it
+        # redirects to, which measured 1,061 self-redirects (headword listed among
+        # its own targets) and 912 redirect headwords colliding with a point
+        # headword, against 0 of each before. The point path strips because its
+        # headword is the only surface for that entry; a redirect's whole purpose
+        # is to be the other spelling, and its tilde-free form is already reachable
+        # through the point it names.
         reading = ""
         for source, record in members:
             candidate = record.get("reading")
@@ -1397,6 +1417,7 @@ __all__ = [
     "build_contribution",
     "build_redirects",
     "choose_headword",
+    "display_headword",
     "contribution_from_json",
     "contribution_to_json",
     "dedupe_examples",

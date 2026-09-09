@@ -268,6 +268,23 @@ CORRECTIONS: dict[tuple[str, str], tuple[Correction, ...]] = {
     ("nihongo_net", "に至るまで"): (
         SetExpression("に至る", "に至るまで", "A7"),
     ),
+    # UGD-16. bunpou/247 glues an editorial comparison note onto its headword with
+    # a newline: '〜向けに\n類似文型「〜向き」との違い'. A multi-line string is not a
+    # lookup form -- the packaged ?query= cross-reference already truncated at the
+    # break, so the rendered link and the headword disagreed, and the entry was
+    # unreachable under either spelling. The note is prose ABOUT a different
+    # pattern (〜向き) and stays in the record's meaning field, where the source
+    # actually says it; only the headword is re-homed onto the form the row
+    # documents. Recorded here rather than truncated in the display path, because
+    # a display-layer cut would collide this row onto the genuine 向けに point (two
+    # `point` entries, one headword, identical axes).
+    ("bunpou", "247"): (
+        SetExpression(
+            "〜向けに",
+            "〜向けに\n類似文型「〜向き」との違い",
+            "UGD-16-headword-newline",
+        ),
+    ),
     # A8. ことは — dojg's noun rows drop the defining こと: 「いい人はいい人{だ/です}」
     # and 「いい人だったことは人{だった/でした}」. The well-formed noun pattern is
     # NであることはN{だ/です}（が） (edewakaru). The な-adjective rows (静かなことは…)

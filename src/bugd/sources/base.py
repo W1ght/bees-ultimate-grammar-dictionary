@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 
 from ..jsonio import MalformedPayload, load_json
 from ..model import GrammarPoint, row_uid
+from ..source_corrections import correct_point
 
 SOURCE_LOCK_NAME = "SOURCE.lock.json"
 
@@ -51,6 +52,12 @@ class ExtractResult:
     through this constructor, so stamping `row_uid` once means a new source
     cannot forget to do it, and the uniqueness gate below cannot be bypassed by a
     source that assigns its own ids.
+
+    Recorded per-source data corrections are applied here for the same reason.
+    They used to run inside `CommunityBankExtractor.extract`, which is a funnel
+    for the five Yomitan-term-bank sources only -- so `bunpou`, `bunpro`, `imabi`,
+    `ninjal_bunkei` and `yokubi` silently bypassed the correction table entirely.
+    Applying them at this constructor makes the gate genuinely unbypassable.
     """
 
     source: str
@@ -66,6 +73,10 @@ class ExtractResult:
                 raise MalformedPayload(
                     f"extractor {self.source!r} emitted a point attributed to {point.source!r}"
                 )
+        # Identity for every record with no correction entry, so unaffected points
+        # stay byte-identical; corrections are keyed by (source, source_id) and
+        # fail closed if their target string has drifted.
+        self.points = [correct_point(point) for point in self.points]
         self.points = assign_row_uids(self.source, self.points)
 
 

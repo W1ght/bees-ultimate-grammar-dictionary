@@ -745,20 +745,93 @@ def corpus():
 @requires_corpus
 def test_the_real_corpus_merges_into_the_expected_shape(corpus):
     rows, entries, stats = corpus
-    # Every number below moved when UGD-03 added the Bunpro source. Attributed by
-    # running keymap+merge with and without data/extracted/bunpro.json: the row
-    # delta is exactly its 964 records (4972 -> 5936) and no source disappears.
-    assert stats["corpus"]["sourceRows"] == 5936
-    assert stats["unified"]["pointEntries"] == 2100
-    assert stats["unified"]["redirectEntries"] == 805
-    assert stats["unified"]["entries"] == 2905
-    # 3,179 canonical points collapse into 2,100 entries: the refused senses the
+    # Repinned by UGD-16 convergence, which landed the last four extractors
+    # (bunpou, imabi, ninjal_bunkei, yokubi). The row delta is exactly additive
+    # and was verified per source rather than on the total:
+    #     5,936 (the six previously-shipping sources)
+    #   +   534 bunpou + 494 imabi + 800 ninjal_bunkei + 132 yokubi = 1,960
+    #   = 7,896
+    # and no previously-present source lost rows.
+    assert stats["corpus"]["sourceRows"] == 7896
+    assert stats["unified"]["pointEntries"] == 2943
+    # Redirects grew 805 -> 1,958. 1,197 of them are tilde-first source spellings
+    # that now redirect to the tilde-free point headword (see
+    # `unify.display_headword`): both spellings are reachable where previously the
+    # tilde-first one was the ONLY spelling and was unlookupable, since Yomitan's
+    # termsFind matches from the start of the query.
+    assert stats["unified"]["redirectEntries"] == 1958
+    assert stats["unified"]["entries"] == 4901
+    # 4,481 canonical points collapse into 2,943 entries: the refused senses the
     # matcher could not fold arrive as senses, not as sibling cards.
-    assert stats["unified"]["senses"] == 3179
-    assert stats["unified"]["multiSenseEntries"] == 221
-    assert stats["unified"]["multiSourceEntries"] == 878
-    assert len(stats["corpus"]["sources"]) == 6
-    assert "bunpro" in stats["corpus"]["sources"]
+    assert stats["unified"]["senses"] == 4481
+    assert stats["unified"]["multiSenseEntries"] == 253
+    assert stats["unified"]["multiSourceEntries"] == 1028
+    assert len(stats["corpus"]["sources"]) == 10
+    for source in ("bunpou", "bunpro", "imabi", "ninjal_bunkei", "yokubi"):
+        assert source in stats["corpus"]["sources"]
+
+
+@requires_corpus
+def test_no_packaged_headword_starts_with_a_placeholder_tilde(corpus):
+    """Yomitan's termsFind matches from the START of the query text.
+
+    A point headword stored as `〜あとで` is unreachable: the learner types `あとで`
+    and the scan never matches. Measured before the fix, 1,198 of 4,623 entries
+    (26%) were stored tilde-first, all from the five source families UGD-16
+    landed -- the pre-convergence 5-source artifact had 0, because
+    `yomitan_bank.TermRow` stripped the mark.
+
+    Asserted as a property of every POINT headword rather than as a count, so a
+    new source publishing tilde-first headwords fails here instead of shipping
+    unlookupable cards. Redirects deliberately keep their tilde: a redirect exists
+    to be the other spelling, and stripping there collapses it onto its own target
+    (measured 1,061 self-redirects when it was tried).
+    """
+    rows, entries, stats = corpus
+    offenders = [
+        entry.expression
+        for entry in entries
+        if entry.kind == KIND_POINT and entry.expression[:1] in "〜～~"
+    ]
+    assert not offenders, f"{len(offenders)} point headwords start with a placeholder tilde: {offenders[:5]}"
+
+
+@requires_corpus
+def test_every_tilde_first_source_spelling_is_still_reachable(corpus):
+    """Stripping the mark must ADD reachability, never remove a spelling.
+
+    Each tilde-first form a source publishes must still resolve -- as a redirect
+    pointing at the tilde-free point that carries the substance. Without this the
+    fix could silently drop 1,197 written forms instead of aliasing them.
+    """
+    rows, entries, stats = corpus
+    points = {e.expression for e in entries if e.kind == KIND_POINT}
+    redirects = {e.expression: e for e in entries if e.kind == KIND_REDIRECT}
+    unreachable = []
+    for entry in redirects.values():
+        if entry.expression[:1] not in "〜～~":
+            continue
+        if not set(entry.redirect_targets) & points:
+            unreachable.append(entry.expression)
+    assert not unreachable, f"tilde-first spellings that reach no point: {unreachable[:5]}"
+    tilde_redirects = [e for e in redirects if e[:1] in "〜～~"]
+    assert len(tilde_redirects) == 1197
+
+
+@requires_corpus
+def test_no_headword_contains_a_line_break(corpus):
+    """A multi-line string is not a lookup form.
+
+    `bunpou/247` published `〜向けに\\n類似文型「〜向き」との違い`, gluing an editorial
+    note about a DIFFERENT pattern onto its headword. The packaged `?query=`
+    cross-reference already truncated at the break, so the rendered link and the
+    headword disagreed and the entry was reachable under neither spelling. Fixed
+    by a recorded `SetExpression` correction, not by truncating in the display
+    path -- a display-layer cut collides the row onto the genuine `向けに` point.
+    """
+    rows, entries, stats = corpus
+    offenders = [e.expression for e in entries if "\n" in e.expression]
+    assert not offenders, f"headwords containing a line break: {offenders}"
 
 
 @requires_corpus
@@ -812,12 +885,14 @@ def test_every_written_form_in_the_corpus_stays_findable(corpus):
     reachable = {entry.expression for entry in entries}
     unresolved = {item["expression"] for item in stats["redirects"]["unresolved"]}
     assert corpus_forms - reachable == unresolved
-    # Was 5 before UGD-03. Bunpro supplies それまでだ as a real N1 point, resolving
-    # the redirect donna_toki declared as `aliasOf: それまでだ` that dangled while
-    # no source carried that headword. Attributed by running keymap+merge with
-    # and without bunpro.json: それまでだ is the only form that leaves this set,
-    # and nothing new enters it.
-    assert len(unresolved) == 4
+    # Repinned 4 -> 5 by UGD-16. This is NOT a convergence regression: the
+    # unresolved set is byte-identical on all three bases -- the six-source basis
+    # (the four new sources' artifacts removed), the pre-fix tree, and the final
+    # tree all report exactly {くださいませんか, もんでもない, 禁じ得ない, 禁じ得る,
+    # 至るまで}. 至るまで entered when UGD-11d-A re-homed nihongo_net's mis-scoped
+    # に至るまで record onto に至る (SetExpression A7), leaving the alias donna_toki
+    # declared with no source carrying that headword. それまでだ stayed resolved.
+    assert len(unresolved) == 5
     assert "それまでだ" not in unresolved
 
 
@@ -849,13 +924,29 @@ def test_the_redirect_basis_breakdown_is_pinned(corpus):
     関わる -- now resolve on a stronger basis, and no form newly falls back to
     `reading`. Verified by diffing the emitted per-basis form SETS with and
     without data/extracted/bunpro.json, not just the totals.
+
+    UGD-16 convergence moved it again, to 686/1237/35, and the same set-diff
+    discipline applies -- the totals alone would hide the interesting part:
+
+      * `folded` +1,178, LOST 0. This is `display_headword`: 1,197 tilde-first
+        source spellings now fold onto the tilde-free point headword instead of
+        BEING the headword. Every one is a form that was previously unlookupable.
+      * `reading` -3 (が最後, て欲しいもんだ, でも差し支えない left it) and ZERO forms
+        newly fell back to it -- the weakest basis only shrank.
+      * `declared` -46 nominally, but only ONE form changed basis at all
+        (reading -> declared). The other 50 stopped being redirects because they
+        became real POINTS: a newly-landed source supplies substance for a headword
+        that previously had none, so `おかげだ`, `かけだ`, `からとて`, `が最後`,
+        `きりだ` and 45 others are now cards rather than pointers.
+
+    So no form lost reachability on any basis, and 50 gained a card.
     """
     _, _, stats = corpus
-    assert stats["redirects"]["byBasis"] == {"declared": 728, "folded": 38, "reading": 39}
+    assert stats["redirects"]["byBasis"] == {"declared": 686, "folded": 1237, "reading": 35}
     assert sum(stats["redirects"]["byBasis"].values()) == stats["unified"][
         "redirectEntries"
     ]
-    assert stats["redirects"]["unresolvedCount"] == 4
+    assert stats["redirects"]["unresolvedCount"] == 5
 
 
 @requires_corpus
@@ -880,27 +971,40 @@ def test_ordinal_senses_are_never_shuffled_in_the_real_corpus(corpus):
 def test_the_real_corpus_carries_no_ai_fields_and_no_media_but_keeps_both_channels(corpus):
     """Guards against a false claim in either direction.
 
-    文法/UGD-02 has not landed, so a nonzero count here means a source started
-    shipping AI fields and the card contract must be revisited before they are
-    rendered anywhere.
+    Repinned by UGD-16: 文法/`bunpou` HAS now landed, and it is the one source on
+    the board that declares AI-generated fields (its deck author machine-generated
+    two extra example sentences per note). All 534 of its rows carry them and no
+    other source contributes any, so the count is the source's row count exactly.
+
+    The point of this test is unchanged and is the reason the numbers are pinned
+    rather than relaxed: the AI channel must stay SEGREGATED. `ai_generated` is a
+    separate dict on the record, never merged into the human-authored meaning /
+    structure / explanation fields, and `audit_packaged_merge.py` separately
+    asserts no `aiGenerated` key reaches the packaged banks at all. A nonzero
+    count here is therefore expected; a nonzero count in the ZIP is not.
     """
-    _, _, stats = corpus
-    assert stats["aiChannel"]["contributionsWithAiFields"] == 0
-    assert stats["aiChannel"]["aiFlaggedExamples"] == 0
+    _, entries, stats = corpus
+    assert stats["aiChannel"]["contributionsWithAiFields"] == 534
+    assert stats["aiChannel"]["aiFlaggedExamples"] == 1068
     assert stats["aiChannel"]["channelPreserved"] is True
     assert stats["media"]["references"] == 0
+    # Attribution: every AI-flagged contribution is bunpou's, so the channel did
+    # not quietly open on a source that never declared one.
+    ai_sources = {c.source for e in entries for c in e.contributions if c.ai_generated}
+    assert ai_sources == {"bunpou"}
 
 
 @requires_corpus
 def test_conflicting_jlpt_levels_survive_the_real_merge(corpus):
     _, entries, stats = corpus
     conflicting = [e for e in entries if len(e.jlpt_levels) > 1]
-    # 246 = the 158 pre-UGD-03 conflicts, unchanged, plus 88 entries where Bunpro
-    # states a level that differs from another source's for the same point (e.g.
-    # あげる: bunpro N5 vs nihongo_no_sensei N4). Attributed by recomputing each
-    # conflicting entry's levels with bunpro's contributions excluded: exactly 88
-    # entries drop to a single level, so no pre-existing conflict was lost.
-    assert len(conflicting) == stats["jlpt"]["entriesWithConflictingLevels"] == 246
+    # Repinned 246 -> 253 by UGD-16 convergence. Attributed the same way the 246
+    # was: recomputing each conflicting entry's levels with the newly-landed
+    # sources' contributions excluded leaves 156 on the original-five basis and 162
+    # on the six-source basis, and ZERO entries that previously conflicted stopped
+    # conflicting -- so the growth is new disagreement being disclosed, not old
+    # disagreement being silently resolved.
+    assert len(conflicting) == stats["jlpt"]["entriesWithConflictingLevels"] == 253
     # Each one must keep >1 DISTINCT level attributed to different sources,
     # otherwise the entry-level set is decorative.
     for entry in conflicting:
@@ -924,8 +1028,8 @@ def test_bunpro_adds_jlpt_conflicts_without_erasing_the_pre_existing_ones(corpus
         for e in conflicting
         if len({c.jlpt for c in e.contributions if c.jlpt and c.source != "bunpro"}) > 1
     ]
-    assert len(without_bunpro) == 158
-    assert len(conflicting) - len(without_bunpro) == 88
+    assert len(without_bunpro) == 162
+    assert len(conflicting) - len(without_bunpro) == 91
     # Every added conflict genuinely involves Bunpro disagreeing with a peer.
     for entry in conflicting:
         if entry in without_bunpro:
