@@ -461,3 +461,193 @@ def test_edewakaru_strips_chrome_from_every_prose_field():
         assert chrome not in value, f"{field} still carries site chrome: {value!r}"
     # The real content around the chrome must survive.
     assert "ほんとうの解説です。" in (point.explanation or "")
+
+
+# --------------------------------------------------------------------------
+# NINJAL 日本語文型データベース (Nihongo Bunkei Database) — XML source
+# --------------------------------------------------------------------------
+
+
+def test_ninjal_furigana_is_reduced_to_its_base_form():
+    """The producer writes furigana inline as `〓漢字〔かな〕`.
+
+    Rendered text must show the base form `漢字`, never `漢字(かな)` and never a
+    stray `〓` marker. A lone marker with no reading is also removed.
+    """
+    from bugd.sources.ninjal_bunkei import strip_furigana
+
+    assert strip_furigana("〓間〔あいだ〕") == "間"
+    assert strip_furigana("〓新入〔しんにゅう〕〓社員〔しゃいん〕") == "新入社員"
+    # Text with no furigana is returned unchanged.
+    assert strip_furigana("～あげく") == "～あげく"
+    # A bare marker never leaks even without a `〔…〕` reading.
+    assert "〓" not in strip_furigana("〓orphan")
+
+
+def test_ninjal_example_lifts_the_brace_highlight_and_strips_furigana():
+    """The grammar point is wrapped in `｛…｝`; that substring is the highlight.
+
+    The braces are removed from the surface sentence, the highlight carries the
+    marked point (with its own furigana reduced), and it is never re-derived by
+    searching the sentence for the headword.
+    """
+    from bugd.sources.ninjal_bunkei import example_from_text
+
+    example = example_from_text(
+        "〓時間〔じかん〕を〓延長〔えんちょう〕して〓話〔はな〕し〓合〔あ〕った｛あげく｝、"
+        "〓会議〔かいぎ〕は〓終了〔しゅうりょう〕した。"
+    )
+    assert example is not None
+    assert "｛" not in example.japanese and "｝" not in example.japanese
+    assert "〓" not in example.japanese
+    assert example.japanese.startswith("時間を延長して話し合ったあげく")
+    assert example.highlight == ("あげく",)
+    # A highlight that itself carries furigana is reduced to its base form.
+    marked = example_from_text("さんざん〓悩〔なや〕んだ｛〓挙句〔あげく〕｝、買った。")
+    assert marked is not None
+    assert marked.highlight == ("挙句",)
+    # An empty / whitespace-only example yields no Example rather than a blank one.
+    assert example_from_text("   ") is None
+
+
+def _ninjal_entry_xml(*, senses: str, pattern: str = "～テスト", reading: str = "～てすと") -> bytes:
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        f"<Entry><SentencePattern>{pattern}</SentencePattern>"
+        f"<Reading>{reading}</Reading><GeneralExplanation></GeneralExplanation>"
+        f"{senses}</Entry>"
+    ).encode("utf-8")
+
+
+def test_ninjal_never_maps_its_teaching_level_onto_jlpt():
+    """`<Level>` is NINJAL's difficulty axis (1–5), NOT a JLPT level.
+
+    It must be recorded verbatim in provenance and the JLPT field must stay
+    None — the same fail-closed "levels are read, never guessed" policy the
+    community base enforces (DoJG's print-volume tag is handled identically).
+    """
+    from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor
+
+    xml = _ninjal_entry_xml(
+        senses=(
+            "<Sense><SenceCategory>〓時〔とき〕</SenceCategory><Level>2</Level>"
+            "<Usage>意味です。</Usage><UsageNotes>注意です。</UsageNotes>"
+            "<Connection><ConnectionType>Vたテスト</ConnectionType>"
+            "<ExampleSet><Example>〓例〔れい〕｛テスト｝です。</Example></ExampleSet>"
+            "</Connection></Sense>"
+        ),
+    )
+    extractor = NinjalBunkeiExtractor(pathlib.Path("."))
+    point = extractor._parse_entry(xml, "～テスト.xml")
+    assert point is not None
+    assert point.jlpt is None
+    assert point.provenance["ninjalLevels"] == ["2"]
+    assert point.source == "ninjal_bunkei"
+    assert point.expression == "～テスト"
+    assert point.meaning == "意味です。"
+    assert point.notes == "注意です。"
+    assert point.structure == "Vたテスト"
+    assert point.examples and point.examples[0].highlight == ("テスト",)
+
+
+def test_ninjal_flattens_every_sense_without_collapsing_to_the_first():
+    """A multi-sense pattern keeps all senses, each labelled by index."""
+    from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor
+
+    xml = _ninjal_entry_xml(
+        senses=(
+            "<Sense><SenceCategory>意味A</SenceCategory><Level>4</Level>"
+            "<Usage>一つ目の意味。</Usage>"
+            "<Connection><ConnectionType>形A</ConnectionType>"
+            "<ExampleSet><Example>例一｛テスト｝。</Example></ExampleSet></Connection>"
+            "</Sense>"
+            "<Sense><SenceCategory>意味B</SenceCategory><Level>2</Level>"
+            "<Usage>二つ目の意味。</Usage>"
+            "<Connection><ConnectionType>形B</ConnectionType>"
+            "<ExampleSet><Example>例二｛テスト｝。</Example></ExampleSet></Connection>"
+            "</Sense>"
+        ),
+    )
+    point = NinjalBunkeiExtractor(pathlib.Path("."))._parse_entry(xml, "多義.xml")
+    assert point is not None
+    assert point.meaning == "[1] 一つ目の意味。\n\n[2] 二つ目の意味。"
+    assert point.provenance["ninjalLevels"] == ["4", "2"]
+    assert point.structure == "形A\n形B"
+    assert len(point.examples) == 2
+
+
+def test_ninjal_extracts_every_locked_headword_from_the_real_archive():
+    """End-to-end over the committed CC BY 4.0 distribution ZIP.
+
+    Fails closed if the archive digest does not match its lock, reads only the
+    locked bytes, and must yield one GrammarPoint per XML member with no leaked
+    producer markup and no invented JLPT level.
+    """
+    from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor
+
+    input_dir = REPO / "data/sources/ninjal_bunkei"
+    if not (input_dir / "SOURCE.lock.json").is_file():  # pragma: no cover
+        pytest.skip("ninjal_bunkei source data is not present in this checkout")
+
+    result = NinjalBunkeiExtractor(input_dir).extract()
+    assert result.source == "ninjal_bunkei"
+    assert result.stats["licenseTier"] == "A"
+    assert result.stats["redistributable"] is True
+    assert result.stats["members"] == len(result.points)
+    assert result.stats["members"] > 700  # 800 headwords ship in this version
+    assert result.stats["withJlpt"] == 0, "NINJAL publishes no JLPT level to read"
+    for point in result.points:
+        assert point.source == "ninjal_bunkei"
+        assert point.jlpt is None
+        assert "〓" not in (point.meaning or "")
+        assert "｛" not in "".join(example.japanese for example in point.examples)
+
+
+def test_ninjal_member_name_recovers_cp932_names_the_utf8_flag_missed():
+    """21 of the archive's 800 members lack the UTF-8 name flag.
+
+    `zipfile` decodes those Shift-JIS names as cp437, so without recovery the
+    record identity for e.g. 召し上がります ships as the mojibake
+    ``Åóé╡Åπé¬éΦé▄é╖``. `member_name` must round-trip the cp437 string back to
+    bytes and decode CP932, and the extractor must use it for `source_id` and
+    `provenance.sourceFile`.
+    """
+    import unicodedata
+    import zipfile
+
+    from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor, member_name
+
+    input_dir = REPO / "data/sources/ninjal_bunkei"
+    if not (input_dir / "SOURCE.lock.json").is_file():  # pragma: no cover
+        pytest.skip("ninjal_bunkei source data is not present in this checkout")
+
+    with zipfile.ZipFile(input_dir / "nihongo_bunkei_database20260126.zip") as archive:
+        infos = [
+            info
+            for info in archive.infolist()
+            if not info.is_dir() and info.filename.endswith(".xml")
+        ]
+    unflagged = [info for info in infos if not info.flag_bits & 0x800]
+    assert unflagged, "the distribution is known to ship unflagged CP932 names"
+    for info in unflagged:
+        assert member_name(info) != info.filename
+
+    names = [member_name(info) for info in infos]
+    assert len(set(names)) == len(names)
+
+    def is_mojibake(text: str) -> bool:
+        # cp437 mis-decoding yields Latin-1 supplement letters and box-drawing
+        # characters; a real headword never contains either.
+        return any(
+            0x80 <= ord(ch) <= 0x2FFF and unicodedata.category(ch).startswith(("L", "S"))
+            and not ("\u3000" <= ch)
+            for ch in text
+        ) or any("\u2500" <= ch <= "\u259F" for ch in text)
+
+    result = NinjalBunkeiExtractor(input_dir).extract()
+    bad = [
+        point.source_id
+        for point in result.points
+        if is_mojibake(point.source_id) or is_mojibake(str(point.provenance["sourceFile"]))
+    ]
+    assert bad == [], f"mojibake identities leaked: {bad[:5]}"

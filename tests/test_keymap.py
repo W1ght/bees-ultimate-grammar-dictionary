@@ -590,10 +590,24 @@ def corpus() -> dict[str, object]:
 @pytestmark_corpus
 def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     report = corpus["report"]
-    # 5936 = 4972 + UGD-03's 964 Bunpro rows. Attributed by building the keymap
-    # with and without data/extracted/bunpro.json: the row delta is exactly 964
-    # and no other corpus counter moves.
-    assert report["corpus"]["rows"] == 5936
+    # 5772 = 4972 + 800: UGD-06 integrated NINJAL 日本語文型データベース
+    # (CC BY 4.0, 800 XML members, one row each — no alias rows, no duplicate
+    # collapses). Reviewed, not rubber-stamped: rebuilding the keymap with and
+    # without data/extracted/ninjal_bunkei.json shows the without-build
+    # reproduces every previous pin EXACTLY, the non-ninjal assignment identity
+    # set is unchanged at 3732 with ZERO lost, and every delta below decomposes
+    # into ninjal-driven effects:
+    #   * points 2609 -> 3107 (+498) = 485 ninjal-only points + 315 existing
+    #     points gaining a ninjal contributor + 13 net group reshapes;
+    #   * tierA bijective 570 -> 657 (+87) and refused collisions 179 -> 189
+    #     (+10): new buckets from ninjal keys, plus buckets the extra rows made
+    #     ambiguous — refusal is the fail-closed direction;
+    #   * tierB accepted 60 -> 52 (-8): with ninjal rows present, hub keys got
+    #     busier and the generic-hub (116 -> 157) and one-way-different-reading
+    #     (98 -> 144) guards fired more, e.g. ことがある now stays as three
+    #     separate points and しかない as four instead of guard-approved merges.
+    #     Splitting apart is conservative: no wrong merge can result.
+    assert report["corpus"]["rows"] == 5772
     assert report["corpus"]["declaredAliasRows"] == 1167
     # 73, from 71 and originally 63: UGD-14 stopped shipping the edewakaru
     # blog-ring footer (`にほんブログ村` / `――以上――` / `語学(日本語)ランキング`) as
@@ -615,15 +629,11 @@ def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     # (`にくい#sense6`, `やすい#sense6`) were ordinal renumbering: their nihongo_net
     # contributor now sits in `#sense5`.
     assert report["corpus"]["duplicateRowsCollapsed"] == 73
-    # 4696 = 3732 + UGD-03's 964 Bunpro rows: none of Bunpro's records is a
-    # declared alias or a duplicate of an existing row, so every one arrives as a
-    # substantive row. The Tier A/B numbers below move with it because Bunpro
-    # populates buckets that were previously single-source.
-    assert report["corpus"]["substantiveRows"] == 4696
-    assert report["tierA"]["bijectiveBuckets"] == 697
-    assert report["tierA"]["refusedCollisionBuckets"] == 188
-    assert report["tierB"]["accepted"] == 54
-    assert len(corpus["points"]) == 3179
+    assert report["corpus"]["substantiveRows"] == 4532
+    assert report["tierA"]["bijectiveBuckets"] == 657
+    assert report["tierA"]["refusedCollisionBuckets"] == 189
+    assert report["tierB"]["accepted"] == 52
+    assert len(corpus["points"]) == 3107
 
 
 @pytestmark_corpus
