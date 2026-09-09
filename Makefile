@@ -65,6 +65,20 @@ validate:
 # schemas; these prove it carries the WORK -- per-source attribution, working
 # redirects, and each source's own JLPT level on the 158 entries whose sources
 # disagree. A gate that is never run is not a gate, so both are targets.
+# Deterministic attribution regressions (UGD-11d). Both read the merged artifact,
+# take ~2s, and need no LLM or network, so any future merge change has to pass them:
+#   coherence  - every claim a contribution makes fits inside ONE source row, so no
+#                card can present a blend of two records as one source's statement.
+#   precision  - the claim handle names a unique row. Run with --handle rowUid: the
+#                acceptance gate is collidingClaimIds == 0. `--handle sourceId` is
+#                the control and still reports the filed 289, since source_id is
+#                deliberately still the producer's non-unique headword.
+# UGD-11d's LLM passes (build_dossiers/llm_audit/adjudicate/synthesize/...) are
+# audit tooling, not build steps, and are deliberately NOT wired in here.
+audit-attribution:
+	$(PY) scripts/audit/attribution_coherence.py
+	$(PY) scripts/audit/attribution_precision.py data/merge/unified.jsonl data/merge/attribution_precision.json --handle rowUid
+
 audit-packaged:
 	$(PY) scripts/audit_packaged_merge.py
 	$(PY) scripts/audit_packaged_jlpt.py

@@ -13,6 +13,7 @@ Usage:
 """
 import argparse
 import json
+import sys
 import re
 import unicodedata
 from collections import defaultdict
@@ -127,6 +128,32 @@ def main():
             print(c["entryId"], c["claimId"], c["senses"], c["divergentFields"]["jlpt"])
             shown += 1
 
+    # UGD-16: fail closed so this can be a Makefile gate. With `--handle rowUid`
+    # every claim must name a unique row: the UGD-11d-C acceptance gate is
+    # collidingClaimIds == 0. `--handle sourceId` is the CONTROL -- it must keep
+    # reporting the filed collisions, because source_id is deliberately still the
+    # producer's non-unique headword, so a zero there would mean the probe stopped
+    # measuring rather than that the defect was fixed.
+    colliding = summary["collidingClaimIds"]
+    if args.handle == "rowUid":
+        if colliding:
+            print(f"\nFAIL: {colliding} colliding claim id(s) under the rowUid handle")
+            return 1
+        if summary.get("handlesMissing"):
+            print(f"\nFAIL: {summary['handlesMissing']} contribution(s) carry no rowUid")
+            return 1
+        print("\nOK: every claim names a unique row (collidingClaimIds == 0)")
+        return 0
+    if not colliding:
+        print(
+            "\nFAIL: the sourceId control reports 0 collisions. source_id is the "
+            "producer's non-unique headword, so this means the probe stopped "
+            "measuring, not that the defect was fixed."
+        )
+        return 1
+    print(f"\nOK: control reproduces {colliding} colliding claim id(s) under sourceId")
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
