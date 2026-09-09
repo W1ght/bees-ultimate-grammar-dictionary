@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import pathlib
 from dataclasses import dataclass, field
 
 from ..jsonio import MalformedPayload, load_json
-from ..model import GrammarPoint
+from ..model import GrammarPoint, row_uid
+from ..source_corrections import correct_point
 
 SOURCE_LOCK_NAME = "SOURCE.lock.json"
 
@@ -26,9 +28,26 @@ def write_points_jsonl(
     Deterministic by construction: records are written in the order the extractor
     emitted them, one canonical JSON object per line, so two runs over identical
     locked bytes produce identical files.
+
+    The records are put through the SAME normalization `ExtractResult.__post_init__`
+    applies — recorded per-source corrections, then row identity — because callers
+    write this sidecar *before* constructing the result. Without that, the sidecar
+    disagrees with the corpus the pipeline actually carries: `row_uid` shipped
+    empty for 2,924 of 7,896 rows (UGD-16 D1), and a corrected field shipped its
+    pre-correction value while every count, digest and determinism check still
+    looked right, because the divergence was uniform. Only a round-trip equality
+    assertion catches this class, so `tests/test_source_*.py` assert exactly that.
+
+    Idempotent: `correct_point` is identity for a record with no correction entry,
+    and `assign_row_uids` preserves an already-assigned uid, so the result
+    constructor re-running both on these same points changes nothing.
     """
     from ..jsonio import dump_json
     from ..pipeline import point_to_json
+
+    if points:
+        source = points[0].source
+        points = assign_row_uids(source, [correct_point(point) for point in points])
 
     path = pathlib.Path(input_dir) / JSONL_NAME
     path.write_text(
@@ -44,7 +63,19 @@ class SourceLockError(MalformedPayload):
 
 @dataclass
 class ExtractResult:
-    """What one extractor produced, plus the provenance to justify it."""
+    """What one extractor produced, plus the provenance to justify it.
+
+    Row identity is assigned HERE rather than per extractor. Every source funnels
+    through this constructor, so stamping `row_uid` once means a new source
+    cannot forget to do it, and the uniqueness gate below cannot be bypassed by a
+    source that assigns its own ids.
+
+    Recorded per-source data corrections are applied here for the same reason.
+    They used to run inside `CommunityBankExtractor.extract`, which is a funnel
+    for the five Yomitan-term-bank sources only -- so `bunpou`, `bunpro`, `imabi`,
+    `ninjal_bunkei` and `yokubi` silently bypassed the correction table entirely.
+    Applying them at this constructor makes the gate genuinely unbypassable.
+    """
 
     source: str
     points: list[GrammarPoint] = field(default_factory=list)
@@ -59,6 +90,55 @@ class ExtractResult:
                 raise MalformedPayload(
                     f"extractor {self.source!r} emitted a point attributed to {point.source!r}"
                 )
+        # Identity for every record with no correction entry, so unaffected points
+        # stay byte-identical; corrections are keyed by (source, source_id) and
+        # fail closed if their target string has drifted.
+        self.points = [correct_point(point) for point in self.points]
+        self.points = assign_row_uids(self.source, self.points)
+
+
+def assign_row_uids(source: str, points: list[GrammarPoint]) -> list[GrammarPoint]:
+    """Stamp each row with `<source>:<ordinal>` and fail closed on a duplicate.
+
+    The ordinal is the row's 1-based position in this source's own emission
+    order, which is deterministic (locked members read in declared order, rows in
+    producer order), so the same locked bytes always yield the same identity.
+
+    A pre-assigned `row_uid` is preserved so a round-tripped artifact keeps its
+    identity, but is re-checked: a repeat is a build defect, not something to
+    renumber around, because renumbering would silently repoint every claim that
+    already cites the id. This gate is the fix for `source_id` collisions —
+    `source_id` names up to 22 rows in `edewakaru` and stays the human-facing
+    headword, while `row_uid` is the machine identity.
+    """
+    stamped: list[GrammarPoint] = []
+    seen: dict[str, int] = {}
+    for index, point in enumerate(points, start=1):
+        uid = point.row_uid or row_uid(source, index)
+        previous = seen.get(uid)
+        if previous is not None:
+            raise DuplicateRowIdentity(source, uid, previous, index)
+        seen[uid] = index
+        stamped.append(
+            point if point.row_uid == uid else dataclasses.replace(point, row_uid=uid)
+        )
+    return stamped
+
+
+class DuplicateRowIdentity(MalformedPayload):
+    """Two extracted rows of one source claim the same `row_uid`."""
+
+    def __init__(self, source: str, uid: str, first: int, second: int) -> None:
+        self.source = source
+        self.uid = uid
+        self.first = first
+        self.second = second
+        super().__init__(
+            f"{source}: row identity {uid!r} is claimed by both row {first} and row "
+            f"{second}. Row identity must be unique within a source, because every "
+            f"merged claim is attributed by it; renumbering here would silently "
+            f"repoint claims that already cite it."
+        )
 
 
 class Extractor:
@@ -137,11 +217,13 @@ def load_source_lock(input_dir: pathlib.Path) -> dict[str, dict]:
 
 
 __all__ = [
+    "DuplicateRowIdentity",
     "Extractor",
     "ExtractResult",
     "SourceLockError",
     "SOURCE_LOCK_NAME",
     "JSONL_NAME",
+    "assign_row_uids",
     "load_source_lock",
     "write_points_jsonl",
 ]

@@ -180,6 +180,28 @@ def _run_cover(run: str, reading: str, start: int) -> int | None:
     return None
 
 
+#: A producer's parenthetical ANNOTATION, not furigana. NINJAL writes a sense tag
+#: in parentheses on either side of the pair: expression `可能の形 （～れる・～られる）`
+#: with reading `～れる（かのう）`. The two sides annotate different things, so no
+#: kana-coverage rule can relate them; the pattern outside the parentheses is what
+#: the reading actually renders.
+_ANNOTATION = re.compile(r"[（(][^）)]*[）)]")
+
+#: A producer's ALTERNATIVE-SPELLING separator. NINJAL, bunpou, bunpro and IMABI
+#: list alternative spellings of ONE pattern in a single headword field
+#: (`～に即して・～に則して` reading `～にそくして`), so the reading is the reading of each
+#: alternative rather than of the concatenation. 43 kanji-bearing rows use it.
+_ALTERNATIVE = "・"
+
+
+def _annotation_stripped(text: str) -> str:
+    return _ANNOTATION.sub("", text or "").strip()
+
+
+def _alternatives(text: str) -> list[str]:
+    return [part.strip() for part in (text or "").split(_ALTERNATIVE) if part.strip()]
+
+
 def is_plausible_reading(expression: str, reading: str | None) -> bool:
     """True when ``reading`` is a structurally possible kana rendering of ``expression``.
 
@@ -189,11 +211,36 @@ def is_plausible_reading(expression: str, reading: str | None) -> bool:
       it can never make the entry unfindable.
     * An expression with no kanji is plausible: there is no kanji reading to
       contradict.
+    * Parenthetical annotation is removed from both sides first, and each
+      alternative spelling is judged separately -- see ``_ANNOTATION`` and
+      ``_ALTERNATIVE``. Every alternative must be renderable by at least one of
+      the reading's alternatives.
     * Otherwise every maximal kanji run must be coverable, in order, within the
       reading (see the module docstring for the exact rule).
+
+    The notation handling was scoped by measurement over the 1,513 kanji-bearing
+    rows that carry a reading: it turns 0 passing rows into failures, turns
+    exactly 4 into passes (all NINJAL `A・B` alternative spellings whose reading is
+    correct for each alternative), and still rejects the structural defect
+    ``結構`` -> ``けっか``.
     """
     if not reading:
         return True
+    if normalize_kana(expression) == normalize_kana(reading):
+        return True
+    expressions = _alternatives(_annotation_stripped(expression))
+    readings = _alternatives(_annotation_stripped(reading))
+    if not expressions or not readings:
+        # Nothing left to compare once annotation is removed.
+        return True
+    return all(
+        any(_covers(candidate, rendering) for rendering in readings)
+        for candidate in expressions
+    )
+
+
+def _covers(expression: str, reading: str) -> bool:
+    """The kanji-run coverage rule, for one expression against one reading."""
     base = normalize_kana(expression)
     read = normalize_kana(reading)
     if base == read:

@@ -22,7 +22,7 @@ import pathlib
 
 import pytest
 
-from bugd.corrections import (
+from bugd.structure_corrections import (
     Correction,
     CorrectionError,
     apply_corrections,

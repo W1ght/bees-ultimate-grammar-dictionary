@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!--
+Real-Yomitan render harness page.
+
+Served from the unmodified Yomitan `ext/` tree so `/js/...` and `/css/...`
+resolve to real extension sources. Nothing here reimplements Yomitan:
+`StructuredContentGenerator` is imported from the pinned checkout and the
+extension's own `display.css` / `structured-content.css` provide every
+selector, design token, and theme rule the popup uses.
+-->
+<!--
+`data-page-type=popup` and the stylesheet set below are copied from
+`ext/popup.html` so the cascade under test is the popup's real cascade.
+`material.css` matters in particular: it is where `body { background-color:
+var(--background-color); color: var(--text-color) }` lives, so omitting it
+makes dark mode silently render black-on-transparent and any theme legibility
+assertion meaningless.
+-->
+<html lang="en" data-page-type="popup">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/css/material.css">
+<link rel="stylesheet" href="/css/display.css">
+<link rel="stylesheet" href="/css/display-pronunciation.css">
+<link rel="stylesheet" href="/css/structured-content.css">
+<style id="dictionary-styles"></style>
+<style>
+  /* Popup geometry only: Yomitan sizes its frame from the host page, which a
+     bare harness page has no equivalent of. Nothing else is overridden. */
+  html, body { margin: 0; padding: 0; }
+  #harness-frame { box-sizing: border-box; width: 100%; }
+</style>
+</head>
+<body>
+<!-- Wrapper chain copied from `ext/popup.html` so the entry inherits the real
+     popup cascade rather than sitting bare on `body`.
+
+     `data-dictionary` on `.definition-item` is NOT decoration: it is the scope
+     Yomitan's `Display._getCustomCss` wraps every dictionary stylesheet in, via
+     `addScopeToCss(styles, '[data-dictionary="<title>"]')`. Without it the
+     shipped `styles.css` matches nothing, so every design token, spacing rule,
+     and theme override silently disappears and the harness reports a card styled
+     purely by Yomitan's defaults. `display-generator.js` sets it on the
+     definition item (`_createTermDefinition`), which is where it is set here.
+     The harness fills in the title at render time. -->
+<div class="content-outer">
+ <div class="content">
+  <div class="content-scroll contain-overscroll scrollbar" id="content-scroll">
+   <div class="content-body" id="content-body">
+<div id="harness-frame">
+  <div class="entry" data-type="term">
+    <div class="entry-body">
+      <div class="entry-body-section">
+        <div class="definition-list-container">
+          <ul class="definition-list">
+            <li class="definition-item" id="definition-host">
+              <div class="definition-item-inner">
+                <div class="glossary-list-container">
+                  <ul class="glossary-list" id="glossary-host"></ul>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+   </div>
+  </div>
+ </div>
+</div>
+<script type="module">
+import {StructuredContentGenerator} from '/js/display/structured-content-generator.js';
+import {addScopeToCss} from '/js/core/utilities.js';
+
+window.__harnessError = null;
+window.__linkClicks = [];
+window.__scopedCss = '';
+
+/**
+ * Minimal content manager. `StructuredContentGenerator` calls exactly two
+ * collaborator methods, and only `prepareLink` is reachable for this
+ * dictionary (it packages no media, so the `img` branch never runs).
+ *
+ * `prepareLink` mirrors `ext/js/display/display-content-manager.js` verbatim
+ * -- href assignment plus `target`/`rel` hardening on external links -- so the
+ * anchor attributes under test are Yomitan's real behaviour, not the harness's
+ * invention. Clicks are recorded instead of navigating, because the popup
+ * intercepts them too; a test asserting "no unexpected navigation" needs the
+ * click to be observable.
+ */
+const contentManager = {
+    prepareLink(element, href, internal) {
+        element.href = href;
+        if (!internal) {
+            element.target = '_blank';
+            element.rel = 'noreferrer noopener';
+        }
+        element.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.__linkClicks.push({href, internal});
+        });
+    },
+    /** Unreachable for this dictionary; throws so a silent media path is loud. */
+    prepareMedia() {
+        throw new Error('harness: unexpected media request (this dictionary packages no media)');
+    },
+};
+
+/**
+ * Render one structured-content glossary item exactly the way Yomitan's
+ * display generator does: a `li.gloss-item` whose child is the generated
+ * structured-content span.
+ * @param {object} content structured-content `content` value
+ * @param {string} dictionary dictionary title
+ */
+window.renderCard = (content, dictionary) => {
+    const host = document.querySelector('#glossary-host');
+    host.textContent = '';
+    window.__linkClicks = [];
+    // The scope Yomitan's dictionary stylesheets are wrapped in.
+    document.querySelector('#definition-host').dataset.dictionary = dictionary;
+    const item = document.createElement('li');
+    item.className = 'gloss-item';
+    const generator = new StructuredContentGenerator(contentManager, document, window);
+    const node = generator.createStructuredContent(content, dictionary);
+    item.appendChild(node);
+    host.appendChild(item);
+    return true;
+};
+
+/**
+ * Apply the dictionary's `styles.css` exactly the way Yomitan applies it.
+ *
+ * This is NOT a raw `<style>` injection. `Display._getCustomCss` passes each
+ * enabled dictionary's stylesheet through `addScopeToCss(styles,
+ * '[data-dictionary="<title>"]')`, which wraps the whole sheet in a CSS
+ * *nesting* block. That has consequences a raw injection cannot reproduce:
+ *
+ * - every rule is nested inside the dictionary-title scope, so a selector only
+ *   matches inside this dictionary's own entries;
+ * - a top-level selector that does not begin with `&` is still matched as a
+ *   descendant, but one written as a bare `:root[...] X` combinator no longer
+ *   matches at all, because `:root` cannot appear *inside* the scope;
+ * - the browser's nesting parser -- not the harness -- decides what survives.
+ *
+ * Rendering the raw sheet instead would silently test a cascade production never
+ * has, so the real scoping function is imported from the pinned checkout.
+ * @param {string} css the dictionary's shipped styles.css
+ * @param {string} dictionary the dictionary title, as imported
+ */
+window.applyDictionaryStyles = (css, dictionary) => {
+    const escapedTitle = dictionary.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    const scoped = addScopeToCss(css, `[data-dictionary="${escapedTitle}"]`);
+    window.__scopedCss = scoped;
+    document.querySelector('#dictionary-styles').textContent = scoped;
+    return scoped;
+};
+
+window.__harnessReady = true;
+</script>
+</body>
+</html>

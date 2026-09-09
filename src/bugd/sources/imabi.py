@@ -211,6 +211,13 @@ class ImabiExtractor(Extractor):
                 "attribution": ATTRIBUTION,
                 "licenseTier": self.license_tier,
                 "redistributable": self.redistributable,
+                # The grant is a user report, not a published licence: IMABI's
+                # /terms/, /license/ and /copyright/ all 404 and the footer
+                # asserts copyright only (UGD-15). Recording the basis on every
+                # record lets a publish-time filter distinguish a verified
+                # licence from a reported permission, which `redistributable`
+                # alone cannot express.
+                "permissionBasis": PERMISSION_BASIS,
                 "pageId": page["id"],
                 "slug": slug,
             }

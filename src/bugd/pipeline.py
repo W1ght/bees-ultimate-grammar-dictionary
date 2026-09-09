@@ -20,11 +20,10 @@ import shutil
 from . import DICTIONARY_SLUG, YOMITAN_SCHEMA_REVISION
 from . import unify
 from .banks import build_banks, build_index, build_tag_bank
-from .corrections import (
-    DEFAULT_CORRECTIONS_PATH,
-    DEFAULT_READINGS_PATH,
-    load_reading_corrections,
+from .reading_corrections import (
+    DEFAULT_CORRECTIONS_PATH as DEFAULT_READING_CORRECTIONS_PATH,
 )
+from .reading_corrections import load_corrections as load_reading_corrections
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .merge import MergedEntry, merge_points
 from .model import Example, GrammarPoint
@@ -34,6 +33,10 @@ from .validate import term_entry_count, validate_zip
 
 DEFAULT_SOURCES_DIR = pathlib.Path("data/sources")
 DEFAULT_EXTRACTED_DIR = pathlib.Path("data/extracted")
+#: Redistributable-only projection of `data/extracted/`, written by the publish
+#: filter. A SEPARATE directory on purpose: the local build legitimately uses all
+#: ten acquired sources, so filtering must never edit the full corpus in place.
+DEFAULT_PUBLIC_EXTRACTED_DIR = pathlib.Path("data/extracted-public")
 DEFAULT_MERGED_DIR = pathlib.Path("data/merged")
 DEFAULT_BUILD_DIR = pathlib.Path("build")
 #: Distribution directory holding the one publishable artifact. A ZIP only
@@ -61,32 +64,80 @@ def zip_name() -> str:
 # --------------------------------------------------------------------------
 
 
+def _unacquired_reason(source_dir: pathlib.Path) -> str | None:
+    """Why this source cannot be extracted yet, or ``None`` if it can.
+
+    "Acquired" means the bytes the lock PINS are on disk, not that the directory
+    exists: `SOURCE.lock.json` is committed for every source (it is the
+    reproducibility contract -- 611 files pinned by sha256), so in a fresh clone
+    every `data/sources/<name>/` directory exists while holding only that lock.
+
+    Returns a human-readable reason so the caller can REPORT the skip. A silently
+    smaller dictionary is the failure mode this project fails closed against, so
+    a skip must be visible in the stage's output.
+    """
+    from .sources.base import SOURCE_LOCK_NAME, load_source_lock
+
+    source_dir = pathlib.Path(source_dir)
+    if not source_dir.is_dir():
+        return "no source directory"
+    if not (source_dir / SOURCE_LOCK_NAME).is_file():
+        return f"no {SOURCE_LOCK_NAME}"
+    try:
+        locked = load_source_lock(source_dir)
+    except MalformedPayload as error:
+        # A malformed lock is a real defect, not an unacquired source. Let the
+        # extractor raise it so it cannot be mistaken for "not built yet".
+        raise error
+    missing = [name for name in locked if not (source_dir / name).exists()]
+    if not missing:
+        return None
+    shown = ", ".join(sorted(missing)[:3])
+    if len(missing) > 3:
+        shown += f", +{len(missing) - 3} more"
+    return f"{len(missing)} of {len(locked)} locked file(s) not acquired ({shown})"
+
+
 def run_extract(
     *,
     sources_dir: pathlib.Path = DEFAULT_SOURCES_DIR,
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     only: list[str] | None = None,
     corrections_path: pathlib.Path | None = None,
+    corrections_dir: pathlib.Path | None = None,
 ) -> dict[str, object]:
     """Run every registered extractor and write one artifact per source.
 
-    After a source is extracted, the byte-anchored corrections overlay
-    (`bugd.corrections`) is applied to its normalized points. The overlay fixes
-    formation/gloss defects that live in the immutable source term-bank bytes —
-    the SOURCE.lock digests and the locked bytes are never touched, so the
-    integrity gate stays intact and every edit remains an auditable, reviewable
-    entry rather than a laundered rewrite. Application is fail-closed: a
-    correction whose anchor no longer matches its source raises, so a drifted
-    source can never silently ship an un-reviewed edit.
-    """
-    from . import corrections as corrections_module
-    from .sources import all_extractors, discover_extractors, get_extractor
+    Two independent, reviewable correction overlays are applied to the normalized
+    records after extraction and before the per-source artifact is written. In
+    both cases the locked publisher bytes and their SOURCE.lock digests are
+    untouched, so the integrity gate stays intact and every edit stays an
+    auditable entry rather than a laundered rewrite:
 
-    # Populate the registry by importing every source module. Without this the
-    # registry is empty (nothing imports the modules for the pipeline) and the
-    # stage writes zero artifacts while a stale data/extracted/*.json is silently
-    # reused by the build -- exactly the cached-pre-fix-text trap UGD-08c warns of.
-    discover_extractors()
+    * `bugd.structure_corrections` (UGD-11c-C) is byte-anchored and fixes
+      formation/gloss defects that live in the immutable source term-bank bytes.
+      Fail-closed: a correction whose anchor no longer matches raises, so a
+      drifted source can never silently ship an un-reviewed edit.
+    * `bugd.content_corrections` (UGD-11c-D) applies the confirmed content
+      dispositions (drop_example / remove_span / clear_field / replace_span) from
+      the review.
+
+    Structure runs first because its anchors are quoted from the publisher's
+    original bytes; a content disposition that drops or trims the same field
+    would otherwise make the anchor unmatchable and fail the build closed.
+
+    The registry populates itself on first query: `all_extractors()` calls
+    `load_source_modules()`, which imports every source module so its
+    `@register_extractor` runs. Without that the registry is empty, the stage
+    writes zero artifacts, and the build silently reuses a stale
+    `data/extracted/*.json` -- the cached-pre-fix-text trap.
+    """
+    from . import structure_corrections as corrections_module
+    from .content_corrections import DEFAULT_CORRECTIONS_DIR
+    from .content_corrections import apply_corrections as apply_content_corrections
+    from .content_corrections import load_corrections as load_content_corrections
+    from .sources import all_extractors, get_extractor
+
 
     extracted_dir.mkdir(parents=True, exist_ok=True)
     classes = [get_extractor(name) for name in only] if only else all_extractors()
@@ -94,17 +145,35 @@ def run_extract(
     overlay = corrections_module.load_corrections(
         corrections_path or corrections_module.DEFAULT_CORRECTIONS_PATH
     )
+    correction_dir = corrections_dir if corrections_dir is not None else DEFAULT_CORRECTIONS_DIR
+    content_corrections = load_content_corrections(correction_dir)
 
     written: dict[str, int] = {}
     corrected_total = 0
+    corrections_report: dict[str, object] = {}
+    skipped: dict[str, str] = {}
     for cls in classes:
         source_dir = sources_dir / cls.name
-        if not only and not source_dir.is_dir():
-            # A registered source whose raw bytes have not been acquired into
-            # data/sources/<name>/ is simply not built yet -- skip it rather than
-            # failing the whole stage on a missing lock. An explicit `--source`
-            # request still runs so a typo or missing acquisition surfaces loudly.
-            continue
+        if not only:
+            unacquired = _unacquired_reason(source_dir)
+            if unacquired is not None:
+                # A registered source whose raw bytes have not been acquired is
+                # simply not built yet -- skip it rather than failing the whole
+                # stage. Keyed on the LOCKED PAYLOAD, not on the directory
+                # existing: every source directory exists in a fresh clone because
+                # `SOURCE.lock.json` is committed (it is the reproducibility
+                # contract), so a directory check skipped nothing and a clean
+                # clone with only the two CC BY 4.0 sources acquired could not run
+                # `make extract` at all -- which made `make public`, the one build
+                # a public user CAN do, unreachable.
+                #
+                # The skip is REPORTED, not silent: the reason lands in the
+                # stage's output so a missing acquisition is visible rather than
+                # presenting as a quietly smaller dictionary. An explicit
+                # `--source` request still runs and still fails loudly, so a typo
+                # or a genuinely broken acquisition surfaces.
+                skipped[cls.name] = unacquired
+                continue
         result = cls(source_dir).extract()
         points, applied = corrections_module.apply_corrections(
             result.points, overlay, source=cls.name
@@ -113,6 +182,13 @@ def run_extract(
         stats = dict(result.stats)
         if applied:
             stats["corrections"] = applied
+        if content_corrections:
+            points, report = apply_content_corrections(
+                points, content_corrections, source=cls.name
+            )
+            if report["applied"]:
+                corrections_report[cls.name] = report
+
         payload = {
             "source": result.source,
             "label": cls.label or cls.name,
@@ -125,11 +201,17 @@ def run_extract(
             dump_json(payload) + "\n", encoding="utf-8"
         )
         written[cls.name] = len(points)
-    return {
+    out: dict[str, object] = {
         "sources": written,
         "total": sum(written.values()),
         "corrections": corrected_total,
     }
+    if skipped:
+        # Reported, with the reason, so an unacquired source is never invisible.
+        out["skippedSources"] = skipped
+    if corrections_report:
+        out["contentCorrections"] = corrections_report
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -143,7 +225,7 @@ def run_merge(
     merged_dir: pathlib.Path = DEFAULT_MERGED_DIR,
     keymap_path: pathlib.Path | None = None,
     unified_path: pathlib.Path | None = None,
-    corrections_path: pathlib.Path | None = DEFAULT_READINGS_PATH,
+    corrections_path: pathlib.Path | None = DEFAULT_READING_CORRECTIONS_PATH,
 ) -> dict[str, object]:
     """Merge every extracted artifact into the one unified corpus.
 

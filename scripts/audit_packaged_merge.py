@@ -109,9 +109,18 @@ check("no redirect card lacks a crossref block", empty, [])
 # because that block is deliberately one line), so the disagreement is disclosed
 # where each source speaks: banks._source_level_block emits the source's own
 # level inside its own `sourceBlock`. UGD-08b landed that; `audit_packaged_jlpt.py`
-# proves it per entry over all 158.
+# proves it per entry over all 253.
+#
+# Repinned 158 -> 253 by UGD-16 convergence, which landed the five remaining
+# extractors. Attributed mechanically rather than on the total: recomputing the
+# conflict set over the ORIGINAL five sources alone gives 156, plus 97 entries that
+# only conflict once a new source joins = 253, with ZERO entries that conflicted
+# under the original five and no longer do. The residual 158 -> 156 on that basis is
+# UGD-11c-A's polarity repair renaming headwords out of the set (なくもある ->
+# なくもない etc.), so no disagreement was destroyed. The behaviour assertions below
+# passed on all 253 before this cardinality was touched.
 conf = [u for u in unified if len(u.get("jlptLevels") or []) > 1]
-check("conflicting-level entries packaged", len(conf), 158)
+check("conflicting-level entries packaged", len(conf), 253)
 bad = []
 for u in conf:
     per_source = {
@@ -154,7 +163,7 @@ def _levels(node, out):
 check(
     "the compact block still shows exactly one JLPT badge",
     Counter(len(_levels(_compact_of(by_head[u["expression"]]), [])) for u in conf),
-    Counter({1: 158}),
+    Counter({1: 253}),
 )
 
 # tag bank still names every source

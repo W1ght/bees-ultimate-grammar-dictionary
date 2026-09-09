@@ -67,13 +67,26 @@ reachable = {e.expression for e in entries}
 missing = sorted(corpus_forms - reachable)
 unresolved = {u["expression"] for u in stats["redirects"]["unresolved"]}
 check("unreachable forms == reported unresolved", set(missing), unresolved)
-# Was 5 before the Bunpro source existed. Bunpro supplies それまでだ as a real N1
-# point (source_id 943, 11 examples), which resolves the redirect donna_toki had
-# declared as `aliasOf: それまでだ` and that previously dangled because no source
-# carried that headword. Attributed by running keymap+merge with and without
-# data/extracted/bunpro.json: the only difference is それまでだ leaving this set,
-# and nothing new enters it.
-check("unresolved count", len(unresolved), 4)
+# Was 5 before the Bunpro source existed, then 4, and is 5 again on the fully
+# converged corpus -- for a DIFFERENT reason each time, so the number alone proves
+# nothing. Attributed by re-running keymap+merge with each source's artifact
+# withheld and diffing the SETS:
+#
+#   * every one of the five is a redirect donna_toki itself declares; withholding
+#     donna_toki empties the set entirely (5 -> 0), and no other source's absence
+#     introduces a form that donna_toki did not declare.
+#   * Bunpro still resolves それまでだ (withholding bunpro: 5 -> 6, それまでだ returns),
+#     so the earlier 5 -> 4 attribution stands and was not undone.
+#   * the fifth member is 至るまで, and it is UGD-11d-A finding A7 landing, not a
+#     regression: nihongo_net's `に至るまで` record was re-homed to `に至る` because
+#     its structure omits まで and none of its examples contain it. nihongo_net was
+#     the only source carrying that headword, so donna_toki's 至るまで redirect now
+#     legitimately dangles. Verified: the sole remaining claimant of 至るまで is
+#     donna_toki's own row, and nihongo_net/に至るまで now reads `に至る`.
+#
+# `unreachable forms == reported unresolved` above already pins the exact set, so
+# this count is a second, weaker guard on the same fact.
+check("unresolved count", len(unresolved), 5)
 
 # --- every redirect points somewhere real ---
 heads = {e.expression for e in entries if e.kind == KIND_POINT}

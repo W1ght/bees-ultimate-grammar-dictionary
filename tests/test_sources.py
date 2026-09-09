@@ -10,9 +10,10 @@ import sys
 
 import pytest
 
-from bugd.jsonio import dump_json
+from bugd.jsonio import MalformedPayload, dump_json
+from bugd.model import GrammarPoint
 from bugd.sources import Extractor, ExtractResult, SourceLockError, load_source_lock
-from bugd.sources.base import SOURCE_LOCK_NAME
+from bugd.sources.base import SOURCE_LOCK_NAME, DuplicateRowIdentity
 from bugd.sources.registry import register_extractor, source_names
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -159,12 +160,14 @@ def test_the_registry_discovers_every_source_in_a_fresh_interpreter():
     assert discovered, "importing the pipeline must leave the registry populated"
 
     # Every concrete extractor module on disk must be represented. `community`
-    # (the shared bank base class) and `yomitan_bank` (the bank reader) are
-    # infrastructure: they are imported but register nothing, which is correct.
+    # (the shared bank base class), `yomitan_bank` (the bank reader) and
+    # `polarity_repair` (the shared headword-polarity fix-up) are infrastructure:
+    # they are imported but register nothing, which is correct.
     expected = {
         path.stem
         for path in (REPO / "src/bugd/sources").glob("*.py")
-        if path.stem not in {"__init__", "base", "registry", "community", "yomitan_bank"}
+        if path.stem
+        not in {"__init__", "base", "registry", "community", "yomitan_bank", "polarity_repair"}
     }
     assert expected, "expected concrete source modules to be present"
     assert set(discovered) == expected, f"expected {sorted(expected)}, discovered {discovered}"
@@ -463,7 +466,144 @@ def test_edewakaru_strips_chrome_from_every_prose_field():
     assert "ほんとうの解説です。" in (point.explanation or "")
 
 
+def test_edewakaru_keeps_a_paraphrase_that_opens_with_a_bold_span():
+    """A `→` rephrasing whose first word is bold lands the arrow alone on its line.
+
+    `read_term_bank` puts every glossary node on its own line, so when edewakaru's
+    `→` paraphrase opens with a bold grammar-point span the arrow is left on its own
+    line (`…泣いてしまった` / `→` / `とても` / …). The old parser only opened a
+    rephrasing when text sat on the arrow's own line, so a bare `→` was dropped and
+    the paraphrase words fused onto the specimen:
+    `嬉しさのあまり泣いてしまったとても嬉しいので泣いてしまった` -- the run-on UGD-08c filed on
+    あまり and に反して (findings 1, 2, 4, 5, 13) and the clipped `→たばこは高いし 体に悪いし、`
+    (findings 9, 12). Measured over edewakaru: 158 arrow-alone lines / 61 fields.
+
+    The property: the specimen and its paraphrase are separated by `\\n→`, the
+    paraphrase carries its full text, and no source characters are lost.
+    """
+    from bugd.sources.edewakaru import _numbered_examples
+
+    # The arrow sits alone on its line; the paraphrase words follow it. Emulates the
+    # node-per-line flattening of `のあまり`/`とても`/`ので` bold spans.
+    body = "\n".join([
+        "①嬉しさ", "のあまり", "泣いてしまった",
+        "→", "とても", "嬉しい", "ので", "泣いてしまった",
+    ])
+    examples = _numbered_examples(body, highlights=("のあまり",))
+    assert len(examples) == 1
+    # The specimen keeps its own text; the paraphrase is a separate `→` line with
+    # its COMPLETE text -- not truncated at the first bold span, not fused on.
+    assert examples[0].japanese == "嬉しさのあまり泣いてしまった\n→とても嬉しいので泣いてしまった"
+
+    # A `→` that DOES carry its own text still works exactly as before.
+    same_line = "\n".join(["①予想に反して難しくなかった", "→予想とは違って難しくなかった"])
+    assert _numbered_examples(same_line, ())[0].japanese == (
+        "予想に反して難しくなかった\n→予想とは違って難しくなかった"
+    )
+
+    # Two circled examples, the second's paraphrase also arrow-alone: both split.
+    two = "\n".join([
+        "①急いだ", "あまり", "スマホを忘れた", "→", "とても", "急いだので", "スマホを忘れた",
+        "②きれいな", "あまり", "感動した", "→", "とても", "きれいだったので", "感動した",
+    ])
+    got = _numbered_examples(two, ())
+    assert [e.japanese for e in got] == [
+        "急いだあまりスマホを忘れた\n→とても急いだのでスマホを忘れた",
+        "きれいなあまり感動した\n→とてもきれいだったので感動した",
+    ]
+
+
 # --------------------------------------------------------------------------
+# row identity: source_id is NOT unique, so every row gets its own machine id
+# --------------------------------------------------------------------------
+
+
+def test_every_extracted_row_is_stamped_with_its_own_identity():
+    """`ExtractResult` assigns `<source>:<ordinal>` in emission order."""
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="dup", expression="あ"),
+        GrammarPoint(source="unit-fixture", source_id="dup", expression="い"),
+        GrammarPoint(source="unit-fixture", source_id="other", expression="う"),
+    ]
+    result = ExtractResult(source="unit-fixture", points=points)
+    assert [p.row_uid for p in result.points] == [
+        "unit-fixture:1",
+        "unit-fixture:2",
+        "unit-fixture:3",
+    ]
+    # The producer's own handle is untouched, and is still not unique.
+    assert [p.source_id for p in result.points] == ["dup", "dup", "other"]
+
+
+def test_two_rows_sharing_a_source_id_get_two_distinct_identities():
+    """The defect this exists for: one edewakaru source_id names 22 rows.
+
+    Asserted as a property of the whole batch rather than of two rows, so the
+    test still bites if a future change makes identity depend on `source_id`.
+    """
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="あまり", expression="あまり", jlpt="N5"),
+        GrammarPoint(source="unit-fixture", source_id="あまり", expression="あまり", jlpt="N2"),
+    ]
+    result = ExtractResult(source="unit-fixture", points=points)
+    assert len({p.row_uid for p in result.points}) == len(result.points)
+
+
+def test_a_duplicate_row_identity_fails_the_extraction_closed():
+    """Renumbering silently would repoint claims that already cite the id."""
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="a", expression="あ", row_uid="unit-fixture:1"),
+        GrammarPoint(source="unit-fixture", source_id="b", expression="い", row_uid="unit-fixture:1"),
+    ]
+    with pytest.raises(DuplicateRowIdentity, match="unit-fixture:1"):
+        ExtractResult(source="unit-fixture", points=points)
+
+
+def test_a_preassigned_identity_survives_a_round_trip():
+    """Re-wrapping already-stamped rows must not renumber them."""
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="a", expression="あ", row_uid="unit-fixture:7"),
+        GrammarPoint(source="unit-fixture", source_id="b", expression="い", row_uid="unit-fixture:9"),
+    ]
+    result = ExtractResult(source="unit-fixture", points=points)
+    assert [p.row_uid for p in result.points] == ["unit-fixture:7", "unit-fixture:9"]
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "unit-fixture:１",  # a fullwidth digit; int() would accept it
+        "unit-fixture:1_0",  # an underscore; int() would accept it too
+        "unit-fixture:0",  # ordinals are 1-based
+        "unit-fixture:+1",  # a sign
+        "unit-fixture:",  # no ordinal at all
+        "other-source:1",  # a foreign source's identity
+        "unit-fixture:1:2",
+    ],
+)
+def test_a_malformed_row_identity_is_refused(bad):
+    """Numeric syntax is checked before conversion, not after.
+
+    Every rejected spelling here is one `int()` or a naive `split(':')` would
+    wave through, which would let two spellings of one ordinal coexist and make
+    the identity ambiguous again.
+    """
+    with pytest.raises(MalformedPayload, match="row_uid"):
+        GrammarPoint(source="unit-fixture", source_id="a", expression="あ", row_uid=bad)
+
+
+def test_row_identity_is_stable_across_repeated_extraction():
+    """Same rows in, same identities out — a build input, not a nonce."""
+    def build():
+        return ExtractResult(
+            source="unit-fixture",
+            points=[
+                GrammarPoint(source="unit-fixture", source_id="x", expression="あ"),
+                GrammarPoint(source="unit-fixture", source_id="x", expression="い"),
+            ],
+        )
+
+    assert [p.row_uid for p in build().points] == [p.row_uid for p in build().points]
 # NINJAL 日本語文型データベース (Nihongo Bunkei Database) — XML source
 # --------------------------------------------------------------------------
 
@@ -651,50 +791,3 @@ def test_ninjal_member_name_recovers_cp932_names_the_utf8_flag_missed():
         if is_mojibake(point.source_id) or is_mojibake(str(point.provenance["sourceFile"]))
     ]
     assert bad == [], f"mojibake identities leaked: {bad[:5]}"
-
-
-def test_edewakaru_keeps_a_paraphrase_that_opens_with_a_bold_span():
-    """A `→` rephrasing whose first word is bold lands the arrow alone on its line.
-
-    `read_term_bank` puts every glossary node on its own line, so when edewakaru's
-    `→` paraphrase opens with a bold grammar-point span the arrow is left on its own
-    line (`…泣いてしまった` / `→` / `とても` / …). The old parser only opened a
-    rephrasing when text sat on the arrow's own line, so a bare `→` was dropped and
-    the paraphrase words fused onto the specimen:
-    `嬉しさのあまり泣いてしまったとても嬉しいので泣いてしまった` -- the run-on UGD-08c filed on
-    あまり and に反して (findings 1, 2, 4, 5, 13) and the clipped `→たばこは高いし 体に悪いし、`
-    (findings 9, 12). Measured over edewakaru: 158 arrow-alone lines / 61 fields.
-
-    The property: the specimen and its paraphrase are separated by `\\n→`, the
-    paraphrase carries its full text, and no source characters are lost.
-    """
-    from bugd.sources.edewakaru import _numbered_examples
-
-    # The arrow sits alone on its line; the paraphrase words follow it. Emulates the
-    # node-per-line flattening of `のあまり`/`とても`/`ので` bold spans.
-    body = "\n".join([
-        "①嬉しさ", "のあまり", "泣いてしまった",
-        "→", "とても", "嬉しい", "ので", "泣いてしまった",
-    ])
-    examples = _numbered_examples(body, highlights=("のあまり",))
-    assert len(examples) == 1
-    # The specimen keeps its own text; the paraphrase is a separate `→` line with
-    # its COMPLETE text -- not truncated at the first bold span, not fused on.
-    assert examples[0].japanese == "嬉しさのあまり泣いてしまった\n→とても嬉しいので泣いてしまった"
-
-    # A `→` that DOES carry its own text still works exactly as before.
-    same_line = "\n".join(["①予想に反して難しくなかった", "→予想とは違って難しくなかった"])
-    assert _numbered_examples(same_line, ())[0].japanese == (
-        "予想に反して難しくなかった\n→予想とは違って難しくなかった"
-    )
-
-    # Two circled examples, the second's paraphrase also arrow-alone: both split.
-    two = "\n".join([
-        "①急いだ", "あまり", "スマホを忘れた", "→", "とても", "急いだので", "スマホを忘れた",
-        "②きれいな", "あまり", "感動した", "→", "とても", "きれいだったので", "感動した",
-    ])
-    got = _numbered_examples(two, ())
-    assert [e.japanese for e in got] == [
-        "急いだあまりスマホを忘れた\n→とても急いだのでスマホを忘れた",
-        "きれいなあまり感動した\n→とてもきれいだったので感動した",
-    ]

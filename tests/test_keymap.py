@@ -438,6 +438,78 @@ def test_chained_links_are_refused_rather_than_transitively_closed() -> None:
     assert "chained-not-pairwise" in {item.guard for item in refused}
 
 
+def test_a_reading_silent_source_does_not_block_an_orthographic_fold() -> None:
+    """A row that states no reading supplies no evidence -- and must not veto.
+
+    Only five of the ten sources state a reading at all, so a bucket routinely
+    mixes reading-bearing and reading-silent rows. Treating "no reading" as
+    disagreement meant any reading-less source joining the target bucket
+    permanently blocked the fold: `や否や` split from `やいなや` the moment
+    bunpou/511 landed there beside donna_toki.
+
+    Asserted as the property (silence does not veto), not as the one pair.
+    """
+    accepted, _ = link_between(
+        dojg=[record("や否や", "や否や", reading="やいなや", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        # An absent reading normalizes to "" (verified on the real bunpou row).
+        bunpou=[record("511", "やいなや", reading="")],
+    )
+    assert [link.reason for link in accepted] == ["reading-identity"]
+
+
+def test_a_contradicting_reading_still_refuses_the_fold() -> None:
+    """Silence is not evidence, but a DIFFERENT stated reading is a refusal.
+
+    The counterpart to the test above: the relaxation must only ignore rows that
+    say nothing, never rows that disagree. Without this, ignoring readings
+    wholesale proposed polarity errors such as `てはいく` <-> `てはいけない`.
+    """
+    accepted, _ = link_between(
+        dojg=[record("や否や", "や否や", reading="やいなや", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        nihongo_net=[record("other", "やいなや", reading="やひや")],
+    )
+    assert accepted == []
+
+
+def test_two_rows_stating_the_same_reading_remain_ambiguous() -> None:
+    """The linked endpoint must be the unique row that attests the reading.
+
+    Two rows both stating the proposer's reading is a homograph fan, not
+    corroboration: there is no single record to point at.
+    """
+    accepted, _ = link_between(
+        dojg=[record("や否や", "や否や", reading="やいなや", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        nihongo_net=[record("also", "やいなや", reading="やいなや")],
+    )
+    assert accepted == []
+
+
+def test_a_reading_silent_proposer_cannot_claim_a_multi_source_bucket() -> None:
+    """The proposer's own reading is the evidence; without it there is none.
+
+    Called directly rather than through the corpus: no reading-less row in the
+    real corpus reaches the multi-source branch (measured: 0), so a mutation
+    deleting this guard survives a full-suite run as a no-op. Guard branches that
+    the corpus does not exercise must be probed with synthetic inputs or they are
+    untested by construction.
+    """
+    from bugd.keymap import _link_target
+
+    rows, _, _ = rows_of(
+        dojg=[record("や否や", "や否や", reading="", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        bunpou=[record("511", "やいなや", reading="")],
+    )
+    proposer = next(r for r in rows if r.row_id.source == "dojg")
+    others = {
+        r.row_id.source: [r] for r in rows if r.row_id.source != "dojg"
+    }
+    assert _link_target(proposer, others) is None
+
+
 def test_variant_in_degree_counts_distinct_rows() -> None:
     rows, _, _ = rows_of(
         dojg=[
@@ -574,44 +646,101 @@ def test_malformed_keymap_payloads_fail_closed(payload: object) -> None:
 # Real-corpus properties. Pinned: a moved count is a review event.
 # --------------------------------------------------------------------------
 
+#: The pinned corpus counts below are properties of the WHOLE corpus, so these
+#: tests are only meaningful when every contributing source has been extracted.
+#: Gating on "any *.json exists" made a single-source extraction (e.g. `bugd.cli
+#: --source yokubi extract` while iterating on one extractor) report 7 loud
+#: failures such as `assert 132 == 4972`, which read as keymap defects but were
+#: only a partial corpus. Require the full set, and skip with a message naming
+#: exactly which sources are missing.
+CORPUS_SOURCES = (
+    "dojg",
+    "donna_toki",
+    "edewakaru",
+    "nihongo_net",
+    "nihongo_no_sensei",
+)
+
+
+def _missing_corpus_sources() -> list[str]:
+    if not EXTRACTED.is_dir():
+        return list(CORPUS_SOURCES)
+    return [name for name in CORPUS_SOURCES if not (EXTRACTED / f"{name}.json").is_file()]
+
+
 pytestmark_corpus = pytest.mark.skipif(
-    not EXTRACTED.is_dir() or not list(EXTRACTED.glob("*.json")),
-    reason="normalized sources not extracted; run `make extract`",
+    bool(_missing_corpus_sources()),
+    reason=(
+        "pinned counts need the full corpus; missing extracted sources: "
+        f"{', '.join(_missing_corpus_sources()) or 'none'} (run `make extract`)"
+    ),
 )
 
 
 @pytest.fixture(scope="module")
 def corpus() -> dict[str, object]:
-    if not EXTRACTED.is_dir() or not list(EXTRACTED.glob("*.json")):
-        pytest.skip("normalized sources not extracted; run `make extract`")
+    missing = _missing_corpus_sources()
+    if missing:
+        pytest.skip(
+            "pinned counts need the full corpus; missing extracted sources: "
+            f"{', '.join(missing)} (run `make extract`)"
+        )
     return build_keymap(EXTRACTED)
 
 
 @pytestmark_corpus
 def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     report = corpus["report"]
-    # Re-pinned at UGD-16 integration, when all 10 sources and every 11* defect fix
-    # had landed. The full corpus is now 7896 rows (was 5772 at UGD-06). That total
-    # still decomposes cleanly and fail-closed:
-    #   rows 7896 = substantiveRows 6656 + declaredAliasRows 1167
-    #             + duplicateRowsCollapsed 73.
-    # declaredAliasRows (1167) and duplicateRowsCollapsed (73) are UNCHANGED from
-    # UGD-06/UGD-14 -- the new sources (bunpou/UGD-02 etc.) ship no declared-alias
-    # rows and introduced no new byte-identical duplicate collapses -- so the entire
-    # +2124 row delta is substantive content, and substantiveRows == the number of
-    # assignments (6656) with zero lost. The tier splits grew accordingly (tierA
-    # bijective 657 -> 844, refused collisions 189 -> 202, tierB accepted 52 -> 81),
-    # and refusal/splitting is always the conservative fail-closed direction: no
-    # wrong merge can result from a bucket becoming ambiguous. Canonical points
-    # 3107 -> 4387, which equals the unified sense count downstream.
+    # 7896 = the 5936 six-source basis plus the four extractors UGD-16 convergence
+    # landed: bunpou 534 + imabi 494 + ninjal_bunkei 800 + yokubi 132 = 1960.
+    #
+    # Attributed by rebuilding the keymap through the real production builder over
+    # the same artifacts with those four `data/extracted/*.json` REMOVED: that
+    # basis reports rows=5936 / substantiveRows=4696 exactly, reproducing this
+    # pin's previous values, and the row-identity SETS
+    # `{(source, sourceId, substanceHash)}` differ by exactly +1960 with **0 lost**
+    # (gained per source: bunpou 534, imabi 494, ninjal_bunkei 800, yokubi 132).
+    # So the growth is additive and nothing that was assigned stopped being
+    # assigned.
     assert report["corpus"]["rows"] == 7896
     assert report["corpus"]["declaredAliasRows"] == 1167
+    # Unmoved by convergence: the four new sources contribute no declared alias
+    # and no duplicate of an existing row.
+    #
+    # 73, from 71 and originally 63: UGD-14 stopped shipping the edewakaru
+    # blog-ring footer (`にほんブログ村` / `――以上――` / `語学(日本語)ランキング`) as
+    # content. Those lines were the ONLY difference between otherwise
+    # byte-identical records, so removing site chrome let the existing duplicate
+    # collapse do its job.
+    #
+    # The 71 -> 73 step is the round-8 fix to `_strip_post_chrome`, which
+    # previously dropped a marker only when it was the WHOLE line and therefore
+    # missed 29 occurrences the producer had concatenated onto the end of real
+    # text (`…イラストリスト】語学(日本語)ランキングにほんブログ村にほんブログ村――以上――`).
     assert report["corpus"]["duplicateRowsCollapsed"] == 73
+    # 6656 = 4696 + the same 1960. Every one of the four new sources' rows arrives
+    # substantive, matching the per-source set diff above.
     assert report["corpus"]["substantiveRows"] == 6656
-    assert report["tierA"]["bijectiveBuckets"] == 844
-    assert report["tierA"]["refusedCollisionBuckets"] == 202
-    assert report["tierB"]["accepted"] == 81
-    assert len(corpus["points"]) == 4387
+    # Tier A grows with the corpus: 676 -> 821 bijective, 201 -> 217 refused.
+    assert report["tierA"]["bijectiveBuckets"] == 821
+    assert report["tierA"]["refusedCollisionBuckets"] == 217
+    # Tier B DECREASED, 57 -> 49, which a totals-only repin would have hidden. Set
+    # diff of `acceptedLinks`: +1 gained (`に応じて`↔`に応じた`) and 8 LOST --
+    # `こととなると`↔`ことになると`, `ずに済む`↔`ないで済む`, `せいで`↔`せいか`,
+    # `ともなく`↔`ともなしに`, `につれて`↔`につれ`, `によって`↔`により`,
+    # `によると`↔`によれば`, `ようがない`↔`ようもない`.
+    #
+    # This is the known Tier-B fold-guard behaviour, not lost content: a newly
+    # landed source adds a row to one side's bucket, so the pairwise guards
+    # (`generic-hub`, `one-way-different-reading`) that keep an ambiguous fold from
+    # merging two distinct points now fire. Verified that nothing became
+    # unreachable: all 16 forms are still separate `point` entries in the emitted
+    # keymap, and 0 contributor identities disappeared. The pair is split across
+    # two cards rather than folded onto one -- a findability regression worth its
+    # own card, NOT a conservation failure, and it cannot touch the public
+    # artifact, whose corpus (ninjal_bunkei + yokubi) has 0 Tier-B links at all.
+    assert report["tierB"]["accepted"] == 49
+    assert len(corpus["points"]) == 4481
 
 
 @pytestmark_corpus

@@ -33,15 +33,6 @@ three formation lines of one 接続 table is fixed uniformly; the anchor is chos
 specific enough that it never matches unintended text in the same card.
 """
 
-# This module hosts TWO independent, coexisting correction systems:
-#  1. FIELD corrections (Correction / load_corrections / apply_corrections):
-#     byte-anchored replace_all fixes to a GrammarPoint field, applied at the
-#     extract boundary from data/corrections/structure_corrections.json.
-#  2. READING corrections (ReadingCorrection / load_reading_corrections /
-#     apply_reading_corrections): byte-exact reading swaps applied before merge
-#     from data/corrections/readings.json. UGD-11c-B confirmed nine impossible
-#     readings; a zero-match correction raises StaleCorrection (fail closed).
-
 from __future__ import annotations
 
 import dataclasses
@@ -52,11 +43,6 @@ from .model import Example, GrammarPoint
 
 #: The corrections overlay ships in the repo (tracked), beside the data stages.
 DEFAULT_CORRECTIONS_PATH = pathlib.Path("data/corrections/structure_corrections.json")
-
-#: Default location of the tracked reading-correction overlay.
-DEFAULT_READINGS_PATH = pathlib.Path("data/corrections/readings.json")
-
-_REQUIRED_FIELDS = ("source", "source_id", "expression", "from", "to")
 
 #: Fields a correction may target. `structure` is a plain string; `examples` is a
 #: tuple of Example, and the anchor is matched/replaced inside each example's
@@ -98,39 +84,6 @@ class Correction:
             raise CorrectionError(f"correction targets unknown field: {self.field!r}")
 
 
-@dataclasses.dataclass(frozen=True)
-class ReadingCorrection:
-    """One evidence-backed reading correction, matched byte-exact."""
-
-    source: str
-    source_id: str
-    expression: str
-    from_reading: str
-    to_reading: str
-    evidence: str
-
-    @property
-    def match_key(self) -> tuple[str, str, str, str]:
-        return (self.source, self.source_id, self.expression, self.from_reading)
-
-
-class StaleCorrection(MalformedPayload):
-    """A declared reading correction matched no extracted row (fail closed)."""
-
-    def __init__(self, unmatched: "list[ReadingCorrection]") -> None:
-        self.unmatched = unmatched
-        shown = ", ".join(
-            f"{c.source}:{c.source_id} {c.from_reading!r}->{c.to_reading!r}"
-            for c in unmatched
-        )
-        super().__init__(
-            f"{len(unmatched)} reading correction(s) matched no extracted row "
-            f"({shown}). The extraction changed or the correction is stale; "
-            f"update data/corrections/readings.json rather than shipping a "
-            f"correction that fixes nothing."
-        )
-
-
 def load_corrections(path: pathlib.Path = DEFAULT_CORRECTIONS_PATH) -> list[Correction]:
     """Load the corrections overlay, or return an empty list when absent.
 
@@ -158,48 +111,6 @@ def load_corrections(path: pathlib.Path = DEFAULT_CORRECTIONS_PATH) -> list[Corr
                 rationale=item.get("rationale", ""),
             )
         )
-    return corrections
-
-
-def load_reading_corrections(
-    path: pathlib.Path = DEFAULT_READINGS_PATH,
-) -> list[ReadingCorrection]:
-    """Parse the reading-correction overlay. Missing file means no corrections."""
-    path = pathlib.Path(path)
-    if not path.is_file():
-        return []
-    payload = load_json(path.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict) or not isinstance(payload.get("corrections"), list):
-        raise MalformedPayload(f"malformed reading corrections overlay: {path}")
-    corrections: list[ReadingCorrection] = []
-    seen: set[tuple[str, str, str, str]] = set()
-    for raw in payload["corrections"]:
-        if not isinstance(raw, dict):
-            raise MalformedPayload("each correction must be an object")
-        for field in _REQUIRED_FIELDS:
-            value = raw.get(field)
-            if not isinstance(value, str) or not value:
-                raise MalformedPayload(
-                    f"a correction is missing a non-empty `{field}`: {raw!r}"
-                )
-        if raw["from"] == raw["to"]:
-            raise MalformedPayload(
-                f"a correction's `from` and `to` are identical (no-op): {raw!r}"
-            )
-        correction = ReadingCorrection(
-            source=raw["source"],
-            source_id=raw["source_id"],
-            expression=raw["expression"],
-            from_reading=raw["from"],
-            to_reading=raw["to"],
-            evidence=str(raw.get("evidence") or ""),
-        )
-        if correction.match_key in seen:
-            raise MalformedPayload(
-                f"duplicate correction key {correction.match_key!r}"
-            )
-        seen.add(correction.match_key)
-        corrections.append(correction)
     return corrections
 
 
@@ -300,62 +211,10 @@ def _apply_to_examples(
     return tuple(out), count
 
 
-def apply_reading_corrections(
-    rows: list[tuple[str, dict[str, object]]],
-    corrections: list[ReadingCorrection],
-) -> tuple[list[tuple[str, dict[str, object]]], list[dict[str, object]]]:
-    """Return ``(rows, applied)`` with each correction's ``from`` swapped to ``to``.
-
-    Rows are matched byte-exact on ``(source, source_id, expression, reading)``.
-    Every correction must match at least one row or ``StaleCorrection`` is
-    raised. ``applied`` is a per-row audit trail (one entry per row rewritten).
-    Rows are shallow-copied before mutation so the caller's input is untouched.
-    """
-    by_key: dict[tuple[str, str, str, str], ReadingCorrection] = {
-        c.match_key: c for c in corrections
-    }
-    matched: set[tuple[str, str, str, str]] = set()
-    applied: list[dict[str, object]] = []
-    out: list[tuple[str, dict[str, object]]] = []
-    for source, record in rows:
-        key = (
-            source,
-            str(record.get("source_id") or ""),
-            str(record.get("expression") or ""),
-            str(record.get("reading")) if record.get("reading") is not None else "",
-        )
-        correction = by_key.get(key)
-        if correction is None:
-            out.append((source, record))
-            continue
-        matched.add(key)
-        rewritten = dict(record)
-        rewritten["reading"] = correction.to_reading
-        out.append((source, rewritten))
-        applied.append(
-            {
-                "source": correction.source,
-                "source_id": correction.source_id,
-                "expression": correction.expression,
-                "from": correction.from_reading,
-                "to": correction.to_reading,
-            }
-        )
-    unmatched = [c for c in corrections if c.match_key not in matched]
-    if unmatched:
-        raise StaleCorrection(unmatched)
-    return out, applied
-
-
 __all__ = [
     "Correction",
     "CorrectionError",
-    "ReadingCorrection",
-    "StaleCorrection",
     "DEFAULT_CORRECTIONS_PATH",
-    "DEFAULT_READINGS_PATH",
-    "load_corrections",
     "apply_corrections",
-    "load_reading_corrections",
-    "apply_reading_corrections",
+    "load_corrections",
 ]

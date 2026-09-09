@@ -45,11 +45,11 @@ STYLES_CSS = """\
      the measurement DID expose is that the card renders seven distinct gap values
      collapsing into two colliding perceptual bands:
 
-       new paragraph      7.69px  \
+       new paragraph      7.69px  |
        label lead-in      6.92px   > three DIFFERENT jobs, all within 0.8px
-       translation tier   7.23px  /
-       new example set   13.30px  \  a named section landmark separated no more
-       section heading   14.27px  /  clearly than the next example in a list
+       translation tier   7.23px  |
+       new example set   13.30px  |  a named section landmark separated no more
+       section heading   14.27px  |  clearly than the next example in a list
 
      Two independent reads of the same tile named exactly this: "at least four or
      five unrelated vertical gap values with no shared scale... vertical space
@@ -395,8 +395,8 @@ STYLES_CSS = """\
    the same source name. */
 
 /* This source's own JLPT level, stated where that source speaks. 158 entries
-   carry a cross-source disagreement (`あまり` is N2 to 絵でわかる日本語 and N3 to
-   毎日のんびり日本語教師) and the compact block is deliberately one line, so the
+   carry a cross-source disagreement (one source says N2 where another says N3
+   for the same point) and the compact block is deliberately one line, so the
    disagreement is disclosed per source rather than reconciled.
 
    It is PROVENANCE about the claim below it, not the claim itself: subordinate in

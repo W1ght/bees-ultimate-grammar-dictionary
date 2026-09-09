@@ -452,22 +452,9 @@ def propose_variant_links(
     """Tier B: accept producer-attested variant edges that survive every guard.
 
     A candidate exists when a row declares a variant whose normalized key is
-    owned, inside the same partition, by *unambiguous* rows of one or more other
-    sources — each other source contributing exactly one row. That is itself a
-    guard: a variant pointing into a homograph fan (a source with two or more
-    senses on the key) is not a usable claim and is refused.
-
-    When several other sources own the target key they have already folded onto
-    one Tier-A point, so the target is still a single point. The link is allowed
-    to reach a multi-source target only on *reading-identity* evidence: the
-    declaring row and the target must share an identical kana reading, and no
-    target row may carry a *different* non-empty reading. This is the same
-    orthographic-pair evidence used for `今更`/`いまさら`; it just no longer
-    requires the target to happen to be owned by a single other source (`や否や`
-    declares the variant `やいなや`, whose point is owned by two sources). A
-    reciprocal-only claim is never allowed to fan across a multi-source target,
-    because a reciprocal declaration between *different* readings is weaker
-    evidence than shared kana.
+    owned, inside the same partition, by exactly one row of exactly one *other*
+    source. That unambiguous-target requirement is itself a guard: a variant
+    pointing into a homograph fan is not a usable claim.
 
     Guards, each measured against the real corpus:
 
@@ -493,34 +480,9 @@ def propose_variant_links(
                 for name, found in per_source.items()
                 if name != row.row_id.source
             }
-            if not others:
+            other = _link_target(row, others)
+            if other is None:
                 continue
-            # A source contributing two or more rows to the key is a homograph fan:
-            # which sense does the variant claim mean? Unanswerable, so refuse.
-            if any(len(found) != 1 for found in others.values()):
-                continue
-            reps = [found[0] for found in others.values()]
-            if len(reps) == 1:
-                other = reps[0]
-            else:
-                # The target key is owned by several sources that already fold onto
-                # one Tier-A point. Reach it only on reading-identity: the declaring
-                # row must share an identical kana reading with the point, and no
-                # member may carry a *different* non-empty reading. Members with an
-                # absent reading neither confirm nor contradict — they are the same
-                # folded point regardless (e.g. bunpou's `〜やいなや` ships no reading).
-                identity = row.reading_identity
-                if not identity:
-                    continue
-                matching = [rep for rep in reps if rep.reading_identity == identity]
-                conflicting = [
-                    rep
-                    for rep in reps
-                    if rep.reading_identity and rep.reading_identity != identity
-                ]
-                if not matching or conflicting:
-                    continue
-                other = min(matching, key=lambda rep: rep.row_id.sort_key)
 
             reciprocal = row.key in variant_keys(other.record)
             guard = _link_guard(row, other, key, degree, reciprocal)
@@ -549,6 +511,56 @@ def propose_variant_links(
     strict, chained = _restrict_to_pairwise(accepted, by_id)
     refused.extend(chained)
     return strict, refused
+
+
+def _link_target(row: Row, others: dict[str, list[Row]]) -> Row | None:
+    """The one row a variant claim can point at, or None when it is ambiguous.
+
+    A variant key must resolve to a single row of a single *other* source. Where
+    exactly one other source owns the bucket that is immediate.
+
+    Where SEVERAL other sources own it, the bucket is not automatically a
+    homograph fan: several producers listing the same kana headword is
+    corroboration. The problem is that only five of the ten sources state a
+    reading at all -- 2,757 of 7,896 rows have none (bunpou 534/534, bunpro
+    964/964, imabi 494/494, yokubi 132/132, ninjal 633/800) -- so 791 of 2,985
+    buckets mix reading-bearing and reading-silent rows. Requiring every row in
+    the bucket to agree on a reading therefore let any reading-less source
+    permanently block orthographic folding into it: `や否や` stopped folding with
+    `やいなや` the moment bunpou/511 joined that bucket beside donna_toki.
+
+    Two looser rules were measured and rejected. Treating a missing reading as
+    agreement proposes 208 extra edges including outright polarity errors
+    (`てはいく` <-> `てはいけない`, `なければなる` <-> `なければならない`) and still nets
+    zero after the pairwise check while losing the `に即して`/`に則して` pair.
+    Linking to a bucket representative re-points existing edges and loses
+    `に反する`/`に反して` and `に応じた`/`に応じて`.
+
+    So require positive evidence on the endpoint actually linked: exactly one row
+    states the proposer's own reading, and every other row there states none, so
+    nothing contradicts. A row stating a DIFFERENT reading still refuses the
+    claim. Measured on the full corpus this adds 10 edges, all genuine kanji/kana
+    spellings of one point (`や否や`/`やいなや`, `甲斐`/`かい`, `の内`/`のうち`,
+    `振る`/`ぶる`, `抜く`/`ぬく`, `恐れがある`/`おそれがある`, ...) and loses none. The
+    `には当たる`/`にはあたらない` polarity ambiguity is still refused, by the existing
+    strict-pairwise degree check.
+    """
+    if not others:
+        return None
+    if len(others) == 1:
+        (_, found), = others.items()
+        return found[0] if len(found) == 1 else None
+    if any(len(found) != 1 for found in others.values()):
+        # A source contributing two rows to one bucket IS a homograph fan.
+        return None
+    if not row.reading_identity:
+        return None
+    candidates = [found[0] for found in others.values()]
+    matching = [r for r in candidates if r.reading_identity == row.reading_identity]
+    silent = [r for r in candidates if not r.reading_identity]
+    if len(matching) != 1 or len(matching) + len(silent) != len(candidates):
+        return None
+    return matching[0]
 
 
 def _link_guard(

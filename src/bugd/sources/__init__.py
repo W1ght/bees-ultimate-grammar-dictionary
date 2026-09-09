@@ -21,7 +21,6 @@ from __future__ import annotations
 from .base import Extractor, ExtractResult, SourceLockError, load_source_lock
 from .registry import (
     all_extractors,
-    discover_extractors,
     get_extractor,
     load_source_modules,
     register_extractor,
@@ -34,7 +33,6 @@ __all__ = [
     "SourceLockError",
     "load_source_lock",
     "all_extractors",
-    "discover_extractors",
     "get_extractor",
     "load_source_modules",
     "register_extractor",

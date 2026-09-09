@@ -71,9 +71,10 @@ import typing
 from collections import Counter, defaultdict
 
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
-from .corrections import ReadingCorrection, StaleCorrection
+from .reading_corrections import ReadingCorrection, StaleCorrection
 from .keymap import alias_targets, is_declared_alias, substance_hash
-from .model import JLPT_LEVELS, Example, GrammarPoint
+from .model import JLPT_LEVELS, Example, GrammarPoint, row_uid_matches
+from .normalize import PLACEHOLDER_TILDES
 
 if typing.TYPE_CHECKING:  # pragma: no cover - import cycle broken at runtime
     from .merge import MergedEntry
@@ -144,6 +145,13 @@ class Contribution:
     card renders under a labelled per-source disclosure, so `source`,
     `source_id`, `source_label` and `provenance` stay attached to the exact prose
     they came from.
+
+    `row_uid` is the machine identity of the one extracted source row this
+    contribution restates; `source_id` remains the producer's human-facing
+    headword and is deliberately NOT unique (one `edewakaru` `source_id` names 22
+    rows). Attribution must be keyed on `row_uid`: keying on
+    `(source, source_id)` addressed 2+ genuinely different records on 289 handles
+    and put two different JLPT levels under one handle on 54 entries.
     """
 
     source: str
@@ -158,6 +166,7 @@ class Contribution:
     explanation: str | None
     notes: str | None
     jlpt: str | None
+    row_uid: str = ""
     examples: tuple[Example, ...] = ()
     tags: tuple[str, ...] = ()
     ai_generated: dict[str, object] = dataclasses.field(default_factory=dict)
@@ -417,9 +426,17 @@ def build_contribution(
     tags = record.get("tags") or ()
     if not isinstance(tags, (list, tuple)):
         raise MalformedPayload("a record's `tags` must be an array")
+    uid = record.get("row_uid")
+    if not isinstance(uid, str) or not row_uid_matches(uid, source):
+        raise MalformedPayload(
+            f"{source}:{record.get('source_id')!r} has no valid row_uid ({uid!r}). Re-run "
+            f"`make extract`: attribution is keyed on row identity because source_id is "
+            f"not unique, so merging a row without one would reintroduce ambiguous claims."
+        )
     return Contribution(
         source=source,
         source_id=str(record.get("source_id") or ""),
+        row_uid=uid,
         source_label=source_label,
         canonical_key=canonical_key,
         expression=str(record["expression"]),
@@ -506,6 +523,42 @@ def _group_of(point: dict[str, object]) -> tuple[str, str, str]:
     return axes["variety"], axes["era"], str(point.get("bucketKey") or "")
 
 
+def display_headword(form: str) -> str:
+    """Normalize a form for use as the emitted LOOKUP headword.
+
+    Two transforms, both about reachability rather than content:
+
+    1. **Strip leading placeholder marks.** A leading `〜`/`～`/`~` is a producer's
+       slot placeholder meaning "something attaches here", not part of the written
+       form -- `normalize.PLACEHOLDER_TILDES` already documents this and
+       `lookup_key` already discards them, which is why stripping here cannot move
+       any bucket's identity. It has to go from the emitted headword too, because
+       Yomitan's `termsFind` matches from the START of the query text: a headword
+       stored as `〜あとで` is unreachable, since the learner types `あとで` and the
+       scan never matches. Measured on the convergence artifact, 1,198 of 4,623
+       entries (26%) were stored tilde-first and therefore unlookupable, against 0
+       in the pre-convergence 5-source baseline -- the five source families landed
+       by UGD-16 publish their headwords with the placeholder attached, while the
+       original five stripped it in `yomitan_bank.TermRow`.
+
+       Only LEADING marks go: an interior tilde (`〜たりとも〜ない`) carries real
+       structure about where the second slot falls.
+
+    2. Nothing else. In particular a newline is NOT cut here. Exactly one row in
+       the corpus (`bunpou` `〜向けに\\n類似文型「〜向き」との違い`) glues a comparison
+       note onto its headword with a line break, and truncating it at this layer
+       collides it onto the genuine `向けに` point -- two `point` entries sharing a
+       headword with identical axes, which is a merge-identity defect rather than a
+       display one. Repairing a producer's headword belongs in the recorded
+       correction table, where the change is keyed, reviewable and replayable;
+       `display_headword` only removes marks that were never part of the form.
+
+    A form that reduces to nothing is returned untouched rather than emptied.
+    """
+    stripped = form.lstrip(PLACEHOLDER_TILDES + "\u3000 ")
+    return stripped if stripped else form
+
+
 def choose_headword(bucket_key: str, expressions: list[str]) -> str:
     """The written form the unified entry is looked up under.
 
@@ -514,12 +567,15 @@ def choose_headword(bucket_key: str, expressions: list[str]) -> str:
     it keeps the entry's identity and its headword in agreement. Otherwise the
     lexicographically first contributing expression is used, which is stable and
     is always a form some source really publishes -- never a synthesised string.
+
+    The chosen form then has leading placeholder marks stripped so it is actually
+    reachable by `termsFind`; see `display_headword`.
     """
     if bucket_key in expressions:
-        return bucket_key
+        return display_headword(bucket_key)
     if not expressions:
         raise MalformedPayload("cannot choose a headword with no expressions")
-    return sorted(expressions)[0]
+    return display_headword(sorted(expressions)[0])
 
 
 def _entry_reading(contributions: tuple[Contribution, ...], expression: str) -> str | None:
@@ -705,11 +761,25 @@ def unify(
             )
         )
 
-    # Fail closed on a stale overlay: every declared correction must have matched
-    # at least one assembled contribution. A correction that matched nothing means
-    # the extraction drifted or the correction is obsolete; ignoring it would let
-    # the overlay claim to fix a defect it no longer touches.
-    unmatched = [c for c in corrections if c.match_key not in correction_hits]
+    # Fail closed on a stale overlay: every declared correction whose SOURCE is in
+    # this corpus must have matched at least one assembled contribution. A
+    # correction that matched nothing while its source is present means the
+    # extraction drifted or the correction is obsolete; ignoring it would let the
+    # overlay claim to fix a defect it no longer touches.
+    #
+    # A correction for a source that contributes NO rows here is out of scope, not
+    # stale. Two real corpora are legitimately narrower than the overlay: a
+    # single-source stage run, and the PUBLIC build, where the redistribution
+    # filter (`bugd.publish_filter`) removes eight of the ten sources. Failing
+    # there would block the publish path for the wrong reason while telling us
+    # nothing about drift. Scoping keeps the gate's full bite on every source
+    # actually in the corpus.
+    present_sources = {source for source, _ in rows}
+    unmatched = [
+        c
+        for c in corrections
+        if c.match_key not in correction_hits and c.source in present_sources
+    ]
     if unmatched:
         raise StaleCorrection(unmatched)
 
@@ -849,6 +919,15 @@ def build_redirects(
 
         basis_counts[basis] += 1
         redirect_sources = sorted({source for source, _ in members})
+        # NOT display_headword'd, deliberately. A redirect exists because `form` is
+        # a DIFFERENT written form from its target; stripping the leading
+        # placeholder here collapses `〜あげく` onto the point `あげく` that it
+        # redirects to, which measured 1,061 self-redirects (headword listed among
+        # its own targets) and 912 redirect headwords colliding with a point
+        # headword, against 0 of each before. The point path strips because its
+        # headword is the only surface for that entry; a redirect's whole purpose
+        # is to be the other spelling, and its tilde-free form is already reachable
+        # through the point it names.
         reading = ""
         for source, record in members:
             candidate = record.get("reading")
@@ -903,6 +982,9 @@ def contribution_to_json(contribution: Contribution) -> dict[str, object]:
     payload: dict[str, object] = {
         "source": contribution.source,
         "sourceId": contribution.source_id,
+        # The unique machine identity of the source row. Written next to the
+        # non-unique human handle so a reader can tell them apart at a glance.
+        "rowUid": contribution.row_uid,
         "sourceLabel": contribution.source_label,
         "canonicalKey": contribution.canonical_key,
         "expression": contribution.expression,
@@ -1001,6 +1083,7 @@ def contribution_from_json(payload: dict[str, object]) -> Contribution:
     return Contribution(
         source=str(payload["source"]),
         source_id=str(payload.get("sourceId") or ""),
+        row_uid=str(payload.get("rowUid") or ""),
         source_label=str(payload.get("sourceLabel") or payload["source"]),
         canonical_key=str(payload.get("canonicalKey") or ""),
         expression=str(payload["expression"]),
@@ -1269,6 +1352,7 @@ def to_grammar_point(
     return GrammarPoint(
         source=contribution.source,
         source_id=contribution.source_id or contribution.expression,
+        row_uid=contribution.row_uid,
         expression=expression,
         variants=variants,
         reading=contribution.reading,
@@ -1347,6 +1431,7 @@ __all__ = [
     "build_contribution",
     "build_redirects",
     "choose_headword",
+    "display_headword",
     "contribution_from_json",
     "contribution_to_json",
     "dedupe_examples",

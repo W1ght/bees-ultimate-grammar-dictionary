@@ -1,0 +1,44 @@
+{
+  "acquiredAt": "2026-09-08T14:01:04Z",
+  "files": {
+    "changelog.txt": {
+      "byteCount": 179,
+      "sha256": "a42b1b3ef48d74e2c42223740a759ac6e3af6bd3db32e8a2131cd0a3b177c80c",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/edewakaru/changelog.txt"
+    },
+    "index.json": {
+      "byteCount": 494,
+      "sha256": "63620ab07b0f54b95773a4cd9569e2f993e2ebf5aad64e5dc20fab5b61512de1",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/edewakaru/index.json"
+    },
+    "term_bank_1.json": {
+      "byteCount": 1183571,
+      "sha256": "5417eee6bff1dc707e4a7ac532112f6174f9cd8918c589e10dd4a1358e582e6c",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/edewakaru/term_bank_1.json"
+    },
+    "term_bank_2.json": {
+      "byteCount": 1766611,
+      "sha256": "7bc09417ae32762e70e1452ca9566f8753625d9506798346b518f9088b5ffc91",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/edewakaru/term_bank_2.json"
+    },
+    "term_bank_3.json": {
+      "byteCount": 527155,
+      "sha256": "c7c0262742fe6636b4250094c315e4f5ec3cff9442f6984ab4564bbbe777e7c7",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/edewakaru/term_bank_3.json"
+    },
+    "term_bank_4.json": {
+      "byteCount": 2057647,
+      "sha256": "c576839fe606ae7291314984decf3f045bbe359c4c81d3f74640e70f19635b32",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/edewakaru/term_bank_4.json"
+    }
+  },
+  "provenance": {
+    "license": "unlicensed community derivative; producer publishes 利用規約",
+    "licenseTier": "B",
+    "producer": "https://www.edewakaru.com/archives/cat_179055.html",
+    "redistributable": false,
+    "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
+    "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
+  },
+  "source": "edewakaru"
+}

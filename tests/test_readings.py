@@ -12,11 +12,11 @@ from __future__ import annotations
 
 import pytest
 
-from bugd.corrections import (
+from bugd.reading_corrections import (
     ReadingCorrection,
     StaleCorrection,
-    apply_reading_corrections,
-    load_reading_corrections,
+    apply_corrections,
+    load_corrections,
 )
 from bugd.readings import has_kanji, is_plausible_reading
 
@@ -101,6 +101,61 @@ def test_gate_is_structural_not_semantic():
     assert not is_plausible_reading("結構", "けっか")
 
 
+def test_alternative_spellings_are_judged_separately():
+    """`A・B` in one headword lists alternative spellings of ONE pattern.
+
+    NINJAL, bunpou, bunpro and IMABI write alternatives this way (43 kanji-bearing
+    rows), so the reading renders EACH alternative rather than the concatenation.
+    Judged as one string the gate sees two kanji runs (即, 則) and only one そく in
+    the reading, and rejected four correct NINJAL readings.
+
+    Asserted as the property, and paired with the refusal below so the relaxation
+    cannot become "ignore everything after a separator".
+    """
+    assert is_plausible_reading("～に即して・～に則して", "～にそくして")
+    assert is_plausible_reading("～反面・～半面", "～はんめん")
+    assert is_plausible_reading("～に即し・～に則し", "～にそくし")
+
+
+def test_one_bad_alternative_still_fails_the_gate():
+    """EVERY alternative must be renderable, not merely one of them.
+
+    The counterpart to the test above: a relaxation that accepted a headword as
+    soon as any single alternative matched would let a genuine defect through on
+    the back of its correct sibling.
+    """
+    assert not is_plausible_reading("～に即して・～結構して", "～にそくして")
+
+
+def test_a_descriptive_label_headword_is_out_of_the_gates_scope():
+    """One NINJAL row is a LABEL, not a headword, and the gate cannot judge it.
+
+    `可能の形 （～れる・～られる）` with reading `～れる（かのう）` is prose describing the
+    potential form, with the two suffixes parenthesised; the reading inverts that
+    and parenthesises the sense tag instead. The label 可能の形 reads かのうのかたち,
+    so no kana-coverage rule can relate the two sides -- stripping parentheses
+    leaves the bare label and makes it worse, not better.
+
+    Pinned as a KNOWN LIMIT rather than papered over: the gate still reports it, and
+    `scripts/audit_readings.py` carries it as a documented allowance. Inventing a
+    rule that passed this row would have to accept an arbitrary label/reading pair
+    and would stop catching real defects. Measured scope: exactly 1 of 1,513
+    kanji-bearing rows.
+    """
+    assert not is_plausible_reading("可能の形 （～れる・～られる）", "～れる（かのう）")
+
+
+def test_annotation_handling_does_not_disarm_the_structural_gate():
+    """Stripping annotation must not turn the gate into a rubber stamp.
+
+    A structurally impossible reading is still rejected when it carries a
+    parenthetical tag or an alternative separator, so the notation handling cannot
+    be used to launder a defect past the gate.
+    """
+    assert not is_plausible_reading("結構（かんじ）", "けっか")
+    assert not is_plausible_reading("結構・結構", "けっか")
+
+
 def test_has_kanji():
     assert has_kanji("結構")
     assert has_kanji("の下で")
@@ -119,7 +174,7 @@ def test_shipped_overlay_targets_are_plausible():
     A correction that swaps one impossible reading for another impossible one
     would be worse than useless; this guards the overlay itself.
     """
-    corrections = load_reading_corrections()
+    corrections = load_corrections()
     assert corrections, "the shipped reading-correction overlay is empty"
     for c in corrections:
         assert is_plausible_reading(c.expression, c.to_reading), (
@@ -143,7 +198,7 @@ def test_apply_corrections_rewrites_matched_row():
     corrections = [
         ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "test"),
     ]
-    out, applied = apply_reading_corrections(rows, corrections)
+    out, applied = apply_corrections(rows, corrections)
     assert out[0][1]["reading"] == "こむ"
     assert out[1][1]["reading"] == "けっこう"
     assert applied == [
@@ -156,7 +211,7 @@ def test_apply_corrections_is_byte_exact_on_from():
     rows = [_row("edewakaru", "込む", "込む", "こむ")]  # already correct
     corrections = [ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "test")]
     with pytest.raises(StaleCorrection):
-        apply_reading_corrections(rows, corrections)
+        apply_corrections(rows, corrections)
 
 
 def test_stale_correction_fails_closed():
@@ -164,7 +219,47 @@ def test_stale_correction_fails_closed():
     rows = [_row("dojg", "結構", "結構", "けっこう")]
     corrections = [ReadingCorrection("dojg", "無い点", "無い点", "x", "y", "test")]
     with pytest.raises(StaleCorrection, match="無い点"):
-        apply_reading_corrections(rows, corrections)
+        apply_corrections(rows, corrections)
+
+
+def test_a_correction_for_a_source_outside_the_corpus_is_not_stale():
+    """Staleness is scoped to the sources the corpus actually carries.
+
+    Two real corpora are legitimately narrower than the overlay: a single-source
+    stage run (`--source dojg`), and the PUBLIC build, where the redistribution
+    filter removes eight of the ten sources. Raising there blocks the publish path
+    for a reason that says nothing about drift — the overlay simply describes rows
+    this corpus does not include.
+
+    Verified against the shipped overlay's actual shape: all eight corrections
+    target `dojg`, `edewakaru`, `nihongo_net`, `nihongo_no_sensei` — every one of
+    them excluded from the public artifact — so an unscoped gate makes
+    `make public` impossible.
+    """
+    rows = [_row("yokubi", "だ", "だ", None)]
+    corrections = [ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "t")]
+    out, applied = apply_corrections(rows, corrections)
+    assert applied == []
+    assert out == rows
+
+
+def test_the_gate_keeps_its_bite_on_every_source_in_the_corpus():
+    """Scoping must not become "ignore anything that does not match".
+
+    A correction whose source IS present but whose row is gone is exactly the
+    drift the gate exists for, and must still raise even when a second,
+    out-of-scope correction is present in the same overlay.
+    """
+    rows = [_row("dojg", "結構", "結構", "けっこう")]
+    corrections = [
+        ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "out of scope"),
+        ReadingCorrection("dojg", "無い点", "無い点", "x", "y", "drifted"),
+    ]
+    with pytest.raises(StaleCorrection, match="無い点") as caught:
+        apply_corrections(rows, corrections)
+    # Only the in-scope correction is reported, so the message names the real
+    # defect instead of burying it under out-of-scope noise.
+    assert [c.source for c in caught.value.unmatched] == ["dojg"]
 
 
 # --------------------------------------------------------------------------
@@ -176,6 +271,11 @@ def _full_row(source, source_id, expression, reading):
     return {
         "source": source,
         "source_id": source_id,
+        # UGD-11d-C made row identity mandatory at the merge boundary: `source_id`
+        # is not unique, so a contribution built from an unstamped row would not be
+        # traceable to a single source record. `ExtractResult` stamps it for real
+        # rows; a fixture must supply it or `unify` fails closed.
+        "row_uid": f"{source}:1",
         "expression": expression,
         "variants": [],
         "reading": reading,
@@ -257,6 +357,47 @@ def test_unify_fails_closed_on_stale_correction():
 
     with pytest.raises(StaleCorrection):
         unify([("edewakaru", row)], keymap, {"edewakaru": "絵でわかる"}, corrections=corrections)
+
+
+def test_unify_scopes_staleness_to_the_sources_in_the_corpus():
+    """`unify` keeps its OWN copy of the staleness gate — scope both.
+
+    `bugd.unify` re-checks correction hits after contribution assembly, so
+    scoping `reading_corrections.apply_corrections` alone leaves the public build
+    failing at the merge stage instead. Both call sites are asserted, or the fix
+    is half-applied and only the second one is discovered at release time.
+    """
+    from bugd.unify import unify
+
+    row = _full_row("yokubi", "だ", "だ", None)
+    keymap = _unify_keymap([("yokubi", row, "だ")], [_point("だ", "だ", "だ")])
+    corrections = [ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "t")]
+
+    entries, _ = unify(
+        [("yokubi", row)], keymap, {"yokubi": "Yokubi"}, corrections=corrections
+    )
+    assert entries[0].contributions[0].reading is None
+
+
+def test_unify_still_fails_on_drift_within_a_present_source():
+    """Scoping must not disarm the gate for a source the corpus does carry."""
+    from bugd.unify import unify
+
+    row = _full_row("edewakaru", "込む", "込む", "こむ")  # already correct
+    keymap = _unify_keymap([("edewakaru", row, "込む")], [_point("込む", "込む", "込む")])
+    corrections = [
+        ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "out of scope"),
+        ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "drifted"),
+    ]
+
+    with pytest.raises(StaleCorrection) as caught:
+        unify(
+            [("edewakaru", row)],
+            keymap,
+            {"edewakaru": "絵でわかる"},
+            corrections=corrections,
+        )
+    assert [c.source for c in caught.value.unmatched] == ["edewakaru"]
 
 
 def test_unify_without_corrections_is_verbatim():

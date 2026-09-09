@@ -1,0 +1,23 @@
+{
+  "acquiredAt": "2026-09-08T14:01:01Z",
+  "files": {
+    "index.json": {
+      "byteCount": 709,
+      "sha256": "740cfa80843322b9a97d65dc35a9489d2be3c72c9095eca3e4de88e64966ef0a",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/dojg/index.json"
+    },
+    "term_bank_1.json": {
+      "byteCount": 1362018,
+      "sha256": "6d2395104edb85e5b5a077a01f8787e6e112c3ce9469d6dcb34cdbc037fd5b64",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/dojg/term_bank_1.json"
+    }
+  },
+  "provenance": {
+    "license": "unlicensed community derivative of a commercial print work",
+    "licenseTier": "C",
+    "redistributable": false,
+    "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
+    "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
+  },
+  "source": "dojg"
+}

@@ -51,6 +51,12 @@ YOKUBI_ATTRIBUTION = "Yokubi — The Common Grammar Guide (https://yoku.bi), CC 
 
 LICENCE = "CC-BY-4.0"
 LICENSE_TIER = "A"
+#: CC BY 4.0 permits redistribution with attribution. The module docstring has
+#: always claimed this flag; it was never actually emitted, so every Yokubi
+#: record read `redistributable: None` and a publish-time filter reading the
+#: documented key would have excluded the one source whose licence is verified
+#: in its own locked bytes.
+REDISTRIBUTABLE = True
 SITE = "https://yoku.bi/"
 
 #: Reason recorded for a lesson Yokubi teaches without declaring a Japanese
@@ -320,6 +326,7 @@ class YokubiExtractor(Extractor):
         points: list[GrammarPoint] = []
         consumed: dict[str, str] = {"src/SUMMARY.md": "index"}
         skipped_lessons: list[dict[str, object]] = []
+        covered_lessons: list[dict[str, object]] = []
         lessons_listed = 0
         examples_unattached = 0
         example_skips: list[dict[str, object]] = []
@@ -334,8 +341,14 @@ class YokubiExtractor(Extractor):
             title = _lesson_h1(body) or label_title
             heads = title_headwords(title)
             examples, group_skips = parse_examples(body)
-            example_skips.extend(group_skips)
             lesson_url = _lesson_url(relative)
+            # Attribute each unparseable group to the lesson that declared it, so
+            # the coverage report can name where a skip happened instead of
+            # publishing an unattributable flat list.
+            for skip in group_skips:
+                skip["lesson"] = number
+                skip["lessonUrl"] = lesson_url
+            example_skips.extend(group_skips)
             # An unparseable group that still carries Japanese is lesson-scoped
             # context Yokubi declared but that attaches to no headword; it is
             # counted as unattached rather than silently discarded.
@@ -378,15 +391,28 @@ class YokubiExtractor(Extractor):
                             "attribution": YOKUBI_ATTRIBUTION,
                             "licence": LICENCE,
                             "licenseTier": LICENSE_TIER,
+                            "redistributable": REDISTRIBUTABLE,
                             "revision": revision,
                         },
                     )
                 )
             examples_unattached += sum(1 for hit in attached_any if not hit) + unparseable_jp
+            covered_lessons.append(
+                {
+                    "lesson": number,
+                    "title": title,
+                    "lessonUrl": lesson_url,
+                    "headwords": list(heads),
+                    "examplesAttached": sum(1 for hit in attached_any if hit),
+                    "exampleGroupsSkipped": len(group_skips),
+                }
+            )
 
         stats: dict[str, object] = {
             "lessonsListed": lessons_listed,
             "headwordPoints": len(points),
+            "coveredLessons": covered_lessons,
+            "coveredCount": len(covered_lessons),
             "skippedLessons": skipped_lessons,
             "skippedCount": len(skipped_lessons),
             "examplesUnattached": examples_unattached,
@@ -394,11 +420,20 @@ class YokubiExtractor(Extractor):
             "attribution": YOKUBI_ATTRIBUTION,
             "licence": LICENCE,
             "licenseTier": LICENSE_TIER,
+            "redistributable": REDISTRIBUTABLE,
             "revision": revision,
         }
-        return ExtractResult(
+        result = ExtractResult(
             source=self.name, points=points, consumed=consumed, stats=stats
         )
+        # Emit the reviewable per-source artifacts the card requires: the
+        # normalized records as JSONL and the coverage report naming every lesson
+        # covered or skipped. render_coverage fails closed if the two lesson
+        # lists do not account for every lesson SUMMARY.md listed, so a report
+        # that silently dropped a lesson cannot be written.
+        self.write_jsonl(points)
+        self.write_coverage(result)
+        return result
 
     def _revision(self) -> str:
         """The pinned upstream revision recorded in the source lock.
@@ -414,6 +449,134 @@ class YokubiExtractor(Extractor):
             raise SourceLockError("yokubi source lock records no revision")
         return revision
 
+    def write_jsonl(self, points: list[GrammarPoint]) -> pathlib.Path:
+        """Write this source's normalized records as JSONL beside its locked bytes.
+
+        One canonical JSON object per line, in extraction order, matching the
+        community sources' ``points.jsonl`` convention so a reviewer can read
+        Yokubi's records without running the merge stage.
+        """
+        from ..pipeline import point_to_json
+
+        path = self.input_dir / JSONL_NAME
+        path.write_text(
+            "".join(dump_json(point_to_json(point)) + "\n" for point in points),
+            encoding="utf-8",
+        )
+        return path
+
+    def write_coverage(self, result: ExtractResult) -> pathlib.Path:
+        """Write the human-readable coverage report the card requires.
+
+        Every lesson ``SUMMARY.md`` lists appears exactly once, either as covered
+        with the headwords its own title declared, or as skipped with the reason
+        recorded. Unparseable example groups are reported the same way, attributed
+        to the lesson that declared them.
+        """
+        path = self.input_dir / COVERAGE_NAME
+        path.write_text(render_coverage(result), encoding="utf-8")
+        return path
+
+
+def render_coverage(result: ExtractResult) -> str:
+    """Render the Yokubi coverage report from one extraction result.
+
+    Fails closed rather than publishing an unaccounted lesson: covered plus
+    skipped must equal the number of lessons ``SUMMARY.md`` listed, because a
+    report that silently loses a lesson is exactly the omission this card forbids.
+    """
+    stats = result.stats
+    listed = int(stats["lessonsListed"])  # type: ignore[arg-type]
+    covered: list[dict] = list(stats["coveredLessons"])  # type: ignore[arg-type]
+    skipped: list[dict] = list(stats["skippedLessons"])  # type: ignore[arg-type]
+    groups: list[dict] = list(stats["exampleGroupsSkipped"])  # type: ignore[arg-type]
+
+    if len(covered) + len(skipped) != listed:
+        raise MalformedPayload(
+            f"yokubi coverage does not account for every lesson: "
+            f"{len(covered)} covered + {len(skipped)} skipped != {listed} listed"
+        )
+
+    lines: list[str] = []
+    lines.append("# Yokubi coverage report")
+    lines.append("")
+    lines.append(f"Source: {YOKUBI_ATTRIBUTION}")
+    lines.append(f"Upstream revision: `{stats['revision']}`")
+    lines.append(f"Licence: {LICENCE} (redistribution permitted with attribution)")
+    lines.append("")
+    lines.append(
+        "Yokubi publishes one `# ` H1 per lesson and no sub-headings, so the "
+        "smallest unit it declares is the lesson. A headword is only taken from a "
+        "Japanese token a lesson title itself declares, and an example only "
+        "attaches to a headword when the example text contains it. No grammar-point "
+        "boundary is inferred anywhere in this report."
+    )
+    lines.append("")
+    lines.append("## Totals")
+    lines.append("")
+    lines.append(f"- Lessons listed in `SUMMARY.md`: **{listed}**")
+    lines.append(f"- Lessons covered: **{len(covered)}**")
+    lines.append(f"- Lessons skipped (reason recorded below): **{len(skipped)}**")
+    lines.append(f"- Grammar points emitted: **{len(result.points)}**")
+    lines.append(f"- Example sentences unattached to any headword: **{stats['examplesUnattached']}**")
+    lines.append(f"- Example groups skipped as unpaired: **{len(groups)}**")
+    lines.append("")
+
+    lines.append("## Covered lessons")
+    lines.append("")
+    lines.append("| Lesson | Title | Headwords declared by the title | Examples attached |")
+    lines.append("| --- | --- | --- | --- |")
+    for row in covered:
+        heads = ", ".join(f"`{head}`" for head in row["headwords"])
+        lines.append(
+            f"| {row['lesson']} | [{row['title']}]({row['lessonUrl']}) | {heads} "
+            f"| {row['examplesAttached']} |"
+        )
+    lines.append("")
+
+    lines.append("## Skipped lessons")
+    lines.append("")
+    if not skipped:
+        lines.append("None: every lesson declared at least one Japanese headword.")
+    else:
+        lines.append(
+            "These lessons are real Yokubi content, but their own titles declare no "
+            "Japanese form, and Yokubi publishes no sub-heading that would draw a "
+            "lookupable boundary inside them. They are reported here rather than "
+            "segmented by guesswork."
+        )
+        lines.append("")
+        lines.append("| Lesson | Title | Reason |")
+        lines.append("| --- | --- | --- |")
+        for row in skipped:
+            lines.append(
+                f"| {row['lesson']} | [{row['title']}]({row['lessonUrl']}) | {row['reason']} |"
+            )
+    lines.append("")
+
+    lines.append("## Skipped example groups")
+    lines.append("")
+    if not groups:
+        lines.append("None: every example group parsed as a source-paired sentence.")
+    else:
+        lines.append(
+            "An example group whose lines are not a source-paired Japanese sentence "
+            "(a conjugation or vocabulary table, or an English-only aside). No "
+            "translation or pairing is invented for these; the shape column records "
+            "the per-line classification (`J` Japanese, `E` English, `M` mixed)."
+        )
+        lines.append("")
+        lines.append("| Lesson | Shape | Text | Reason |")
+        lines.append("| --- | --- | --- | --- |")
+        for row in groups:
+            text = str(row["text"]).replace("|", "\\|")
+            if len(text) > 120:
+                text = text[:117] + "..."
+            lines.append(f"| {row['lesson']} | `{row['shape']}` | {text} | {row['reason']} |")
+    lines.append("")
+
+    return "\n".join(lines)
+
 
 __all__ = [
     "YOKUBI_ATTRIBUTION",
@@ -422,8 +585,11 @@ __all__ = [
     "LICENCE",
     "LICENSE_TIER",
     "SITE",
+    "JSONL_NAME",
+    "COVERAGE_NAME",
     "strip_inline_markup",
     "title_headwords",
     "parse_examples",
+    "render_coverage",
     "YokubiExtractor",
 ]

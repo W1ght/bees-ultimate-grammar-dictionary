@@ -35,6 +35,20 @@ UNIFIED = pathlib.Path("data/merge/unified.jsonl")
 REPORT = pathlib.Path("data/merge/reading_audit.json")
 
 
+#: Rows whose expression is a descriptive LABEL rather than a headword, so no
+#: kana-coverage rule can relate it to the reading. Each is listed explicitly, with
+#: its exact reading, so the allowance cannot widen silently: a new row, or a
+#: changed reading on this row, still fails the gate.
+#:
+#: `可能の形 （～れる・～られる）` / `～れる（かのう）` is NINJAL prose describing the
+#: potential form, with the suffixes parenthesised; the reading inverts that and
+#: parenthesises the sense tag instead. The label 可能の形 reads かのうのかたち. Scoped
+#: by measurement: exactly 1 of 1,513 kanji-bearing rows carrying a reading.
+DESCRIPTIVE_LABELS = {
+    ("ninjal_bunkei", "可能の形 （～れる・～られる）", "～れる（かのう）"),
+}
+
+
 def _contributions(entries):
     for entry in entries:
         for sense in entry.get("senses", []):
@@ -48,6 +62,7 @@ def main() -> int:
     # 1. Plausibility gate.
     checked = 0
     implausible = []
+    allowed_labels: list[dict[str, object]] = []
     # 2. Cross-source disagreement: expression -> {reading -> sources}
     by_expr: dict[str, dict[str, set[str]]] = collections.defaultdict(lambda: collections.defaultdict(set))
 
@@ -60,9 +75,15 @@ def main() -> int:
             continue
         checked += 1
         if not is_plausible_reading(expression, reading):
+            source = contribution.get("source")
+            if (source, expression, reading) in DESCRIPTIVE_LABELS:
+                allowed_labels.append(
+                    {"source": source, "expression": expression, "reading": reading}
+                )
+                continue
             implausible.append(
                 {
-                    "source": contribution.get("source"),
+                    "source": source,
                     "expression": expression,
                     "reading": reading,
                 }
@@ -77,7 +98,16 @@ def main() -> int:
         # Every reading of a disagreement must itself be plausible; an impossible
         # one is a real defect (and the plausibility gate above already caught it
         # if it is kanji-bearing).
-        bad = [r for r in variants if has_kanji(expression) and not is_plausible_reading(expression, r)]
+        bad = [
+            r
+            for r in variants
+            if has_kanji(expression)
+            and not is_plausible_reading(expression, r)
+            and not any(
+                expression == allowed_expression and r == allowed_reading
+                for _, allowed_expression, allowed_reading in DESCRIPTIVE_LABELS
+            )
+        ]
         record = {
             "expression": expression,
             "readings": {r: sorted(readings[r]) for r in variants},
@@ -92,6 +122,7 @@ def main() -> int:
             {
                 "checkedKanjiReadings": checked,
                 "implausibleReadings": implausible,
+                "allowedDescriptiveLabels": allowed_labels,
                 "readingDisagreements": disagreements,
                 "disagreementCount": len(disagreements),
             },
@@ -105,6 +136,27 @@ def main() -> int:
     print(f"[reading-audit] checked {checked} kanji-bearing readings")
     print(f"[reading-audit] cross-source reading disagreements: {len(disagreements)}")
     ok = True
+    if allowed_labels:
+        print(
+            f"[reading-audit] allowed {len(allowed_labels)} descriptive-label row(s) "
+            "(expression is prose, not a headword):"
+        )
+        for item in allowed_labels:
+            print(f"    {item['source']} · {item['expression']} -> {item['reading']}")
+    # A stale allowance is a defect too: if a listed row no longer reaches the gate
+    # (re-homed, corrected, or dropped) the entry must be removed rather than left
+    # silently widening the gate for a future row that happens to match it.
+    unused = sorted(DESCRIPTIVE_LABELS - {
+        (item["source"], item["expression"], item["reading"]) for item in allowed_labels
+    })
+    if unused:
+        ok = False
+        print(
+            f"[reading-audit] FAIL: {len(unused)} DESCRIPTIVE_LABELS entr(ies) matched no "
+            "implausible row; the corpus changed, so remove the stale allowance:"
+        )
+        for source, expression, reading in unused:
+            print(f"    {source} · {expression} -> {reading}")
     if implausible:
         ok = False
         print(f"[reading-audit] FAIL: {len(implausible)} structurally implausible reading(s):")
