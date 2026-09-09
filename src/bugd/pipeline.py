@@ -18,6 +18,7 @@ import pathlib
 import shutil
 
 from . import DICTIONARY_SLUG, YOMITAN_SCHEMA_REVISION
+from . import unify
 from .banks import build_banks, build_index, build_tag_bank
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .merge import MergedEntry, merge_points
@@ -94,18 +95,39 @@ def run_merge(
     *,
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     merged_dir: pathlib.Path = DEFAULT_MERGED_DIR,
+    keymap_path: pathlib.Path | None = None,
+    unified_path: pathlib.Path | None = None,
 ) -> dict[str, object]:
-    """Merge every extracted artifact into the one unified corpus."""
-    points: list[GrammarPoint] = []
-    labels: dict[str, str] = {}
-    for path in sorted(extracted_dir.glob("*.json")):
-        payload = load_json(path.read_text(encoding="utf-8"))
-        if not isinstance(payload, dict) or not isinstance(payload.get("points"), list):
-            raise MalformedPayload(f"malformed extracted artifact: {path}")
-        labels[payload["source"]] = payload.get("label") or payload["source"]
-        points.extend(point_from_json(item) for item in payload["points"])
+    """Merge every extracted artifact into the one unified corpus.
 
-    entries = merge_points(points)
+    The real cross-source policy lives in `bugd.unify`, driven by the keymap
+    `make keymap` emits. It fails closed when the keymap and the extraction are
+    not self-consistent, because the tolerant alternative silently deletes rows
+    (a stale keymap left 1,664 substantive rows unresolved and a best-effort
+    merge would have dropped them while reporting success).
+
+    `data/merge/unified.jsonl` is the reviewable artifact; `data/merged/corpus.json`
+    is its projection onto the bank generator's input contract, so the renderer
+    keeps consuming the stage boundary it was written against.
+    """
+    keymap_path = keymap_path or unify.DEFAULT_KEYMAP_PATH
+    unified_path = unified_path or unify.DEFAULT_UNIFIED_PATH
+
+    rows, labels = unify.load_extracted(extracted_dir)
+    keymap = unify.load_keymap(keymap_path)
+    unified, stats = unify.unify(rows, keymap, labels)
+
+    byte_count, digest = unify.write_unified(unified, unified_path)
+    stats["artifact"] = {
+        "path": str(unified_path),
+        "byteCount": byte_count,
+        "contentHash": digest,
+        "keymapPath": str(keymap_path),
+    }
+    stats_path = unified_path.with_name(f"{unified_path.stem}.stats.json")
+    stats_path.write_text(dump_json(stats) + "\n", encoding="utf-8")
+
+    entries = unify.to_merged_entries(unified)
     corpus = {
         "sourceLabels": labels,
         "entries": [entry_to_json(entry) for entry in entries],
@@ -113,9 +135,14 @@ def run_merge(
     merged_dir.mkdir(parents=True, exist_ok=True)
     (merged_dir / MERGED_CORPUS_NAME).write_text(dump_json(corpus) + "\n", encoding="utf-8")
     return {
-        "points": len(points),
+        "points": len(rows),
         "entries": len(entries),
+        "pointEntries": stats["unified"]["pointEntries"],
+        "redirectEntries": stats["unified"]["redirectEntries"],
+        "contributions": stats["unified"]["contributions"],
         "sources": sorted(labels),
+        "unifiedPath": str(unified_path),
+        "statsPath": str(stats_path),
         "contentHash": content_hash(corpus),
     }
 
