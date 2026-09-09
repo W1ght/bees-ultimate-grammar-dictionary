@@ -1,0 +1,83 @@
+{
+ "_meta": {
+  "schema": 1,
+  "purpose": "Deterministic, evidence-backed corrections to per-source contribution readings whose upstream value is not a possible reading of the written form. Applied in bugd.unify.load_extracted before merge, matched byte-exact on (source, source_id, expression, from) so a correction can never silently alter a different value. Every correction fails closed if it matches zero rows (stale) or if the on-disk 'from' has drifted.",
+  "origin": "UGD-11c-B (card t_1209257e). Each item was flagged by a fresh single-card LLM review, CONFIRMED by an independent adversarial second opinion, and re-verified byte-exact against the frozen candidate data/merge/unified.jsonl (sha256 06bd856f724a90ed6dc84dcb1c0d54b3e9b104bb0d4977c0d141ea8e3737711c). Full machine-readable evidence: t_9a932ecc data/review/clusters/cluster_B.json.",
+  "policy": "Correct only where independent evidence fixes the reading (KANJIDIC2/UniDic and/or a sibling contribution on the same card that already gives the right reading). Never invent a reading where evidence is absent. All corrections here are single, well-attested target readings; none is a guess.",
+  "rootCause": "Upstream publisher term-bank data, not a pipeline bug. src/bugd/sources reads the reading column verbatim, which is the correct faithful behaviour. These corrections are the documented, auditable exception to verbatim carry, scoped to nine confirmed impossible readings."
+ },
+ "corrections": [
+  {
+   "source": "dojg",
+   "source_id": "の下で",
+   "expression": "の下で",
+   "from": "のしたで",
+   "to": "のもとで",
+   "evidence": "In the 'under the control/influence/guidance of' sense, 下 in 〜の下で is read もと: 指導の下で=しどうのもとで, 監視の下で=かんしのもとで, カラヤンの下で=カラヤンのもとで, インフレの下で=インフレのもとで. Five of the six examples on the card are this abstract type. のしたで is limited to literal spatial 'underneath' (木の下で). KANJIDIC2 lists both した and もと for 下, so both are per-kanji plausible; the semantic reviewer (fresh + adversarial second opinion) selected もと for this grammar point.",
+   "confidence": 0.75
+  },
+  {
+   "source": "dojg",
+   "source_id": "結構",
+   "expression": "結構",
+   "from": "けっか",
+   "to": "けっこう",
+   "evidence": "結構 is read けっこう in all standard usage (kan-on 構=コウ: 構成 こうせい, 機構 きこう). 構 has no カ reading, so けっか is structurally impossible for 結構; けっか is the reading of 結果, a different word. The card's own examples all use the adverb けっこう.",
+   "confidence": 0.97
+  },
+  {
+   "source": "edewakaru",
+   "source_id": "如何",
+   "expression": "如何",
+   "from": "いかが",
+   "to": "いかん",
+   "evidence": "In the nominal pattern 〜如何だ／〜如何で／〜如何によって／〜如何を問わず, 如何 is the kanbun-derived noun いかん (成否は君の努力いかんだ、結果のいかんを問わず). いかが is the adverbial/polite 'how' reading and cannot substitute in 「努力如何だ」. JLPT N1 lists this item as 〜いかん. A sibling contribution on the same card already gives いかん. (如何 is ateji: いかん/いかが are whole-word readings, so this pair is carried on the gate's jukujikun allowlist.)",
+   "confidence": 0.7
+  },
+  {
+   "source": "edewakaru",
+   "source_id": "込む",
+   "expression": "込む",
+   "from": "ごむ",
+   "to": "こむ",
+   "evidence": "The compound-verb suffix 込む is read こむ and does not undergo rendaku in these formations: 考え込む=かんがえこむ, 話し込む=はなしこむ, 煮込む=にこむ, 入り込む=はいりこむ, 差し込む=さしこむ. ごむ is not attested for this morpheme. The other publisher on this card correctly gives こむ. Applies to both senses on this card (source_id 込む, senses 1 and 2).",
+   "confidence": 0.88
+  },
+  {
+   "source": "edewakaru",
+   "source_id": "間に",
+   "expression": "間に",
+   "from": "まに",
+   "to": "あいだに",
+   "evidence": "In this temporal pattern 間に is あいだに, as the two other contributions on the same card correctly give. 間=ま exists per-kanji but denotes room/gap ('space'), not the temporal 'while' sense of this grammar point.",
+   "confidence": 0.8
+  },
+  {
+   "source": "nihongo_net",
+   "source_id": "込む",
+   "expression": "込む",
+   "from": "ごむ",
+   "to": "こむ",
+   "evidence": "Same morpheme as the edewakaru 込む correction: the compound-verb suffix 込む is read こむ (入り込む=はいりこむ, 差し込む=さしこむ) and never voices to ごむ.",
+   "confidence": 0.88
+  },
+  {
+   "source": "nihongo_no_sensei",
+   "source_id": "に如くはない",
+   "expression": "に如くはない",
+   "from": "にごとくはない",
+   "to": "にしくはない",
+   "evidence": "The pattern is にしくはない, from classical 如く（しく）'to be equal to' (cf. 百聞は一見に如かず＝ひゃくぶんはいっけんにしかず). The card itself states the ごとく reading belongs to the simile use (〜の如く), not this pattern. (如=しく is a classical kun reading KANJIDIC2 does not carry, so this pair is on the gate's jukujikun/gikun allowlist.)",
+   "confidence": 0.8
+  },
+  {
+   "source": "nihongo_no_sensei",
+   "source_id": "んな風",
+   "expression": "んな風",
+   "from": "んなかぜ",
+   "to": "んなふう",
+   "evidence": "In こんな風／そんな風／という風 the reading is ふう, as every one of the card's own examples writes in kana (こんなふう, というふう). かぜ is the 'wind/cold' reading, wrong for the 'manner/way' sense. KANJIDIC2 lists ふう for 風.",
+   "confidence": 0.8
+  }
+ ]
+}
