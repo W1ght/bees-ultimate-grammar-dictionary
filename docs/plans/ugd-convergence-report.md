@@ -37,6 +37,28 @@ integration branch, dictionary rebuilt end-to-end, every gate re-verified.
   clearance = bunpou (personal), Bunpro (proprietary), DoJG (Japan Times), and
   community sources; per-record `redistributable:false` is authoritative.
 
+## Byte-stability (reproducibility gate)
+The ZIP is byte-reproducible: three consecutive `bugd.cli build` runs produce
+the identical sha256 `bdd058d6543ff5121bfc290bf2b67c168ccfd3f2c13c7f81f9a9ef31ec60e051`.
+A real non-determinism defect was found and fixed during convergence: the
+highlight-span splitter in `banks.py` sorted markers by length only, leaving
+equal-length markers in arbitrary set-iteration order, so term_bank_2/_4 varied
+per build (e.g. headword ていく split differently). Fixed by adding the string
+itself as a deterministic tiebreak (`key=lambda h: (-len(h), h)`).
+
+## Beauty gate / Japanese review must-fix status
+The Japanese-content review findings (UGD-11c/11d) are all resolved and committed
+(impossible readings, formation rules, 187 content defects, 8 Class-A source
+corrections, 12 hedged absolute rules) — see the ugd-11c-*/ugd-11d-* merges.
+The beauty-gate run-on/clipping must-fix items (concatenated example sentences,
+recorded in `docs/evidence/ugd-08b-beauty-gate.md` from the pre-08c v44 round)
+are addressed by UGD-08c's sentence-separator fix (merge d1ad36d / e6e92f9),
+whose tests pass. NOTE: a fresh beauty-gate re-render (host screenshots) to
+formally reduce the must-fix list to empty on the CURRENT build requires the
+host rendering harness and is a UGD-17-adjacent host step, not reproducible in
+this headless environment; the underlying defects the list named are fixed in
+the merged source.
+
 ## Final artifact
 - Path: `dist/bees-ultimate-grammar-dictionary.zip`
 - Entries: 4,632
