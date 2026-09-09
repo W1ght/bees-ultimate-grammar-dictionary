@@ -152,6 +152,26 @@ def test_normalized_jsonl_lands_beside_the_locked_bytes(result):
     assert all(record["source"] == "bunpro" for record in records)
 
 
+def test_extract_writes_the_jsonl_rather_than_relying_on_a_stale_one(tmp_path):
+    """The write must be the extractor's own side effect.
+
+    Asserting `path.is_file()` in the shared source directory passes even if the
+    extractor stopped writing, because a previous run left the file there. Point
+    the extractor at a fresh directory holding only the locked inputs, so the
+    JSONL can only exist if THIS run produced it.
+    """
+    directory = tmp_path / "bunpro"
+    directory.mkdir()
+    (directory / SOURCE_LOCK_NAME).write_bytes((BUNPRO_DIR / SOURCE_LOCK_NAME).read_bytes())
+    (directory / APKG_NAME).symlink_to(APKG_PATH.resolve())
+
+    path = directory / JSONL_NAME
+    assert not path.exists()
+    result = BunproExtractor(directory).extract()
+    assert path.is_file(), "extract() did not write its JSONL deliverable"
+    assert len(path.read_text(encoding="utf-8").splitlines()) == len(result.points)
+
+
 def test_jsonl_is_deterministic_over_identical_locked_bytes():
     """Two runs over the same bytes produce byte-identical JSONL."""
     path = BUNPRO_DIR / JSONL_NAME
@@ -284,6 +304,36 @@ def test_flatten_drops_furigana_readings_and_tags():
     assert _flatten("") is None
     assert _flatten(None) is None
     assert _flatten("   ") is None
+
+
+def test_flatten_drops_rp_ruby_fallback_parens():
+    """`<rp>` must not survive into the plain-text surface string.
+
+    Those are the parentheses a browser paints ONLY when it cannot render ruby,
+    so a renderer that paints `<rt>` never paints them. Keeping them left an empty
+    `（）` in the surface text -- and the surface string is exactly what example
+    dedup (`sentence_key`) and highlight substring matching compare on.
+    """
+    ruby = "<ruby>親切<rp>（</rp><rt>しんせつ</rt><rp>）</rp></ruby>だ。"
+    surface = _flatten(ruby)
+    assert surface == "親切だ。"
+    assert surface is not None and "（" not in surface and "）" not in surface
+    # Latin-parenthesis form too, and rp with attributes.
+    assert _flatten("<ruby>読<rp >(</rp><rt>よ</rt><rp>)</rp></ruby>む") == "読む"
+
+
+def test_examples_strip_rp_from_the_surface_but_keep_it_in_the_annotated_html():
+    """The invariant that binds the two forms must hold for rp-bearing ruby."""
+    field = (
+        '<div class="example-item">'
+        '<div class="japanese"><ruby>親切<rp>（</rp><rt>しんせつ</rt><rp>）</rp></ruby>だ。</div>'
+        '<div class="english">It is kind.</div></div>'
+    )
+    (example,) = _examples(field)
+    assert example.japanese == "親切だ。"
+    annotated = example.japanese_html
+    assert annotated is not None and "<rp>" in annotated  # source markup verbatim
+    assert _flatten(annotated) == example.japanese
 
 
 def test_examples_pair_japanese_english_highlight_and_preserve_html():
