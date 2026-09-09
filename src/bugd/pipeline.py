@@ -64,6 +64,40 @@ def zip_name() -> str:
 # --------------------------------------------------------------------------
 
 
+def _unacquired_reason(source_dir: pathlib.Path) -> str | None:
+    """Why this source cannot be extracted yet, or ``None`` if it can.
+
+    "Acquired" means the bytes the lock PINS are on disk, not that the directory
+    exists: `SOURCE.lock.json` is committed for every source (it is the
+    reproducibility contract -- 611 files pinned by sha256), so in a fresh clone
+    every `data/sources/<name>/` directory exists while holding only that lock.
+
+    Returns a human-readable reason so the caller can REPORT the skip. A silently
+    smaller dictionary is the failure mode this project fails closed against, so
+    a skip must be visible in the stage's output.
+    """
+    from .sources.base import SOURCE_LOCK_NAME, load_source_lock
+
+    source_dir = pathlib.Path(source_dir)
+    if not source_dir.is_dir():
+        return "no source directory"
+    if not (source_dir / SOURCE_LOCK_NAME).is_file():
+        return f"no {SOURCE_LOCK_NAME}"
+    try:
+        locked = load_source_lock(source_dir)
+    except MalformedPayload as error:
+        # A malformed lock is a real defect, not an unacquired source. Let the
+        # extractor raise it so it cannot be mistaken for "not built yet".
+        raise error
+    missing = [name for name in locked if not (source_dir / name).exists()]
+    if not missing:
+        return None
+    shown = ", ".join(sorted(missing)[:3])
+    if len(missing) > 3:
+        shown += f", +{len(missing) - 3} more"
+    return f"{len(missing)} of {len(locked)} locked file(s) not acquired ({shown})"
+
+
 def run_extract(
     *,
     sources_dir: pathlib.Path = DEFAULT_SOURCES_DIR,
@@ -117,14 +151,29 @@ def run_extract(
     written: dict[str, int] = {}
     corrected_total = 0
     corrections_report: dict[str, object] = {}
+    skipped: dict[str, str] = {}
     for cls in classes:
         source_dir = sources_dir / cls.name
-        if not only and not source_dir.is_dir():
-            # A registered source whose raw bytes have not been acquired into
-            # data/sources/<name>/ is simply not built yet -- skip it rather than
-            # failing the whole stage on a missing lock. An explicit `--source`
-            # request still runs so a typo or missing acquisition surfaces loudly.
-            continue
+        if not only:
+            unacquired = _unacquired_reason(source_dir)
+            if unacquired is not None:
+                # A registered source whose raw bytes have not been acquired is
+                # simply not built yet -- skip it rather than failing the whole
+                # stage. Keyed on the LOCKED PAYLOAD, not on the directory
+                # existing: every source directory exists in a fresh clone because
+                # `SOURCE.lock.json` is committed (it is the reproducibility
+                # contract), so a directory check skipped nothing and a clean
+                # clone with only the two CC BY 4.0 sources acquired could not run
+                # `make extract` at all -- which made `make public`, the one build
+                # a public user CAN do, unreachable.
+                #
+                # The skip is REPORTED, not silent: the reason lands in the
+                # stage's output so a missing acquisition is visible rather than
+                # presenting as a quietly smaller dictionary. An explicit
+                # `--source` request still runs and still fails loudly, so a typo
+                # or a genuinely broken acquisition surfaces.
+                skipped[cls.name] = unacquired
+                continue
         result = cls(source_dir).extract()
         points, applied = corrections_module.apply_corrections(
             result.points, overlay, source=cls.name
@@ -157,6 +206,9 @@ def run_extract(
         "total": sum(written.values()),
         "corrections": corrected_total,
     }
+    if skipped:
+        # Reported, with the reason, so an unacquired source is never invisible.
+        out["skippedSources"] = skipped
     if corrections_report:
         out["contentCorrections"] = corrections_report
     return out

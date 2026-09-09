@@ -164,6 +164,72 @@ def test_extract_stage_discovers_registered_sources_without_being_told_them(tmp_
     assert written == ["dojg.json"]
 
 
+def test_extract_skips_a_source_whose_locked_bytes_are_not_acquired(tmp_path):
+    """An unacquired source is skipped WITH A REASON, not a hard stage failure.
+
+    The skip used to key on `data/sources/<name>/` existing. But
+    `SOURCE.lock.json` is committed for every source -- it IS the reproducibility
+    contract -- so in a fresh clone every source directory exists while holding
+    only that lock, the check skipped nothing, and `make extract` died on the
+    first unacquired source. That made `make public` unreachable for a public
+    user, who by design has only the two CC BY 4.0 sources.
+
+    Keying on the locked PAYLOAD fixes it. Verified end to end: a clean checkout
+    with only `ninjal_bunkei` and `yokubi` acquired extracts 932 points, reports 8
+    skips, and reproduces the published archive byte for byte.
+    """
+    sources = tmp_path / "sources"
+    _locked_dojg_source(sources)
+    # A second source with its lock present but its locked bytes absent -- exactly
+    # the fresh-clone shape.
+    unacquired = sources / "donna_toki"
+    unacquired.mkdir(parents=True, exist_ok=True)
+    (unacquired / "SOURCE.lock.json").write_text(
+        dump_json(
+            {
+                "source": "donna_toki",
+                "files": {
+                    "term_bank_1.json": {"sha256": "0" * 64, "byteCount": 1},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert main(_args("extract", tmp_path)) == 0
+
+    written = sorted(p.name for p in (tmp_path / "extracted").glob("*.json"))
+    assert written == ["dojg.json"]
+
+
+def test_an_unacquired_source_is_reported_not_silently_dropped(tmp_path, capsys):
+    """The skip must be visible: a silently smaller dictionary is the failure mode.
+
+    Asserts the source NAME and a reason naming the missing member reach the
+    stage's output, not merely that the stage exited 0.
+    """
+    sources = tmp_path / "sources"
+    _locked_dojg_source(sources)
+    unacquired = sources / "donna_toki"
+    unacquired.mkdir(parents=True, exist_ok=True)
+    (unacquired / "SOURCE.lock.json").write_text(
+        dump_json(
+            {
+                "source": "donna_toki",
+                "files": {"term_bank_1.json": {"sha256": "0" * 64, "byteCount": 1}},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert main(_args("extract", tmp_path)) == 0
+
+    out = capsys.readouterr().out
+    assert "skippedSources" in out
+    assert "donna_toki" in out
+    assert "term_bank_1.json" in out
+
+
 def test_extract_stage_fails_closed_on_a_source_with_no_locked_input(tmp_path):
     # The counterpart honesty property: an unacquired source is a hard error, not
     # a quietly smaller dictionary.
