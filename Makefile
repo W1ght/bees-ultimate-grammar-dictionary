@@ -127,7 +127,14 @@ all: extract keymap merge build validate
 # The remaining stages are the SAME code as the local build, pointed at the
 # filtered corpus -- the public artifact is not a separate renderer, so it cannot
 # drift from the one the tests and audits cover.
-publish-filter: 
+# `extract` is a real prerequisite: the filter projects `data/extracted/`, so a
+# fresh clone with no extraction has nothing to filter and fails with
+# "no extracted corpus" rather than building the release. Depending on it here
+# means `make public` works from a clean checkout, which is the whole point of the
+# target. Extraction skips (with a reason) every source whose locked bytes are not
+# acquired, so a public user with only the two CC BY 4.0 sources gets exactly the
+# corpus the filter then admits.
+publish-filter: extract
 	$(PY) -m bugd.cli --public-dir $(PUBLIC_EXTRACTED) publish-filter
 
 public: publish-filter
