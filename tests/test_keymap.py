@@ -613,10 +613,31 @@ def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     # contributor now sits in `#sense5`.
     assert report["corpus"]["duplicateRowsCollapsed"] == 73
     assert report["corpus"]["substantiveRows"] == 3732
-    assert report["tierA"]["bijectiveBuckets"] == 570
-    assert report["tierA"]["refusedCollisionBuckets"] == 179
+    # UGD-11c-A moved these three. The extraction-level polarity repair
+    # (src/bugd/sources/polarity_repair.py) rewrites 28 publisher-flipped
+    # headwords from an affirmative 〜ある surface to the 〜ない form their OWN
+    # reading witnesses (e.g. `に越したことはある`->`に越したことはない`,
+    # `どころではある`->`どころではない`). Once the surface is corrected, each
+    # repaired form now shares a canonical key with the source(s) that already
+    # carried the correct negative, so 19 buckets that used to be single-source
+    # bijections become collisions. UGD-07's polarity guard is doing exactly
+    # what the fix card requires: it REFUSES to fold those pairs (the affirmative
+    # and negative are different points), so refusedCollisionBuckets rises by 11
+    # (179 -> 190) and the surviving separate points push the canonical count up
+    # by 35 (2609 -> 2644). bijectiveBuckets falls by the matching 19 (570 ->
+    # 551).
+    #
+    # Verified content-preserving, not rubber-stamped: substantiveRows,
+    # assignment count, unique assignment identities and total contributors are
+    # ALL invariant at 3732 across the repair (measured by rebuilding the keymap
+    # with repair_point patched to identity). Exactly 28 assignment identities
+    # change their substanceHash (the repaired expressions) and re-bucket; no
+    # source contribution is added, dropped or double-counted. The guard in
+    # src/bugd/polarity.py is byte-identical to its pre-repair revision.
+    assert report["tierA"]["bijectiveBuckets"] == 551
+    assert report["tierA"]["refusedCollisionBuckets"] == 190
     assert report["tierB"]["accepted"] == 60
-    assert len(corpus["points"]) == 2609
+    assert len(corpus["points"]) == 2644
 
 
 @pytestmark_corpus
