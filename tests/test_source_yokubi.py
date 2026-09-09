@@ -1,189 +1,457 @@
-"""Yokubi extractor against the real acquired corpus.
+"""Behaviour tests for the Yokubi extractor.
 
-These tests run against `data/sources/yokubi/` — the mdBook markdown already
-acquired into the repo — never a synthetic fixture, so they assert the actual
-invariants the extractor's contract promises.
+These pin the honesty contract the card requires, not just the happy path:
+
+* headwords come only from what a lesson title itself declares, so no grammar
+  point boundary is ever invented;
+* a lesson whose title declares no Japanese headword is reported as skipped with
+  a recorded reason rather than segmented by guesswork;
+* an example is attached to a headword only when the example text actually
+  contains that headword; otherwise it stays lesson-scoped context;
+* Yokubi's own `<b>` highlights become the example highlight spans, and the
+  mdBook `{f|kanji|reading}` furigana markers degrade to clean surface text;
+* every emitted point carries the CC-BY attribution the licence requires.
 """
 
 from __future__ import annotations
 
+import json
 import pathlib
 
 import pytest
 
-from bugd.jsonio import load_json
-from bugd.model import GrammarPoint
-from bugd.sources.base import ExtractResult, SourceLockError
-from bugd.sources.registry import get_extractor
+from bugd.jsonio import MalformedPayload
+from bugd.sources import SourceLockError
 from bugd.sources.yokubi import (
-    ATTRIBUTION,
-    LICENSE_TIER,
-    REDISTRIBUTABLE,
+    COVERAGE_NAME,
+    JSONL_NAME,
+    LESSON_ONLY_REASON,
+    YOKUBI_ATTRIBUTION,
     YokubiExtractor,
-    is_japanese,
-    lesson_examples,
+    parse_examples,
+    render_coverage,
+    strip_inline_markup,
     title_headwords,
 )
 
-REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
-CORPUS = REPO_ROOT / "data" / "sources" / "yokubi"
+
+def write_source(root: pathlib.Path, files: dict[str, str]) -> pathlib.Path:
+    target = root / "yokubi"
+    lock_files = {}
+    for relative, text in files.items():
+        path = target / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        raw = text.encode("utf-8")
+        path.write_bytes(raw)
+        import hashlib
+
+        lock_files[relative] = {
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "byteCount": len(raw),
+        }
+    (target / "SOURCE.lock.json").write_text(
+        json.dumps(
+            {
+                "source": "yokubi",
+                "revision": "0" * 40,
+                "licence": {"licence": "CC-BY-4.0"},
+                "files": lock_files,
+            }
+        ),
+        encoding="utf-8",
+    )
+    return target
 
 
-@pytest.fixture(scope="module")
-def result() -> ExtractResult:
-    return YokubiExtractor(CORPUS).extract()
+SUMMARY = """# Summary
+
+- [Part 1](./Section1/Part1.md)
+  - [Lesson 1: State of being with だ and です](./Section1/Part1/Lesson1.md)
+  - [Lesson 4: Verbs](./Section1/Part1/Lesson4.md)
+"""
+
+LESSON1 = """# State of being with だ and です
+
+The two copulas in Japanese are だ and です.
+
+<pre>
+ペン<b>だ</b>。
+It's a pen.
+
+ネコ<b>です</b>。
+It is a cat.
+</pre>
+
+<div class="warning">
+Reality check: だ is usually omitted.
+</div>
+"""
+
+LESSON4 = """# Verbs
+
+Japanese verbs conjugate.
+
+<pre>
+見る／見ます, ichidan verb.
+</pre>
+"""
 
 
-# --- registration ---------------------------------------------------------
+# ---------------------------------------------------------------------------
+# headword derivation
+# ---------------------------------------------------------------------------
 
 
-def test_registered_under_yokubi():
-    assert get_extractor("yokubi") is YokubiExtractor
-    assert YokubiExtractor.name == "yokubi"
-    assert YokubiExtractor.ai_generated_source is False
+def test_title_headwords_are_taken_only_from_the_title():
+    assert title_headwords("State of being with だ and です") == ("だ", "です")
 
 
-# --- unit rules on the headword derivation --------------------------------
+def test_title_headwords_split_on_tilde_placeholders():
+    # 〜たり〜たり declares the form たり; the tilde is a placeholder, not a headword.
+    assert title_headwords("Listing and repeating actions with 〜たり〜たり and ては") == (
+        "たり",
+        "ては",
+    )
 
 
-def test_headwords_derive_only_from_title_japanese_tokens():
-    # The English words in the title never become headwords.
-    assert title_headwords("Lesson 1: State of being with だ and です".split(": ", 1)[1]) == [
-        "だ",
-        "です",
+def test_title_headwords_split_alternatives_written_with_a_slash():
+    assert title_headwords("Adversatives with が, けど, しかし, and ても/でも") == (
+        "が",
+        "けど",
+        "しかし",
+        "ても",
+        "でも",
+    )
+
+
+def test_title_headwords_are_empty_when_the_title_declares_none():
+    assert title_headwords("The causative form") == ()
+    assert title_headwords("Counting things") == ()
+
+
+def test_title_headwords_are_deduplicated_preserving_order():
+    assert title_headwords("Making and becoming with なる and する plus なる") == (
+        "なる",
+        "する",
+    )
+
+
+# ---------------------------------------------------------------------------
+# inline markup
+# ---------------------------------------------------------------------------
+
+
+def test_strip_inline_markup_removes_tags_and_decodes_entities():
+    assert strip_inline_markup("<b>だ</b>&lt;verb&gt;てあげる") == "だ<verb>てあげる"
+
+
+def test_strip_inline_markup_degrades_furigana_to_surface_text():
+    assert strip_inline_markup("{f|事|こと}をする") == "事をする"
+
+
+# ---------------------------------------------------------------------------
+# example parsing
+# ---------------------------------------------------------------------------
+
+
+def test_parse_examples_pairs_japanese_with_its_english_line():
+    examples, skipped = parse_examples(LESSON1)
+    assert [(e.japanese, e.english) for e in examples] == [
+        ("ペンだ。", "It's a pen."),
+        ("ネコです。", "It is a cat."),
     ]
-    assert title_headwords("State of being with だ and です") == ["だ", "です"]
+    assert skipped == []
 
 
-def test_title_with_no_japanese_yields_no_headword():
-    assert title_headwords("The anatomy of Japanese sentences") == []
-    assert title_headwords("Nouns, pronouns") == []
+def test_parse_examples_records_source_bold_spans_as_highlights():
+    examples, _ = parse_examples(LESSON1)
+    assert examples[0].highlight == ("だ",)
+    assert examples[1].highlight == ("です",)
 
 
-def test_is_japanese_detects_scripts():
-    assert is_japanese("だ") and is_japanese("自分") and is_japanese("ネコ")
-    assert not is_japanese("anatomy") and not is_japanese("N5")
+def test_parse_examples_never_marks_an_example_ai_generated():
+    examples, _ = parse_examples(LESSON1)
+    assert all(example.ai_generated is False for example in examples)
 
 
-# --- corpus-wide invariants -----------------------------------------------
+def test_parse_examples_skips_unpaired_groups_with_a_recorded_reason():
+    examples, skipped = parse_examples(LESSON4)
+    assert examples == []
+    assert len(skipped) == 1
+    assert skipped[0]["shape"] == "M"
+    assert "reason" in skipped[0]
+    assert skipped[0]["text"].startswith("見る")
 
 
-def test_extracts_all_64_lessons(result):
-    assert result.source == "yokubi"
-    assert result.stats["lessons"] == 64
-    # 50 lessons declare a Japanese headword; 14 are title-less and skipped.
-    assert result.stats["skippedCount"] == 14
-    assert result.stats["lessons"] == result.stats["skippedCount"] + 50
+def test_parse_examples_keeps_japanese_only_groups_without_inventing_english():
+    examples, skipped = parse_examples("# T\n\n<pre>\n食べる\n</pre>\n")
+    assert len(examples) == 1
+    assert examples[0].japanese == "食べる"
+    assert examples[0].english is None
+    assert skipped == []
 
 
-def test_every_point_is_valid_and_self_attributed(result):
-    assert result.points, "expected at least one grammar point"
-    for point in result.points:
-        assert isinstance(point, GrammarPoint)
+# ---------------------------------------------------------------------------
+# extractor behaviour
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def extracted(tmp_path):
+    target = write_source(
+        tmp_path,
+        {
+            "src/SUMMARY.md": SUMMARY,
+            "src/Section1/Part1.md": "# Part 1: Getting Started\n",
+            "src/Section1/Part1/Lesson1.md": LESSON1,
+            "src/Section1/Part1/Lesson4.md": LESSON4,
+        },
+    )
+    return YokubiExtractor(target).extract()
+
+
+def test_extractor_emits_one_point_per_title_declared_headword(extracted):
+    assert [point.expression for point in extracted.points] == ["だ", "です"]
+
+
+def test_extractor_attributes_every_point_to_yokubi(extracted):
+    for point in extracted.points:
         assert point.source == "yokubi"
-        assert is_japanese(point.expression)
+        assert point.provenance["attribution"] == YOKUBI_ATTRIBUTION
+        assert point.provenance["licence"] == "CC-BY-4.0"
+        assert point.provenance["lessonUrl"].startswith("https://yoku.bi/")
 
 
-def test_headwords_come_only_from_their_lesson_title(result):
-    # Reconstruct the expected headword set straight from lesson H1s and assert
-    # the extractor invented nothing beyond the title-declared tokens.
-    for point in result.points:
-        title = point.provenance["lessonTitle"]
-        assert point.expression in title_headwords(title)
+def test_extractor_records_the_pinned_revision_on_every_point(extracted):
+    for point in extracted.points:
+        assert point.provenance["revision"] == "0" * 40
 
 
-def test_skipped_lessons_are_recorded_with_a_reason(result):
-    skipped = result.stats["skippedLessons"]
-    nums = {entry["lesson"] for entry in skipped}
-    # Lesson 0 ("The anatomy of Japanese sentences") declares no Japanese token.
-    assert 0 in nums
-    assert 2 in nums  # "Nouns, pronouns"
-    for entry in skipped:
-        assert entry["reason"]
-        assert title_headwords(entry["title"]) == []
-    # A skipped lesson never leaks a point.
-    skipped_lessons = {entry["lesson"] for entry in skipped}
-    for point in result.points:
-        assert point.provenance["lesson"] not in skipped_lessons
+def test_extractor_never_invents_a_meaning_or_jlpt_level(extracted):
+    for point in extracted.points:
+        assert point.meaning is None
+        assert point.jlpt is None
 
 
-def test_da_and_desu_are_lesson1_headwords(result):
-    lesson1 = [p for p in result.points if p.provenance["lesson"] == 1]
-    assert {p.expression for p in lesson1} == {"だ", "です"}
+def test_extractor_carries_the_lesson_prose_as_the_explanation(extracted):
+    point = extracted.points[0]
+    assert "The two copulas in Japanese are だ and です." in point.explanation
 
 
-# --- example attachment requires substring containment --------------------
+def test_extractor_attaches_an_example_only_when_it_contains_the_headword(extracted):
+    by_expression = {point.expression: point for point in extracted.points}
+    assert [e.japanese for e in by_expression["だ"].examples] == ["ペンだ。"]
+    assert [e.japanese for e in by_expression["です"].examples] == ["ネコです。"]
 
 
-def test_attached_examples_all_contain_their_headword(result):
-    saw_attachment = False
-    for point in result.points:
-        for example in point.examples:
-            saw_attachment = True
-            assert point.expression in example.japanese
-    assert saw_attachment, "expected at least one attached example"
+def test_extractor_reports_lessons_without_a_declared_headword_as_skipped(extracted):
+    skipped = extracted.stats["skippedLessons"]
+    assert [item["title"] for item in skipped] == ["Verbs"]
+    assert skipped[0]["reason"] == LESSON_ONLY_REASON
+    assert skipped[0]["lesson"] == 4
 
 
-def test_da_attaches_only_containing_examples(result):
-    (da,) = [
-        p for p in result.points if p.provenance["lesson"] == 1 and p.expression == "だ"
-    ]
-    japanese = {ex.japanese for ex in da.examples}
-    assert "ペンだ。" in japanese  # contains だ
-    assert "ネコです。" not in japanese  # だ not a substring -> not attached
+def test_extractor_never_reports_a_lesson_as_both_covered_and_skipped(extracted):
+    covered = {point.provenance["lesson"] for point in extracted.points}
+    skipped = {item["lesson"] for item in extracted.stats["skippedLessons"]}
+    assert covered.isdisjoint(skipped)
 
 
-def test_lesson_examples_reads_pre_blocks():
-    body = (CORPUS / "src" / "Section1" / "Part1" / "Lesson1.md").read_text("utf-8")
-    examples = lesson_examples(body)
-    japanese = {ex.japanese for ex in examples}
-    assert "ペンだ。" in japanese
-    # The English gloss line becomes the following example's translation.
-    pen = next(ex for ex in examples if ex.japanese == "ペンだ。")
-    assert pen.english == "It's a pen."
+def test_extractor_counts_every_summary_lesson_exactly_once(extracted):
+    stats = extracted.stats
+    covered = len({point.provenance["lesson"] for point in extracted.points})
+    assert covered + len(stats["skippedLessons"]) == stats["lessonsListed"]
 
 
-# --- attribution / licence ------------------------------------------------
+def test_extractor_records_lesson_scoped_examples_rather_than_forcing_them(extracted):
+    # Lesson 4's example matches no declared headword, so it must be counted as
+    # unattached context, never silently attributed to a headword.
+    assert extracted.stats["examplesUnattached"] >= 1
 
 
-def test_attribution_present_on_every_point(result):
-    assert ATTRIBUTION == "Yokubi — The Common Grammar Guide (https://yoku.bi), CC BY 4.0"
-    for point in result.points:
-        assert point.provenance["attribution"] == ATTRIBUTION
-        assert point.provenance["licenseTier"] == LICENSE_TIER == "A"
-        assert point.provenance["redistributable"] is REDISTRIBUTABLE is True
-    assert result.stats["attribution"] == ATTRIBUTION
-    assert result.stats["licenseTier"] == "A"
-    assert result.stats["redistributable"] is True
+def test_extractor_output_is_deterministic(tmp_path):
+    files = {
+        "src/SUMMARY.md": SUMMARY,
+        "src/Section1/Part1.md": "# Part 1\n",
+        "src/Section1/Part1/Lesson1.md": LESSON1,
+        "src/Section1/Part1/Lesson4.md": LESSON4,
+    }
+    first = YokubiExtractor(write_source(tmp_path / "a", files)).extract()
+    second = YokubiExtractor(write_source(tmp_path / "b", files)).extract()
+    assert [p.expression for p in first.points] == [p.expression for p in second.points]
+    assert first.stats["skippedLessons"] == second.stats["skippedLessons"]
 
 
-# --- fails closed on a missing locked lesson ------------------------------
-
-
-def test_missing_locked_lesson_fails_closed(tmp_path):
-    """A SUMMARY lesson absent from the lock raises rather than yielding fewer."""
-    lock = load_json((CORPUS / "SOURCE.lock.json").read_text("utf-8"))
-    # Drop one real lesson from the lock so read_locked_bytes must refuse it.
-    victim = "src/Section1/Part1/Lesson1.md"
-    assert victim in lock["files"]
-    del lock["files"][victim]
-
-    staged = tmp_path / "yokubi"
-    (staged / "src").mkdir(parents=True)
-    import json
-
-    (staged / "SOURCE.lock.json").write_text(json.dumps(lock), encoding="utf-8")
-    # Only stage SUMMARY.md (which still lists Lesson 1) — the lesson body is
-    # both unlocked and absent, so the extractor must fail closed.
-    summary = (CORPUS / "src" / "SUMMARY.md").read_text("utf-8")
-    (staged / "src" / "SUMMARY.md").write_text(summary, encoding="utf-8")
-
+def test_extractor_fails_closed_on_a_tampered_lesson(tmp_path):
+    target = write_source(
+        tmp_path,
+        {
+            "src/SUMMARY.md": SUMMARY,
+            "src/Section1/Part1.md": "# Part 1\n",
+            "src/Section1/Part1/Lesson1.md": LESSON1,
+            "src/Section1/Part1/Lesson4.md": LESSON4,
+        },
+    )
+    (target / "src/Section1/Part1/Lesson1.md").write_text("# tampered\n", encoding="utf-8")
     with pytest.raises(SourceLockError):
-        YokubiExtractor(staged).extract()
+        YokubiExtractor(target).extract()
 
 
-def test_consumed_lists_summary_and_lessons(result):
-    assert result.consumed["src/SUMMARY.md"] == "index"
-    lesson_keys = [k for k, v in result.consumed.items() if v == "lesson"]
-    assert len(lesson_keys) == 64
-    assert "src/Section1/Part1/Lesson1.md" in lesson_keys
+def test_extractor_fails_closed_when_a_listed_lesson_is_absent_from_the_lock(tmp_path):
+    target = write_source(
+        tmp_path,
+        {
+            "src/SUMMARY.md": SUMMARY,
+            "src/Section1/Part1.md": "# Part 1\n",
+            "src/Section1/Part1/Lesson1.md": LESSON1,
+        },
+    )
+    with pytest.raises(SourceLockError):
+        YokubiExtractor(target).extract()
+
+
+# ---------------------------------------------------------------------------
+# emitted artifacts: JSONL records + coverage report
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def emitted(tmp_path):
+    """The source directory after a real extraction, so the artifacts are on disk."""
+    target = write_source(
+        tmp_path,
+        {
+            "src/SUMMARY.md": SUMMARY,
+            "src/Section1/Part1.md": "# Part 1\n",
+            "src/Section1/Part1/Lesson1.md": LESSON1,
+            "src/Section1/Part1/Lesson4.md": LESSON4,
+        },
+    )
+    result = YokubiExtractor(target).extract()
+    return target, result
+
+
+def test_extract_writes_one_jsonl_record_per_point(emitted):
+    target, result = emitted
+    lines = (target / JSONL_NAME).read_text(encoding="utf-8").splitlines()
+    assert len(lines) == len(result.points)
+    assert [json.loads(line)["expression"] for line in lines] == [
+        point.expression for point in result.points
+    ]
+
+
+def test_jsonl_records_carry_attribution_and_provenance(emitted):
+    target, _ = emitted
+    for line in (target / JSONL_NAME).read_text(encoding="utf-8").splitlines():
+        record = json.loads(line)
+        assert record["source"] == "yokubi"
+        assert record["provenance"]["attribution"] == YOKUBI_ATTRIBUTION
+        assert record["provenance"]["licence"] == "CC-BY-4.0"
+        assert record["provenance"]["revision"] == "0" * 40
+
+
+def test_jsonl_is_one_json_object_per_line_and_ends_with_a_newline(emitted):
+    target, _ = emitted
+    raw = (target / JSONL_NAME).read_text(encoding="utf-8")
+    assert raw.endswith("\n")
+    for line in raw.splitlines():
+        assert isinstance(json.loads(line), dict)
+
+
+def test_jsonl_bytes_are_deterministic_across_runs(emitted):
+    target, _ = emitted
+    first = (target / JSONL_NAME).read_bytes()
+    YokubiExtractor(target).extract()
+    assert (target / JSONL_NAME).read_bytes() == first
+
+
+def test_coverage_report_is_written_and_names_the_source(emitted):
+    target, _ = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    assert YOKUBI_ATTRIBUTION in text
+    assert "CC-BY-4.0" in text
+    assert "0" * 40 in text
+
+
+def test_coverage_report_records_a_reason_for_every_skipped_lesson(emitted):
+    target, result = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    skipped = result.stats["skippedLessons"]
+    assert skipped
+
+    section = text.split("## Skipped lessons", 1)[1].split("## Skipped example groups", 1)[0]
+    rows = [
+        line
+        for line in section.splitlines()
+        if line.startswith("|") and not line.startswith("| ---") and "Lesson |" not in line
+    ]
+    assert len(rows) == len(skipped)
+    for row, entry in zip(rows, skipped):
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert cells[0] == str(entry["lesson"])
+        assert str(entry["title"]) in cells[1]
+        # The reason must be rendered, not merely present somewhere in the file.
+        assert cells[2] == str(entry["reason"])
+        assert cells[2]
+
+
+def test_coverage_report_lists_every_covered_lesson_with_its_headwords(emitted):
+    target, result = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    covered = result.stats["coveredLessons"]
+    assert covered
+
+    # Parse the rendered rows so an empty headword cell cannot pass: a lesson's
+    # headwords are the whole point of the covered table.
+    section = text.split("## Covered lessons", 1)[1].split("## Skipped lessons", 1)[0]
+    rows = [
+        line
+        for line in section.splitlines()
+        if line.startswith("|") and not line.startswith("| ---") and "Lesson |" not in line
+    ]
+    assert len(rows) == len(covered)
+    for row, entry in zip(rows, covered):
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert cells[0] == str(entry["lesson"])
+        assert str(entry["title"]) in cells[1]
+        assert cells[2] == ", ".join(f"`{head}`" for head in entry["headwords"])
+        assert cells[2]
+        assert cells[3] == str(entry["examplesAttached"])
+
+
+def test_coverage_report_accounts_for_every_listed_lesson(emitted):
+    _, result = emitted
+    stats = result.stats
+    assert stats["coveredCount"] + stats["skippedCount"] == stats["lessonsListed"]
+
+
+def test_coverage_report_records_skipped_example_groups_with_their_lesson(emitted):
+    target, result = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    groups = result.stats["exampleGroupsSkipped"]
+    assert groups
+
+    # Read the rendered rows, not just the stats dict: a skip is only reportable
+    # when the report itself names the lesson that declared it. Asserting the
+    # key exists in stats passes even when the row renders an empty cell.
+    section = text.split("## Skipped example groups", 1)[1]
+    rows = [
+        line
+        for line in section.splitlines()
+        if line.startswith("|") and not line.startswith("| ---") and "Shape" not in line
+    ]
+    assert len(rows) == len(groups)
+    for row, group in zip(rows, groups):
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert cells[0] == str(group["lesson"])
+        assert cells[1] == f"`{group['shape']}`"
+        assert cells[-1] == str(group["reason"])
+
+
+def test_render_coverage_fails_closed_when_a_lesson_is_unaccounted_for(emitted):
+    """A report that silently loses a lesson must not be renderable."""
+    _, result = emitted
+    result.stats["lessonsListed"] = int(result.stats["lessonsListed"]) + 1
+    with pytest.raises(MalformedPayload):
+        render_coverage(result)
+

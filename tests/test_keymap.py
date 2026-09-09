@@ -574,16 +574,45 @@ def test_malformed_keymap_payloads_fail_closed(payload: object) -> None:
 # Real-corpus properties. Pinned: a moved count is a review event.
 # --------------------------------------------------------------------------
 
+#: The pinned corpus counts below are properties of the WHOLE corpus, so these
+#: tests are only meaningful when every contributing source has been extracted.
+#: Gating on "any *.json exists" made a single-source extraction (e.g. `bugd.cli
+#: --source yokubi extract` while iterating on one extractor) report 7 loud
+#: failures such as `assert 132 == 4972`, which read as keymap defects but were
+#: only a partial corpus. Require the full set, and skip with a message naming
+#: exactly which sources are missing.
+CORPUS_SOURCES = (
+    "dojg",
+    "donna_toki",
+    "edewakaru",
+    "nihongo_net",
+    "nihongo_no_sensei",
+)
+
+
+def _missing_corpus_sources() -> list[str]:
+    if not EXTRACTED.is_dir():
+        return list(CORPUS_SOURCES)
+    return [name for name in CORPUS_SOURCES if not (EXTRACTED / f"{name}.json").is_file()]
+
+
 pytestmark_corpus = pytest.mark.skipif(
-    not EXTRACTED.is_dir() or not list(EXTRACTED.glob("*.json")),
-    reason="normalized sources not extracted; run `make extract`",
+    bool(_missing_corpus_sources()),
+    reason=(
+        "pinned counts need the full corpus; missing extracted sources: "
+        f"{', '.join(_missing_corpus_sources()) or 'none'} (run `make extract`)"
+    ),
 )
 
 
 @pytest.fixture(scope="module")
 def corpus() -> dict[str, object]:
-    if not EXTRACTED.is_dir() or not list(EXTRACTED.glob("*.json")):
-        pytest.skip("normalized sources not extracted; run `make extract`")
+    missing = _missing_corpus_sources()
+    if missing:
+        pytest.skip(
+            "pinned counts need the full corpus; missing extracted sources: "
+            f"{', '.join(missing)} (run `make extract`)"
+        )
     return build_keymap(EXTRACTED)
 
 
