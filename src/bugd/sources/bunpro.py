@@ -50,6 +50,7 @@ from ..furigana_fixups import normalize_furigana, normalize_jlpt_field
 from ..jsonio import MalformedPayload
 from ..model import Example, GrammarPoint
 from ..normalize import lookup_keys, sentence_key, split_alternatives
+from ..richtext import strike_omissions
 from .base import Extractor, ExtractResult, load_source_lock, write_points_jsonl
 from .registry import register_extractor
 
@@ -90,10 +91,23 @@ def _flatten(raw: str | None) -> str | None:
     ruby, so keeping them would put an empty `（）` into the surface string for
     the sentences that ship them. Returns None for an empty result so a blank
     field never becomes an empty string on the record.
+
+    Omission markup is rewritten to struck plain text FIRST. `Structure` uses
+    `<del>` on the ending a conjugation drops before attaching the next one
+    (`食べ<del>る</del> + ます` = "drop る, add ます"), and this flattener strips
+    every tag equally, so without the rewrite the marking vanished and the field
+    asserted `食べる + ます` — a form that is not Japanese. Measured over the locked
+    deck: 431 `<del>` runs across 80 Structure fields, and no other field.
+
+    Player markup (`<audio>`/`<button onclick>`/`<svg>`) is dropped with its
+    subtree first — see `_PLAYER` for why that is an explicit policy rather than
+    a side effect of stripping tags.
     """
     if raw is None:
         return None
-    text = _RT.sub("", raw)
+    text = _drop_players(raw)
+    text = strike_omissions(text) or ""
+    text = _RT.sub("", text)
     text = _RP.sub("", text)
     text = text.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
     text = _TAG.sub("", text)
@@ -115,11 +129,68 @@ def _example_blocks(field: str) -> list[str]:
     return parts[1:]
 
 
+#: Bunpro's per-example audio player: an `<audio>` element, a `<button>` whose
+#: `onclick` calls `.play()` on it by id, and an inline `<svg>` play icon. Every
+#: one of these is dropped WITH ITS SUBTREE and explicitly, not left to a
+#: tag-stripping regex, because they are not content and they carry three
+#: separate hazards into anything downstream that handles raw source HTML:
+#:
+#: * `onclick` is an inline JS event handler. Yomitan's structured-content
+#:   renderer has no attribute channel that could emit one, so nothing is
+#:   exploitable today — but passing script text through the pipeline at all is an
+#:   unnecessary surface, and the drop should be a stated policy rather than a
+#:   side effect of `_TAG.sub`.
+#: * `src="audio_NNN_M_female.opus"` names a media file this dictionary does not
+#:   repackage. Shipped, it renders as a broken silent control.
+#: * `id="audio_NNN_rest_M"` is unique per note, not per corpus, so ids from
+#:   different notes collide once several notes' HTML is concatenated.
+#:
+#: Measured over the locked deck: 14,881 players in `Rest_Examples_HTML`, plus
+#: 3,945 in `Explanation` and 2,680 in `Explanation_JP`, which embed the same
+#: `.example-item` markup inside `div.embedded-examples` — 21,506 in total. A
+#: guard scoped to `Rest_Examples_HTML` alone would miss 6,625 of them, so this
+#: runs over every field the extractor reads.
+_PLAYER = re.compile(
+    r"<(audio|button|svg)\b[^>]*>.*?</\1\s*>|<(?:audio|source|track|path)\b[^>]*/?>",
+    re.DOTALL | re.IGNORECASE,
+)
+
+#: Interactive/media markup that must never reach a normalized record. Asserted
+#: by the regression suite over the whole corpus and over the packaged ZIP.
+INTERACTIVE_MARKUP = re.compile(
+    r"<(?:audio|button|svg|path|video|source|track|script|iframe)\b|\bon[a-z]+\s*=",
+    re.IGNORECASE,
+)
+
+
+def _drop_players(raw: str) -> str:
+    """Remove audio/button/svg player nodes and their subtrees.
+
+    Applied before any text extraction, so the player's `onclick` body, `.opus`
+    reference and per-note element id are gone before the field is parsed rather
+    than merely absent from the result by luck.
+    """
+    previous = None
+    current = raw
+    # Nested/adjacent players: rewrite until stable.
+    while current != previous:
+        previous = current
+        current = _PLAYER.sub("", current)
+    return current
+
+
 def _examples(field: str) -> tuple[Example, ...]:
     """Build examples from a `Rest_Examples_HTML` field, deduped by surface text.
 
     A note occasionally repeats a sentence; it is attached once. An item without
     a Japanese sentence is skipped rather than emitted as an empty example.
+
+    Only the Japanese sentence and the English translation are read out of each
+    `.example-item`; the item's audio player is never part of either. The
+    annotated `japanese_html` kept on the record is additionally run through
+    `_drop_players`, because that field is stored as RAW source HTML and travels
+    to the bank stage — the only field that does — so it is the one place a player
+    node could otherwise ride along.
     """
     examples: list[Example] = []
     seen: set[str] = set()
@@ -127,7 +198,7 @@ def _examples(field: str) -> tuple[Example, ...]:
         ja_match = _JAPANESE_DIV.search(block)
         if ja_match is None:
             continue
-        japanese_html = ja_match.group(1).strip()
+        japanese_html = _drop_players(ja_match.group(1)).strip()
         japanese = _flatten(japanese_html)
         if not japanese or japanese in seen:
             continue
@@ -285,4 +356,10 @@ class BunproExtractor(Extractor):
         return fixed
 
 
-__all__ = ["BunproExtractor", "APKG_NAME", "NOTETYPE", "BUNPRO_LEVELS"]
+__all__ = [
+    "BunproExtractor",
+    "APKG_NAME",
+    "NOTETYPE",
+    "BUNPRO_LEVELS",
+    "INTERACTIVE_MARKUP",
+]

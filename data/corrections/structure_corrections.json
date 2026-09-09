@@ -5,8 +5,16 @@
     "task": "UGD-11c-C (t_98e7da66)",
     "frozen_candidate_sha256": "06bd856f724a90ed6dc84dcb1c0d54b3e9b104bb0d4977c0d141ea8e3737711c",
     "total_findings": 100,
-    "corrected": 45,
+    "corrected": 46,
     "documented_not_corrected": 66,
+    "later_additions": [
+      {
+        "task": "UGD-11b (t_f936109e)",
+        "count": 1,
+        "targets": ["bunpou/222 meaning"],
+        "note": "One source-authoring inconsistency in 文法.apkg: the 〜によって（誤用） note drops によって from its second counterexample, marking the grammatical 「箸でご飯を食べます」 as an error while its sibling note teaching the identical 誤用 pair writes 「箸によってご飯を食べます」. Corrected to the sibling's form, which is what this card's own stated rule evidences."
+      }
+    ],
     "corrected_note": "42 distinct byte-anchored corrections. Started from the 34 in-scope findings, collapsed duplicate findings on shared cards, added sibling headword-variant completeness fixes (same physical card indexed under multiple lookup forms), and added defects surfaced by the post-fix UGD-11c re-review on the corrected corpus (a repeated typo the original anchor under-scoped, plus two example-field defects on cards whose structure defect was already flagged). Every correction restores a form the card's own examples/headword/pattern-header already evidence; none invents a rule.",
     "rereview": {
       "harness": "UGD-11c review_runner.py (Bedrock global.anthropic.claude-opus-5, adaptive thinking, effort=high), one fresh isolated invocation per card",
@@ -420,6 +428,15 @@
       "anchor": "ほからなぬ",
       "replacement": "ほかならぬ",
       "rationale": "ほかならぬ + 名詞 (連体); ほからなぬ is a source metathesis typo (sibling headword variant sharing the same structure; reviewer flagged にほかならない)"
+    },
+    {
+      "source": "bunpou",
+      "source_id": "222",
+      "field": "meaning",
+      "op": "replace_all",
+      "anchor": "×箸でご飯を食べます。",
+      "replacement": "×箸によってご飯を食べます。",
+      "rationale": "UGD-11b finding 1. Note 1647848745958 (〜によって（誤用）) and note 1647848690228 (〜によって) teach the SAME 誤用 pair, and the 誤用 note drops によって from the second counterexample: 「×箸でご飯を食べます。」 marks a GRAMMATICAL sentence as an error, since 手段の で is exactly the correct particle here. Both notes' shared first counterexample (×毎日、自転車によって学校へ行く。) is identical, and both state the same rule 単に手段の選択を表す場合には使わない, so the sibling note's own 「×箸によってご飯を食べます。」 is the form this card's rule evidences. Mechanically derivable from the card's own asserted rule plus its sibling's verbatim text; no rule is invented."
     }
   ],
   "documented_not_corrected": [

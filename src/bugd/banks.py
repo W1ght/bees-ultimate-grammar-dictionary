@@ -364,6 +364,13 @@ def _construction_section(point: GrammarPoint) -> dict | None:
     pipe-delimited table, and three other sources one per LINE. Rows become list
     items so the popup shows the source's own patterns instead of a wall of `|`
     characters or a space-joined run-on line.
+
+    Each cell is CONVERTED, not pasted. Sources keep inline markup in `structure`
+    -- NINJAL marks the ending a conjugation drops with `<s>` in 526 places across
+    168 cards (`i-A<s>い</s>＋かったあまり`) -- and building the row from the raw line
+    put the literal characters `<s>` and `</s>` on the card in 107 of them while
+    the marking they carry was lost. Conversion renders the omission as a real
+    struck-through span, which is the whole point of the notation.
     """
     structure = _text(point.structure)
     if not structure or _has_badge_structure(point):
@@ -375,7 +382,26 @@ def _construction_section(point: GrammarPoint) -> dict | None:
         cells = [c for c in cells if c]
         if not cells:
             continue
-        rows.append({"tag": "li", "data": {"pattern": ""}, "content": " · ".join(cells)})
+        content: list[object] = []
+        for cell in cells:
+            converted = html_to_content(cell)
+            if converted is None:
+                continue
+            if content:
+                # Separator is appended only once a rendered cell is known to
+                # follow, so a cell that converts to nothing cannot leave a
+                # dangling ` · ` at the end of the row.
+                content.append(" · ")
+            content.extend(converted if isinstance(converted, list) else [converted])
+        if not content:
+            continue
+        rows.append(
+            {
+                "tag": "li",
+                "data": {"pattern": ""},
+                "content": content[0] if len(content) == 1 else content,
+            }
+        )
     if not rows:
         return None
     return {"tag": "ul", "data": {"patterns": ""}, "content": rows}
