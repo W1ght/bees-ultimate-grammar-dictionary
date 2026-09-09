@@ -294,7 +294,14 @@ def _highlight_sentence(sentence: str, highlights: tuple[str, ...] | list[str]) 
     text = sentence
     if not text:
         return ""
-    markers = sorted({h for h in (highlights or ()) if isinstance(h, str) and h.strip()}, key=len, reverse=True)
+    # Longest-first so a larger span wins over a nested smaller one; the string
+    # itself is the deterministic tiebreak, because iterating the deduped set
+    # otherwise leaves equal-length markers in arbitrary (hash) order and the
+    # build stops being byte-reproducible.
+    markers = sorted(
+        {h for h in (highlights or ()) if isinstance(h, str) and h.strip()},
+        key=lambda h: (-len(h), h),
+    )
     if not markers:
         return text
 

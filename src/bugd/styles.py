@@ -29,10 +29,10 @@ get a `data-sc-grammar-card` attribute; a key of `sc` would render as
 from __future__ import annotations
 
 STYLES_CSS = """\
-/* Yomitan wraps this file in [data-dictionary="..."] { ... }, so every rule
-   below is scoped to this dictionary's own entries and cannot restyle Yomitan
-   or another dictionary. Colours come from Yomitan's theme variables so light
-   and dark themes are inherited rather than re-implemented. */
+/* Yomitan wraps this whole file in one [data-dictionary="..."] nesting block,
+   so every rule below is scoped to this dictionary's own entries and cannot
+   restyle Yomitan or another dictionary. Colours come from Yomitan's theme
+   variables so light and dark themes are inherited rather than re-implemented. */
 
 [data-sc-grammar-card] {
   --bugd-row-gap: 0.5em;
@@ -226,6 +226,24 @@ STYLES_CSS = """\
   margin-top: 0.5em;
 }
 
+/* Keep the construction badge and JLPT chip on ONE line in a full-width popup.
+   Yomitan renders each structured-content block inside a `span.structured-content`
+   whose `display: inline` collapses this flex row's ancestor chain to zero width
+   whenever the host does not stretch it (the search page and the bare render
+   harness; the popup's flex content-body does stretch it). A flex container sized
+   against a 0-width parent shrinks to min-content and breaks the construction
+   formula one glyph per line, stacking the JLPT chip far beneath it. Sizing the
+   row to `max-content` lays the two chips out on their natural single line
+   independent of the collapsed ancestor. This is gated to a wide viewport so a
+   phone-width popup keeps the container-query fallback below (the row is allowed
+   to wrap rather than overflow), which is exactly the desktop/narrow split the
+   contract draws. */
+@media (min-width: 480px) {
+  [data-sc-metarow] {
+    width: max-content;
+  }
+}
+
 /* Grammatical construction: set as a chip that matches the JLPT pill's shape so
    the metadata row reads as one family of chips, and visually distinct from the
    English meaning above it. */
@@ -239,15 +257,23 @@ STYLES_CSS = """\
   overflow-wrap: anywhere;
 }
 
-/* JLPT level: a compact badge. Yomitan's own tag palette keeps it legible in
-   both themes and in forced-colors mode. */
+/* JLPT level: a compact badge. Legibility is measured against the CARD's own
+   backdrop, not the pill fill (structured-content wrappers up to the card root
+   are the surface a reader perceives the chip against), so the text is drawn in
+   Yomitan's full-strength `--text-color` — legible on white in light and on the
+   dark surface in dark — rather than white-on-mid-grey, which reads as ~1:1
+   against the card background in light mode. The chip still stands out as a
+   badge via a filled tint and pill shape, but its contrast no longer depends on
+   a fill the surrounding surface hides. The token tracks Yomitan's active theme
+   and, in forced-colors mode, the rule below maps it to the system palette. */
 [data-sc-jlpt] {
   flex: none;
   font-size: 0.82em;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--tag-text-color, #fff);
-  background: var(--tag-default-background-color, #8a8a91);
+  color: var(--text-color, inherit);
+  background: var(--bugd-well);
+  border: 1px solid var(--bugd-control-edge);
   border-radius: var(--bugd-pill);
   padding: 0.1em 0.55em;
 }
@@ -289,6 +315,17 @@ STYLES_CSS = """\
   padding: 0.3em 0.5em;
   /* Flush to the enclosing box's inner edge: the row is the box's header. */
   margin: 0;
+  /* A visible separator at the top of every source disclosure. The enclosing
+     `details` already draws the box, but the section rule the reader perceives
+     as "one source ends, the next begins" is this top edge on the control row
+     itself. Drawn from `--bugd-control-edge` so it (a) clears the 3:1 non-text
+     contrast floor on both of Yomitan's real surfaces, (b) tracks the active
+     theme (the token is derived from Yomitan's inherited theme vars, not from
+     `prefers-color-scheme` or a top-level `data-theme` ancestor that cannot match
+     under Yomitan's `[data-dictionary=...]` nesting), and (c) survives
+     forced-colors, where the token resolves to `CanvasText`. A real border,
+     not a background tint, so high-contrast mode keeps it. */
+  border-block-start: 1px solid var(--bugd-control-edge);
   /* A resting affordance: the row is a control whether or not a pointer is over
      it, so it carries its own tint instead of appearing only on hover. The
      enclosing `details` draws the boundary; a border here too would cut the
@@ -917,6 +954,32 @@ STYLES_CSS = """\
   }
   [data-sc-structure] {
     border-color: CanvasText;
+  }
+  /* The custom flex chevron is a translucent-free `currentColor` box, but flex
+     layout removes the summary's list-item box and with it the native
+     disclosure triangle. In forced-colors mode the native `::marker` triangle
+     is the affordance guaranteed to survive the user's palette override, so the
+     control row is restored to a list-item and the native marker is un-hidden.
+     The reconstructed `::before` chevron is dropped here so the row shows one
+     triangle, not two. `list-item` also keeps the row's `border-block-start`
+     CanvasText separator (via `--bugd-control-edge`) as the section boundary. */
+  [data-sc-grammar-card] summary {
+    display: list-item;
+    list-style: disclosure-closed inside;
+  }
+  [data-sc-grammar-card] details[open] > summary {
+    list-style-type: disclosure-open;
+  }
+  [data-sc-grammar-card] summary::marker {
+    content: normal;
+    color: CanvasText;
+  }
+  [data-sc-grammar-card] summary::-webkit-details-marker {
+    display: inline-block;
+    color: CanvasText;
+  }
+  [data-sc-grammar-card] summary::before {
+    display: none;
   }
   /* The chevron already uses currentColor, so it survives the override. The
      hover tint does not: a forced background would erase the label behind it. */
