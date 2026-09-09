@@ -108,11 +108,76 @@ class SetExpression:
         return dataclasses.replace(point, expression=self.expression)
 
 
+@dataclass(frozen=True)
+class HedgeAbsolute:
+    """Soften an unqualified absolute restriction into a source-attributed tendency.
+
+    UGD-11d-B remedy. Twelve merged cards paired one source's ABSOLUTE
+    prohibition (必ず… / 〜しか使えません / いけません / 使いません / ❌…) beside another
+    source's sanctioned example that the prohibition forbids — a learner saw a
+    rule and a counterexample to it on the same card with no guidance.
+
+    The dictionary's contract is that every statement stays attributed to the
+    source that made it, so the fix must NOT rewrite the claim to match the other
+    source or delete it. Instead the absolute operator in ``anchor`` is replaced,
+    in place inside the source's own prose, with ``hedged`` — the same statement
+    re-cast as that source's *tendency* plus an inline note that other sources
+    disagree. The statement stays byte-attributed to the source; only its modal
+    force is lowered so the card no longer presents an unqualified rule next to a
+    live counterexample.
+
+    ``anchor`` must occur exactly ``count`` times in ``explanation`` (fail-closed:
+    a drifted source surfaces as a hard error, never a silent miss). ``hedged``
+    is asserted to (a) drop the absolute operator ``forbids`` and (b) contain the
+    tendency marker, so a regression that reintroduces the absolute is caught.
+    """
+
+    anchor: str
+    hedged: str
+    forbids: str
+    count: int
+    finding: str
+    field: str = "explanation"
+
+    def apply(self, point: GrammarPoint) -> GrammarPoint:
+        # Structural guards on the correction itself run regardless of which row
+        # we landed on, so a malformed hedge fails at build time even before it
+        # meets its anchor.
+        if self.forbids and self.forbids not in self.anchor:
+            raise SourceCorrectionError(
+                f"hedge {self.finding}: absolute operator {self.forbids!r} is not "
+                f"in the anchor {self.anchor!r}"
+            )
+        if self.forbids and self.forbids in self.hedged:
+            raise SourceCorrectionError(
+                f"hedge {self.finding}: hedged text still contains the absolute "
+                f"operator {self.forbids!r}"
+            )
+        value = getattr(point, self.field)
+        observed = value.count(self.anchor) if value else 0
+        # UGD-11d proved source_id is NOT unique (max 22 rows/id): a single
+        # (source, source_id) key can select several rows that share a headword
+        # but carry different prose. The absolute paragraph lives on exactly the
+        # rendering row; sibling rows under the same id legitimately lack the
+        # anchor. Pass those through untouched (observed == 0) rather than fail.
+        if observed == 0:
+            return point
+        if observed != self.count:
+            raise SourceCorrectionError(
+                f"hedge {self.finding} for {point.source}#{point.source_id} "
+                f"expected {self.count} occurrence(s) of {self.anchor!r} in "
+                f"{self.field}, found {observed}"
+            )
+        return dataclasses.replace(
+            point, **{self.field: value.replace(self.anchor, self.hedged)}
+        )
+
+
 class SourceCorrectionError(Exception):
     """A recorded correction did not match the extracted record it targets."""
 
 
-Correction = ReplaceIn | SetExpression
+Correction = ReplaceIn | SetExpression | HedgeAbsolute
 
 # ---------------------------------------------------------------------------
 # The closed table: eight Class-A defects (UGD-11d-A / card t_62bd276f).
@@ -223,6 +288,149 @@ CORRECTIONS: dict[tuple[str, str], tuple[Correction, ...]] = {
             "A8",
         ),
     ),
+    # -----------------------------------------------------------------------
+    # UGD-11d-B: twelve absolute usage rules, each rendered on a card beside
+    # another source's sanctioned counterexample. Hedge in place — the source's
+    # own prose stays attributed, only its modal force is lowered and an inline
+    # note records that other sources disagree. Keyed by the rendering row's
+    # (source, source_id) confirmed via the frozen keymap (probe_rows.py); each
+    # anchor occurs exactly once in that row's explanation.
+    # -----------------------------------------------------------------------
+    # B1. あげく — edewakaru asserts あげく is only for bad outcomes; dojg's
+    # さんざん考えたあげく大学院へ進学することにした is a neutral/good outcome.
+    ("edewakaru", "あげく"): (
+        HedgeAbsolute(
+            "「〜あげく」はよくない結果になったことに使います",
+            "「〜あげく」はよくない結果になったことに使う傾向があります（他の辞書はよい結果の例も認めます）",
+            "使います",
+            1,
+            "B1",
+        ),
+    ),
+    # B2. か〜ないかのうちに — edewakaru requires 必ず「た形」; donna_toki's
+    # 教室を飛び出していく ends in non-past. Same prose also renders on the
+    # ないかのうちに row; the headword row か carries the shipped fix.
+    ("edewakaru", "か"): (
+        HedgeAbsolute(
+            "後ろには必ず「た形」がくると覚えておきましょう",
+            "後ろには多くの場合「た形」がくると覚えておきましょう（他の辞書は非過去の例も挙げています）",
+            "必ず",
+            1,
+            "B2",
+        ),
+    ),
+    # B4. が早いか — edewakaru calls natural-phenomenon subjects unnatural;
+    # nihongo_no_sensei's 電話が来るが早いか、緊張で手が震え出した uses one.
+    ("edewakaru", "が早いか"): (
+        HedgeAbsolute(
+            "自然現象や状態の発生などに使うと不自然になります",
+            "自然現象や状態の発生などに使うと不自然になりやすいとされます（他の辞書はそうした例も認めます）",
+            "不自然になります",
+            1,
+            "B4",
+        ),
+    ),
+    # B5. が早いか — nihongo_no_sensei says past-only; donna_toki's
+    # チャイムが鳴るが早いか、教室に入ってきます is habitual non-past.
+    ("nihongo_no_sensei", "が早いか"): (
+        HedgeAbsolute(
+            "この文法は過去のことにしか使えません。",
+            "この文法は主に過去のことに使われます。（他の辞書は非過去の例も挙げています）",
+            "しか使えません",
+            1,
+            "B5",
+        ),
+    ),
+    # B6. くせに — edewakaru restricts the subject to people; nihongo_no_sensei's
+    # 道が狭いくせに車通りは多い takes a non-person subject. Same prose also renders
+    # on くせして; the headword row くせに carries the shipped fix.
+    ("edewakaru", "くせに"): (
+        HedgeAbsolute(
+            "人に使う（動物であればOKな場合もある）",
+            "主に人（動物であればOKな場合もある）を対象にする傾向があります（他の辞書は物事を主語にする例も認めます）",
+            "人に使う",
+            1,
+            "B6",
+        ),
+    ),
+    # B9. すら — nihongo_no_sensei says the second clause must be negative; its
+    # OWN examples #1/#6/#7/#11 are affirmative (e.g. 怒っているところすら可愛い).
+    ("nihongo_no_sensei", "すら"): (
+        HedgeAbsolute(
+            "後件には否定形が呼応します。",
+            "後件には否定形が呼応する傾向があります。（ただし当辞書の例文にも肯定形の後件が見られます）",
+            "呼応します",
+            1,
+            "B9",
+        ),
+    ),
+    # B10. せいか/せいで — nihongo_no_sensei says only bad outcomes; edewakaru's
+    # ⭕️薬を飲んだせいか頭痛が治った is a good outcome. Renders on the せいで row
+    # (canonicalKey せいか); the せいか/せいだ/せいにする rows are demoted.
+    ("nihongo_no_sensei", "せいで"): (
+        HedgeAbsolute(
+            "後項にはその原因から発生した良くない結果を述べます",
+            "後項にはその原因から発生した良くない結果を述べる傾向があります（他の辞書はよい結果の例も認めます）",
+            "述べます",
+            1,
+            "B10",
+        ),
+    ),
+    # B13. なり — edewakaru requires same subject before and after; dojg's
+    # 部屋に入るなりルームサービスの人が…持ってきてくれた switches subject.
+    ("edewakaru", "なり"): (
+        HedgeAbsolute(
+            "また、前と後ろの主語は同じでなければいけません",
+            "また、前と後ろの主語は同じであることが多いです（他の辞書は主語が異なる例も挙げています）",
+            "なければいけません",
+            1,
+            "B13",
+        ),
+    ),
+    # B14. に至っては — donna_toki frames it as negative-evaluation extremes;
+    # dojg's くらげにいたっては96%が水だ is a neutral extreme example.
+    ("donna_toki", "に至っては"): (
+        HedgeAbsolute(
+            "マイナス評価の例がいくつかある中で～という極端な例を挙げて",
+            "いくつかの例がある中で～という極端な例を挙げて（多くは否定的な評価だが、他の辞書は中立的な極端例も挙げています）",
+            "マイナス評価",
+            1,
+            "B14",
+        ),
+    ),
+    # B18. ようにも — donna_toki says the post-clause verb is the potential form;
+    # edewakaru notes 「〜ない」 and potential-negative both occur.
+    ("donna_toki", "ようにも"): (
+        HedgeAbsolute(
+            "「にも」の前後は同じ動詞を使い、前は意志動詞の意志形、後はその可能動詞である。",
+            "「にも」の前後は同じ動詞を使い、前は意志動詞の意志形、後はその可能動詞であることが多い。（他の辞書は「〜ない」や可能形の否定形がくる場合も挙げています）",
+            "である。",
+            1,
+            "B18",
+        ),
+    ),
+    # B19. わ — nihongo_no_sensei claims good-meaning use is possible, but all 8
+    # of its OWN examples describe unwelcome outcomes; edewakaru follows suit.
+    ("nihongo_no_sensei", "わ"): (
+        HedgeAbsolute(
+            "良いことにも使えますが、どちらかというと悪い意味の用法が多めに感じます。",
+            "どちらかというと悪い意味の用法が多めに感じます。（当辞書の例文はいずれも好ましくない結果を述べており、良い意味での用法は確認できません）",
+            "良いことにも使えますが",
+            1,
+            "B19",
+        ),
+    ),
+    # B20. をものともせずに — edewakaru forbids first-person subjects; nihongo_no_sensei's
+    # 老いをものともせず、何歳になっても挑戦的でありたい is speaker-referential.
+    ("edewakaru", "をものともせずに"): (
+        HedgeAbsolute(
+            "話し手自身のことには使えません",
+            "話し手自身のことには使いにくいとされます（他の辞書は一人称の例も認めます）",
+            "使えません",
+            1,
+            "B20",
+        ),
+    ),
 }
 
 
@@ -243,6 +451,7 @@ def correct_point(point: GrammarPoint) -> GrammarPoint:
 __all__ = [
     "CORRECTIONS",
     "Correction",
+    "HedgeAbsolute",
     "ReplaceIn",
     "SetExpression",
     "SourceCorrectionError",
