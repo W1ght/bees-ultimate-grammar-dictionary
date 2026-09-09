@@ -28,6 +28,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--sources-dir", type=pathlib.Path, default=DEFAULT_SOURCES_DIR)
     parser.add_argument("--extracted-dir", type=pathlib.Path, default=DEFAULT_EXTRACTED_DIR)
+    parser.add_argument(
+        "--corrections-dir",
+        type=pathlib.Path,
+        default=None,
+        help="directory of confirmed post-extraction content corrections "
+        "(default: data/corrections; a missing directory means no corrections)",
+    )
     parser.add_argument("--merged-dir", type=pathlib.Path, default=DEFAULT_MERGED_DIR)
     parser.add_argument(
         "--keymap",
@@ -70,7 +77,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if stage in ("extract", "all"):
         result = run_extract(
-            sources_dir=args.sources_dir, extracted_dir=args.extracted_dir, only=args.only
+            sources_dir=args.sources_dir,
+            extracted_dir=args.extracted_dir,
+            only=args.only,
+            corrections_dir=args.corrections_dir,
         )
         print(f"[extract] {dump_json(result)}")
 

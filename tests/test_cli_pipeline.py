@@ -24,6 +24,7 @@ def _args(stage, tmp_path, *extra):
     return [
         "--sources-dir", str(tmp_path / "sources"),
         "--extracted-dir", str(tmp_path / "extracted"),
+        "--corrections-dir", str(tmp_path / "corrections"),
         "--merged-dir", str(tmp_path / "merged"),
         "--keymap", str(tmp_path / "keymap.json"),
         "--unified", str(tmp_path / "unified.jsonl"),

@@ -66,17 +66,27 @@ def run_extract(
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     only: list[str] | None = None,
     corrections_path: pathlib.Path | None = None,
+    corrections_dir: pathlib.Path | None = None,
 ) -> dict[str, object]:
     """Run every registered extractor and write one artifact per source.
 
-    After a source is extracted, the byte-anchored corrections overlay
-    (`bugd.structure_corrections`) is applied to its normalized points. It fixes
-    formation/gloss defects that live in the immutable source term-bank bytes —
-    the SOURCE.lock digests and the locked bytes are never touched, so the
-    integrity gate stays intact and every edit remains an auditable, reviewable
-    entry rather than a laundered rewrite. Application is fail-closed: a
-    correction whose anchor no longer matches its source raises, so a drifted
-    source can never silently ship an un-reviewed edit.
+    Two independent, reviewable correction overlays are applied to the normalized
+    records after extraction and before the per-source artifact is written. In
+    both cases the locked publisher bytes and their SOURCE.lock digests are
+    untouched, so the integrity gate stays intact and every edit stays an
+    auditable entry rather than a laundered rewrite:
+
+    * `bugd.structure_corrections` (UGD-11c-C) is byte-anchored and fixes
+      formation/gloss defects that live in the immutable source term-bank bytes.
+      Fail-closed: a correction whose anchor no longer matches raises, so a
+      drifted source can never silently ship an un-reviewed edit.
+    * `bugd.content_corrections` (UGD-11c-D) applies the confirmed content
+      dispositions (drop_example / remove_span / clear_field / replace_span) from
+      the review.
+
+    Structure runs first because its anchors are quoted from the publisher's
+    original bytes; a content disposition that drops or trims the same field
+    would otherwise make the anchor unmatchable and fail the build closed.
 
     The registry populates itself on first query: `all_extractors()` calls
     `load_source_modules()`, which imports every source module so its
@@ -85,6 +95,9 @@ def run_extract(
     `data/extracted/*.json` -- the cached-pre-fix-text trap.
     """
     from . import structure_corrections as corrections_module
+    from .content_corrections import DEFAULT_CORRECTIONS_DIR
+    from .content_corrections import apply_corrections as apply_content_corrections
+    from .content_corrections import load_corrections as load_content_corrections
     from .sources import all_extractors, get_extractor
 
 
@@ -94,9 +107,12 @@ def run_extract(
     overlay = corrections_module.load_corrections(
         corrections_path or corrections_module.DEFAULT_CORRECTIONS_PATH
     )
+    correction_dir = corrections_dir if corrections_dir is not None else DEFAULT_CORRECTIONS_DIR
+    content_corrections = load_content_corrections(correction_dir)
 
     written: dict[str, int] = {}
     corrected_total = 0
+    corrections_report: dict[str, object] = {}
     for cls in classes:
         source_dir = sources_dir / cls.name
         if not only and not source_dir.is_dir():
@@ -113,6 +129,12 @@ def run_extract(
         stats = dict(result.stats)
         if applied:
             stats["corrections"] = applied
+        if content_corrections:
+            points, report = apply_content_corrections(
+                points, content_corrections, source=cls.name
+            )
+            if report["applied"]:
+                corrections_report[cls.name] = report
 
         payload = {
             "source": result.source,
@@ -126,11 +148,14 @@ def run_extract(
             dump_json(payload) + "\n", encoding="utf-8"
         )
         written[cls.name] = len(points)
-    return {
+    out: dict[str, object] = {
         "sources": written,
         "total": sum(written.values()),
         "corrections": corrected_total,
     }
+    if corrections_report:
+        out["contentCorrections"] = corrections_report
+    return out
 
 
 # --------------------------------------------------------------------------
