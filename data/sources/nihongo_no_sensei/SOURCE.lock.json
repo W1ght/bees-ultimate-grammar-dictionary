@@ -1,0 +1,50 @@
+{
+  "acquiredAt": "2026-09-08T14:01:09Z",
+  "files": {
+    "changelog.txt": {
+      "byteCount": 105,
+      "sha256": "7cb45d14b3d042ecc62df6dcfbadd481b75ee757049f30270885a60b15f8e9eb",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/changelog.txt"
+    },
+    "index.json": {
+      "byteCount": 601,
+      "sha256": "55699b77a012f0029ff405fa3188c4cdc8a094dfab24e5aeb5ac45fbae2d8d60",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/index.json"
+    },
+    "term_bank_1.json": {
+      "byteCount": 1898842,
+      "sha256": "6289954d85a30b9443a3d94bbc7eadb501e686c4fbf23884cdafa315733d128f",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/term_bank_1.json"
+    },
+    "term_bank_2.json": {
+      "byteCount": 1223827,
+      "sha256": "77faa0f88a7641dd77c8acc42d1d325c3df968c2a67335de646fb403e416fb0e",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/term_bank_2.json"
+    },
+    "term_bank_3.json": {
+      "byteCount": 1698098,
+      "sha256": "c8c1884c383a78a6199997282fbd3d4aa0c5c1e58ff07009f3354e4e79d17279",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/term_bank_3.json"
+    },
+    "term_bank_4.json": {
+      "byteCount": 589184,
+      "sha256": "2197321f378b92c9fe5cc09d8f651d3f893680acc6eec28c2593a4b802cfb904",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/term_bank_4.json"
+    },
+    "term_bank_5.json": {
+      "byteCount": 332785,
+      "sha256": "474738127f4d37b78a0441f6bc52b038a9fc431cf0e20f71990dde13263ddf20",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_no_sensei/term_bank_5.json"
+    }
+  },
+  "provenance": {
+    "license": "unlicensed community derivative; producer publishes 利用規約",
+    "licenseTier": "B",
+    "meaningSectionLanguage": "zh",
+    "producer": "https://nihongonosensei.net/?page_id=10246",
+    "redistributable": false,
+    "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
+    "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
+  },
+  "source": "nihongo_no_sensei"
+}

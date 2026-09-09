@@ -1,0 +1,36 @@
+{
+  "acquiredAt": "2026-09-08T14:01:02Z",
+  "corroboration": {
+    "archiveMembers": [
+      "index.json",
+      "term_bank_1.json"
+    ],
+    "entries": 1082
+  },
+  "files": {
+    "donnatoki_1_05.zip": {
+      "byteCount": 261913,
+      "sha256": "b91845b2a565bce855b3eca593ae1441eb6b30c49486e0a163e2ec1e570d21ff",
+      "url": "https://raw.githubusercontent.com/yangjizhou99/language-learning2/142e47f3d85af05d2a372f32f32a35ae215c08b1/src/data/grammar/sources/extra/%E3%81%A9%E3%82%93%E3%81%AA%E3%81%A8%E3%81%8D%E3%81%A9%E3%81%86%E4%BD%BF%E3%81%86%20%E6%97%A5%E6%9C%AC%E8%AA%9E%E8%A1%A8%E7%8F%BE%E6%96%87%E5%9E%8B%E8%BE%9E%E5%85%B8_1_05.zip"
+    },
+    "index.json": {
+      "byteCount": 401,
+      "sha256": "3040e80fbca39fbb17d339badea18789f44abd58b45474aac17bb143565bea46",
+      "url": "https://raw.githubusercontent.com/yangjizhou99/language-learning2/142e47f3d85af05d2a372f32f32a35ae215c08b1/src/data/grammar/sources/extra/donnatoki/index.json"
+    },
+    "term_bank_1.json": {
+      "byteCount": 1293142,
+      "sha256": "ca22a4c9ba853bb97ef272f0364392e9d8df5dcd4023da6205a85cd239e2cfe8",
+      "url": "https://raw.githubusercontent.com/yangjizhou99/language-learning2/142e47f3d85af05d2a372f32f32a35ae215c08b1/src/data/grammar/sources/extra/donnatoki/term_bank_1.json"
+    }
+  },
+  "provenance": {
+    "acquiredVia": "public mirror; absent from aiko-tanaka HEAD",
+    "corroboratedBy": "donnatoki_1_05.zip",
+    "license": "unlicensed community derivative of a commercial print work",
+    "licenseTier": "C",
+    "redistributable": false,
+    "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
+  },
+  "source": "donna_toki"
+}

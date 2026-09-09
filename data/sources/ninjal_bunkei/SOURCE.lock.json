@@ -1,0 +1,34 @@
+{
+  "acquiredAt": "2026-09-08T14:01:17Z",
+  "files": {
+    "headwords.txt": {
+      "byteCount": 16716,
+      "sha256": "dafa092480006c2de09a4cfdff90ebcb1fdbc93a7347a677b206293a1cf588c5",
+      "url": "https://repository.ninjal.ac.jp/record/2000610/files/headwords.txt"
+    },
+    "nihongo_bunkei_database20260126.zip": {
+      "byteCount": 1658481,
+      "sha256": "21db3087c49c9e05eaf50f735d5c704b971df20d206b56a079dee1f50bf3a6a9",
+      "url": "https://repository.ninjal.ac.jp/record/2000610/files/nihongo_bunkei_database20260126.zip"
+    },
+    "readme.txt": {
+      "byteCount": 9900,
+      "sha256": "cea8fa4dcdd92240c4a74fc3eb8be4630b36c638828ac6862be3cb7d1699049f",
+      "url": "https://repository.ninjal.ac.jp/record/2000610/files/readme.txt"
+    }
+  },
+  "provenance": {
+    "doi": "https://doi.org/10.15084/0002000610",
+    "editors": [
+      "パルデシ, プラシャント",
+      "砂川 有里子"
+    ],
+    "license": "CC BY 4.0",
+    "licenseTier": "A",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "publisher": "国立国語研究所 研究系 (NINJAL Research Department)",
+    "redistributable": true,
+    "version": "2026.01.26"
+  },
+  "source": "ninjal_bunkei"
+}

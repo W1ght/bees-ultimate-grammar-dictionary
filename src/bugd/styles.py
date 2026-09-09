@@ -45,11 +45,11 @@ STYLES_CSS = """\
      the measurement DID expose is that the card renders seven distinct gap values
      collapsing into two colliding perceptual bands:
 
-       new paragraph      7.69px  \
+       new paragraph      7.69px  |
        label lead-in      6.92px   > three DIFFERENT jobs, all within 0.8px
-       translation tier   7.23px  /
-       new example set   13.30px  \  a named section landmark separated no more
-       section heading   14.27px  /  clearly than the next example in a list
+       translation tier   7.23px  |
+       new example set   13.30px  |  a named section landmark separated no more
+       section heading   14.27px  |  clearly than the next example in a list
 
      Two independent reads of the same tile named exactly this: "at least four or
      five unrelated vertical gap values with no shared scale... vertical space
