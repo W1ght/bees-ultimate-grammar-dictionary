@@ -66,7 +66,7 @@ def run_extract(
     """Run every registered extractor and write one artifact per source.
 
     After a source is extracted, the byte-anchored corrections overlay
-    (`bugd.corrections`) is applied to its normalized points. The overlay fixes
+    (`bugd.structure_corrections`) is applied to its normalized points. It fixes
     formation/gloss defects that live in the immutable source term-bank bytes —
     the SOURCE.lock digests and the locked bytes are never touched, so the
     integrity gate stays intact and every edit remains an auditable, reviewable
@@ -80,7 +80,7 @@ def run_extract(
     writes zero artifacts, and the build silently reuses a stale
     `data/extracted/*.json` -- the cached-pre-fix-text trap.
     """
-    from . import corrections as corrections_module
+    from . import structure_corrections as corrections_module
     from .sources import all_extractors, get_extractor
 
 
