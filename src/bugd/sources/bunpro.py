@@ -46,9 +46,11 @@ import html
 import re
 
 from ..anki import AnkiNote, read_apkg_notes
+from ..furigana_fixups import normalize_furigana, normalize_jlpt_field
 from ..jsonio import MalformedPayload
 from ..model import Example, GrammarPoint
-from .base import Extractor, ExtractResult, load_source_lock
+from ..normalize import lookup_keys, sentence_key, split_alternatives
+from .base import Extractor, ExtractResult, load_source_lock, write_points_jsonl
 from .registry import register_extractor
 
 #: The locked `.apkg` member, and the notetype whose notes are grammar points.
@@ -57,16 +59,13 @@ NOTETYPE = "Bunpro Grammar Model Final V3"
 
 #: Bunpro's level labels that map onto the JLPT scale. `Non-JLPT` and `関西弁`
 #: (Kansai dialect) deliberately mark a point as *off* the scale and yield None
-#: rather than an invented level.
-_JLPT_MAP = {
-    "JLPT5": "N5",
-    "JLPT4": "N4",
-    "JLPT3": "N3",
-    "JLPT2": "N2",
-    "JLPT1": "N1",
-}
+#: rather than an invented level. `bugd.furigana_fixups.normalize_jlpt_field`
+#: owns that mapping so one shared parser serves both Anki decks; the table is
+#: kept here only as the documented enumeration of what the field contains.
+BUNPRO_LEVELS = ("JLPT5", "JLPT4", "JLPT3", "JLPT2", "JLPT1", "Non-JLPT", "関西弁")
 
 _RT = re.compile(r"<rt\b[^>]*>.*?</rt>", re.DOTALL)
+_RP = re.compile(r"<rp\b[^>]*>.*?</rp>", re.DOTALL)
 _TAG = re.compile(r"<[^>]+>")
 _WHITESPACE = re.compile(r"[ \t\u3000]+")
 _BLANK_LINES = re.compile(r"\n{3,}")
@@ -86,12 +85,16 @@ def _flatten(raw: str | None) -> str | None:
     """Flatten source HTML to plain text, dropping furigana readings.
 
     `<ruby>私<rt>わたし</rt></ruby>` flattens to `私`: the base characters are the
-    surface text, the `<rt>` reading is annotation. Returns None for an empty
-    result so a blank field never becomes an empty string on the record.
+    surface text, the `<rt>` reading is annotation. `<rp>` goes with it — those
+    are the fallback parentheses a browser shows *only* when it cannot render
+    ruby, so keeping them would put an empty `（）` into the surface string for
+    the sentences that ship them. Returns None for an empty result so a blank
+    field never becomes an empty string on the record.
     """
     if raw is None:
         return None
     text = _RT.sub("", raw)
+    text = _RP.sub("", text)
     text = text.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
     text = _TAG.sub("", text)
     text = html.unescape(text)
@@ -163,6 +166,7 @@ class BunproExtractor(Extractor):
     redistributable = False
 
     def extract(self) -> ExtractResult:
+        self._fixups_applied = 0
         # Fail closed: the apkg must be the exact locked bytes. `load_source_lock`
         # rejects a missing/malformed lock; `read_locked_bytes` rejects a missing
         # file or a digest / byte-count mismatch.
@@ -177,6 +181,10 @@ class BunproExtractor(Extractor):
         notes = read_apkg_notes(raw, notetype=NOTETYPE)
         points = [self._parse(note) for note in notes]
 
+        # The reviewable per-source artifact: one normalized record per line,
+        # beside the locked bytes it came from.
+        jsonl_path = write_points_jsonl(self.input_dir, points)
+
         return ExtractResult(
             source=self.name,
             points=points,
@@ -190,12 +198,28 @@ class BunproExtractor(Extractor):
                 "withExamples": sum(1 for point in points if point.examples),
                 "withJlpt": sum(1 for point in points if point.jlpt),
                 "examples": sum(len(point.examples) for point in points),
+                "jsonl": jsonl_path.name,
+                # Dedup-relevant identity, reported so a reviewer can see what
+                # the merge stage will group on without re-deriving it.
+                "distinctSourceIds": len({point.source_id for point in points}),
+                "distinctLookupKeys": len(
+                    {key for point in points for key in lookup_keys(point.expression)}
+                ),
+                "pointsWithVariants": sum(1 for point in points if point.variants),
+                "distinctSentenceKeys": len(
+                    {
+                        sentence_key(example.japanese)
+                        for point in points
+                        for example in point.examples
+                    }
+                ),
+                "furiganaFixupsApplied": self._fixups_applied,
             },
         )
 
     def _parse(self, note: AnkiNote) -> GrammarPoint:
         fields = note.fields
-        expression = _flatten(fields.get("Title"))
+        expression = _flatten(self._fix(fields.get("Title")))
         if not expression:
             raise MalformedPayload(
                 f"{self.name}: note {note.note_id} has no Title headword"
@@ -203,7 +227,9 @@ class BunproExtractor(Extractor):
 
         source_id = (fields.get("ID") or "").strip() or str(note.note_id)
         jlpt_label = (fields.get("JLPT") or "").strip()
-        jlpt = _JLPT_MAP.get(jlpt_label)
+        # One shared parser for both Anki decks: it folds `JLPT5` onto `N5` and
+        # deliberately leaves `Non-JLPT` / `関西弁` off the scale as a note.
+        jlpt, jlpt_note = normalize_jlpt_field(jlpt_label)
 
         provenance: dict[str, object] = {
             "sourceLabel": self.label,
@@ -219,22 +245,44 @@ class BunproExtractor(Extractor):
         if note.tags:
             provenance["ankiTags"] = list(note.tags)
 
+        # Alternates the source itself advertises in one headword (`けど・だけど`)
+        # become additional lookup forms, so both spellings resolve to this
+        # record instead of only the first.
+        variants = tuple(
+            form for form in split_alternatives(expression) if form != expression
+        )
+
         return GrammarPoint(
             source=self.name,
             source_id=source_id,
             expression=expression,
+            variants=variants,
             reading=None,
-            meaning=_flatten(fields.get("Meaning")),
-            structure=_flatten(fields.get("Structure")),
-            nuance=_flatten(fields.get("Nuance")),
-            nuance_ja=_flatten(fields.get("Nuance_JP")),
-            explanation=_flatten(fields.get("Explanation")),
-            explanation_ja=_flatten(fields.get("Explanation_JP")),
+            meaning=_flatten(self._fix(fields.get("Meaning"))),
+            structure=_flatten(self._fix(fields.get("Structure"))),
+            nuance=_flatten(self._fix(fields.get("Nuance"))),
+            nuance_ja=_flatten(self._fix(fields.get("Nuance_JP"))),
+            explanation=_flatten(self._fix(fields.get("Explanation"))),
+            explanation_ja=_flatten(self._fix(fields.get("Explanation_JP"))),
+            notes=jlpt_note,
             jlpt=jlpt,
-            examples=_examples(fields.get("Rest_Examples_HTML") or ""),
+            examples=_examples(self._fix(fields.get("Rest_Examples_HTML")) or ""),
             tags=tuple(note.tags),
             provenance=provenance,
         )
 
+    def _fix(self, raw: str | None) -> str | None:
+        """Apply the audited UGD-11a furigana fix-ups to one raw field.
 
-__all__ = ["BunproExtractor", "APKG_NAME", "NOTETYPE"]
+        Counts the fields it actually changed so the extract stats can state how
+        many corrections landed rather than asserting the table is wired up.
+        """
+        if raw is None:
+            return None
+        fixed = normalize_furigana(raw)
+        if fixed != raw:
+            self._fixups_applied += 1
+        return fixed
+
+
+__all__ = ["BunproExtractor", "APKG_NAME", "NOTETYPE", "BUNPRO_LEVELS"]

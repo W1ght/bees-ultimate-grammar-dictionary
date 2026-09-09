@@ -135,6 +135,14 @@ _JLPT_LEVELS = ("N5", "N4", "N3", "N2", "N1")
 _TAG = re.compile(r"<[^>]+>")
 _LEVEL = re.compile(r"\bN[1-5]\b")
 
+#: Bunpro's ``JLPT`` field spells the same level as ``JLPT5`` rather than ``N5``
+#: (verified: all 964 notes use one of JLPT1..JLPT5, ``Non-JLPT`` or ``関西弁``).
+#: Rewritten to the canonical ``N`` form BEFORE level matching so one shared
+#: parser serves both decks. ``Non-JLPT`` deliberately does not match: the token
+#: must be a whole word, so the deck's explicit "outside the JLPT scale" marker
+#: keeps ``level=None`` instead of being coerced onto the scale.
+_JLPT_PREFIXED = re.compile(r"(?<![A-Za-z-])JLPT\s*([1-5])\b")
+
 
 def normalize_jlpt_field(raw: str | None) -> tuple[str | None, str | None]:
     """Split a raw JLPTレベル field value into ``(level, note)``.
@@ -147,6 +155,11 @@ def normalize_jlpt_field(raw: str | None) -> tuple[str | None, str | None]:
       -> ``("N4", "※N4では意味①のみ扱う。")`` — a level mixed with a footnote is
       split into a validated level plus a normalized note.
     * ``"N3"`` -> ``("N3", None)``; ``""`` / no level -> ``(None, <text or None>)``.
+    * ``"JLPT5"`` (bunpro) -> ``("N5", None)`` — the same level in the other
+      deck's spelling.
+    * ``"Non-JLPT"`` / ``"関西弁"`` (bunpro) -> ``(None, "Non-JLPT")`` /
+      ``(None, "関西弁")`` — markers placing a point *outside* the JLPT scale, so
+      the level stays None and the marker survives as a note.
 
     The level is validated against the accepted JLPT set; anything else is
     returned as note text rather than guessed into a badge.
@@ -160,6 +173,10 @@ def normalize_jlpt_field(raw: str | None) -> tuple[str | None, str | None]:
     text = text.replace("&nbsp;", " ").strip()
     if not text:
         return None, None
+
+    # Fold bunpro's `JLPT5` spelling onto the canonical `N5` before matching, so
+    # the level parser and the note remainder below both see one form.
+    text = _JLPT_PREFIXED.sub(lambda match: f"N{match.group(1)}", text)
 
     match = _LEVEL.search(text)
     level = match.group(0) if match and match.group(0) in _JLPT_LEVELS else None

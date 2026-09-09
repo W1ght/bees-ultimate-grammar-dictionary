@@ -726,16 +726,20 @@ def corpus():
 @requires_corpus
 def test_the_real_corpus_merges_into_the_expected_shape(corpus):
     rows, entries, stats = corpus
-    assert stats["corpus"]["sourceRows"] == 4972
-    assert stats["unified"]["pointEntries"] == 1696
-    assert stats["unified"]["redirectEntries"] == 745
-    assert stats["unified"]["entries"] == 2441
-    # 2,609 canonical points collapse into 1,696 entries: the refused senses the
+    # Every number below moved when UGD-03 added the Bunpro source. Attributed by
+    # running keymap+merge with and without data/extracted/bunpro.json: the row
+    # delta is exactly its 964 records (4972 -> 5936) and no source disappears.
+    assert stats["corpus"]["sourceRows"] == 5936
+    assert stats["unified"]["pointEntries"] == 2100
+    assert stats["unified"]["redirectEntries"] == 805
+    assert stats["unified"]["entries"] == 2905
+    # 3,179 canonical points collapse into 2,100 entries: the refused senses the
     # matcher could not fold arrive as senses, not as sibling cards.
-    assert stats["unified"]["senses"] == 2609
-    assert stats["unified"]["multiSenseEntries"] == 210
-    assert stats["unified"]["multiSourceEntries"] == 743
-    assert len(stats["corpus"]["sources"]) == 5
+    assert stats["unified"]["senses"] == 3179
+    assert stats["unified"]["multiSenseEntries"] == 221
+    assert stats["unified"]["multiSourceEntries"] == 878
+    assert len(stats["corpus"]["sources"]) == 6
+    assert "bunpro" in stats["corpus"]["sources"]
 
 
 @requires_corpus
@@ -783,13 +787,19 @@ def test_no_example_disappears_without_being_counted(corpus):
 
 @requires_corpus
 def test_every_written_form_in_the_corpus_stays_findable(corpus):
-    """Only the 5 forms the stats report as unresolved may be unreachable."""
+    """Only the 4 forms the stats report as unresolved may be unreachable."""
     rows, entries, stats = corpus
     corpus_forms = {str(record["expression"]) for _, record in rows}
     reachable = {entry.expression for entry in entries}
     unresolved = {item["expression"] for item in stats["redirects"]["unresolved"]}
     assert corpus_forms - reachable == unresolved
-    assert len(unresolved) == 5
+    # Was 5 before UGD-03. Bunpro supplies それまでだ as a real N1 point, resolving
+    # the redirect donna_toki declared as `aliasOf: それまでだ` that dangled while
+    # no source carried that headword. Attributed by running keymap+merge with
+    # and without bunpro.json: それまでだ is the only form that leaves this set,
+    # and nothing new enters it.
+    assert len(unresolved) == 4
+    assert "それまでだ" not in unresolved
 
 
 @requires_corpus
@@ -808,16 +818,25 @@ def test_the_redirect_basis_breakdown_is_pinned(corpus):
 
     An earlier probe counted forms by *eligibility* (696 declared / 33 folded /
     21 both), which is NOT what the code emits: `declared` is tried first and
-    absorbs 587 forms that would also have resolved as `folded`, so the real
-    split is 702/41/2. Pinning the emitted numbers stops the docstring and the
-    handoff drifting away from the artifact again.
+    absorbs forms that would also have resolved as `folded`, so the emitted split
+    is not the eligibility split. Pinning the emitted numbers stops the docstring
+    and the handoff drifting away from the artifact again.
+
+    UGD-03 moved this from 702/2/41 to 728/38/39. Bunpro writes its headwords with
+    placeholder tildes and slot notation (`～ずつ`, `Verb[ないで]`,
+    `う-Verb (Negative)`), so exactly 36 of its forms resolve by *folding* onto the
+    base headword, and `declared` gains a net 26 (49 added, 23 reclassified). Two
+    forms that previously needed the weaker `reading` basis -- ないほうがいい and
+    関わる -- now resolve on a stronger basis, and no form newly falls back to
+    `reading`. Verified by diffing the emitted per-basis form SETS with and
+    without data/extracted/bunpro.json, not just the totals.
     """
     _, _, stats = corpus
-    assert stats["redirects"]["byBasis"] == {"declared": 702, "folded": 2, "reading": 41}
+    assert stats["redirects"]["byBasis"] == {"declared": 728, "folded": 38, "reading": 39}
     assert sum(stats["redirects"]["byBasis"].values()) == stats["unified"][
         "redirectEntries"
     ]
-    assert stats["redirects"]["unresolvedCount"] == 5
+    assert stats["redirects"]["unresolvedCount"] == 4
 
 
 @requires_corpus
@@ -857,12 +876,44 @@ def test_the_real_corpus_carries_no_ai_fields_and_no_media_but_keeps_both_channe
 def test_conflicting_jlpt_levels_survive_the_real_merge(corpus):
     _, entries, stats = corpus
     conflicting = [e for e in entries if len(e.jlpt_levels) > 1]
-    assert len(conflicting) == stats["jlpt"]["entriesWithConflictingLevels"] == 158
+    # 246 = the 158 pre-UGD-03 conflicts, unchanged, plus 88 entries where Bunpro
+    # states a level that differs from another source's for the same point (e.g.
+    # あげる: bunpro N5 vs nihongo_no_sensei N4). Attributed by recomputing each
+    # conflicting entry's levels with bunpro's contributions excluded: exactly 88
+    # entries drop to a single level, so no pre-existing conflict was lost.
+    assert len(conflicting) == stats["jlpt"]["entriesWithConflictingLevels"] == 246
     # Each one must keep >1 DISTINCT level attributed to different sources,
     # otherwise the entry-level set is decorative.
     for entry in conflicting:
         per_source = {(c.source, c.jlpt) for c in entry.contributions if c.jlpt}
         assert len({level for _, level in per_source}) > 1, entry.expression
+
+
+@requires_corpus
+def test_bunpro_adds_jlpt_conflicts_without_erasing_the_pre_existing_ones(corpus):
+    """The 158 -> 246 step must be additive, not a reshuffle.
+
+    Pinning only the total would pass if Bunpro had destroyed pre-existing
+    conflicts while adding more of its own. Recompute each conflicting entry's
+    level set with Bunpro's contributions removed: the entries that still
+    disagree are exactly the pre-UGD-03 population.
+    """
+    _, entries, _ = corpus
+    conflicting = [e for e in entries if len(e.jlpt_levels) > 1]
+    without_bunpro = [
+        e
+        for e in conflicting
+        if len({c.jlpt for c in e.contributions if c.jlpt and c.source != "bunpro"}) > 1
+    ]
+    assert len(without_bunpro) == 158
+    assert len(conflicting) - len(without_bunpro) == 88
+    # Every added conflict genuinely involves Bunpro disagreeing with a peer.
+    for entry in conflicting:
+        if entry in without_bunpro:
+            continue
+        sources = {c.source for c in entry.contributions if c.jlpt}
+        assert "bunpro" in sources, entry.expression
+        assert len(sources) > 1, entry.expression
 
 
 @requires_corpus

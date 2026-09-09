@@ -8,13 +8,16 @@ file.
 
 from __future__ import annotations
 
+import json
 import pathlib
 
 import pytest
 
 from bugd.jsonio import dump_json
 from bugd.model import Example
-from bugd.sources.base import SOURCE_LOCK_NAME, SourceLockError
+from bugd.normalize import sentence_key, split_alternatives
+from bugd.pipeline import point_from_json
+from bugd.sources.base import JSONL_NAME, SOURCE_LOCK_NAME, SourceLockError
 from bugd.sources.bunpro import (
     APKG_NAME,
     NOTETYPE,
@@ -135,6 +138,115 @@ def test_licence_tier_and_attribution_travel_on_every_record(result):
         assert provenance["redistributable"] is False
 
 
+def test_normalized_jsonl_lands_beside_the_locked_bytes(result):
+    """The card's deliverable: one normalized record per line in the source dir."""
+    path = BUNPRO_DIR / JSONL_NAME
+    assert result.stats["jsonl"] == JSONL_NAME
+    assert path.is_file()
+    lines = path.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == len(result.points)
+    records = [json.loads(line) for line in lines]
+    # Every line round-trips back into the same record the extractor emitted, so
+    # the artifact is the corpus rather than a lossy summary of it.
+    assert [point_from_json(record) for record in records] == list(result.points)
+    assert all(record["source"] == "bunpro" for record in records)
+
+
+def test_extract_writes_the_jsonl_rather_than_relying_on_a_stale_one(tmp_path):
+    """The write must be the extractor's own side effect.
+
+    Asserting `path.is_file()` in the shared source directory passes even if the
+    extractor stopped writing, because a previous run left the file there. Point
+    the extractor at a fresh directory holding only the locked inputs, so the
+    JSONL can only exist if THIS run produced it.
+    """
+    directory = tmp_path / "bunpro"
+    directory.mkdir()
+    (directory / SOURCE_LOCK_NAME).write_bytes((BUNPRO_DIR / SOURCE_LOCK_NAME).read_bytes())
+    (directory / APKG_NAME).symlink_to(APKG_PATH.resolve())
+
+    path = directory / JSONL_NAME
+    assert not path.exists()
+    result = BunproExtractor(directory).extract()
+    assert path.is_file(), "extract() did not write its JSONL deliverable"
+    assert len(path.read_text(encoding="utf-8").splitlines()) == len(result.points)
+
+
+def test_jsonl_is_deterministic_over_identical_locked_bytes():
+    """Two runs over the same bytes produce byte-identical JSONL."""
+    path = BUNPRO_DIR / JSONL_NAME
+    BunproExtractor(BUNPRO_DIR).extract()
+    first = path.read_bytes()
+    BunproExtractor(BUNPRO_DIR).extract()
+    assert path.read_bytes() == first
+
+
+def test_the_audited_furigana_fixups_are_actually_applied(result):
+    """UGD-11a's table must reach the records, not just exist in the tree.
+
+    The 13 occurrences below were verified present in the raw deck HTML, so a
+    corrected corpus must contain none of them and the extractor must report
+    having changed the fields that carried them.
+    """
+    assert result.stats["furiganaFixupsApplied"] > 0
+    wrong_pairs = {
+        ("思", "あも"),
+        ("私", "またし"),
+        ("学", "なな"),
+        ("対", "つか"),
+        ("使", "かた"),
+    }
+    # The wrong reading must not survive anywhere the annotated form is kept.
+    for point in result.points:
+        for example in point.examples:
+            if example.japanese_html is None:
+                continue
+            for base, wrong in wrong_pairs:
+                assert f"<ruby>{base}<rt>{wrong}</rt></ruby>" not in example.japanese_html
+
+
+def test_headword_alternates_become_lookup_variants(result):
+    """`けど・だけど` must resolve under both spellings, not only the first."""
+    with_variants = [point for point in result.points if point.variants]
+    assert with_variants
+    for point in with_variants:
+        # A variant is a genuine alternate of the same headword, never a repeat.
+        assert point.expression not in point.variants
+        assert len(set(point.variants)) == len(point.variants)
+        assert set(point.variants) <= set(split_alternatives(point.expression))
+    assert result.stats["pointsWithVariants"] == len(with_variants)
+
+
+def test_dedup_relevant_keys_are_reported_and_unique_where_claimed(result):
+    stats = result.stats
+    # source_id: Bunpro's own per-note ID, unique across the corpus.
+    assert stats["distinctSourceIds"] == len(result.points)
+    # Alternates expand the corpus's lookup surface beyond one key per point.
+    assert stats["distinctLookupKeys"] > len(result.points)
+    # Example identity is reported on the same normalized key the merge stage
+    # dedupes on, so a reviewer can see the duplicate budget before merging.
+    keys = {
+        sentence_key(example.japanese)
+        for point in result.points
+        for example in point.examples
+    }
+    assert stats["distinctSentenceKeys"] == len(keys)
+    assert stats["distinctSentenceKeys"] <= stats["examples"]
+
+
+def test_off_scale_levels_survive_as_notes_not_as_a_guessed_badge(result):
+    off_scale = [
+        point
+        for point in result.points
+        if point.provenance.get("bunproLevel") in {"Non-JLPT", "関西弁"}
+    ]
+    assert off_scale
+    for point in off_scale:
+        assert point.jlpt is None
+        # The marker itself is preserved rather than discarded.
+        assert point.notes in {"Non-JLPT", "関西弁"}
+
+
 def test_fails_closed_when_a_locked_file_is_missing(tmp_path):
     """A lock that names the apkg without the bytes present must fail closed."""
     directory = tmp_path / "bunpro"
@@ -192,6 +304,36 @@ def test_flatten_drops_furigana_readings_and_tags():
     assert _flatten("") is None
     assert _flatten(None) is None
     assert _flatten("   ") is None
+
+
+def test_flatten_drops_rp_ruby_fallback_parens():
+    """`<rp>` must not survive into the plain-text surface string.
+
+    Those are the parentheses a browser paints ONLY when it cannot render ruby,
+    so a renderer that paints `<rt>` never paints them. Keeping them left an empty
+    `（）` in the surface text -- and the surface string is exactly what example
+    dedup (`sentence_key`) and highlight substring matching compare on.
+    """
+    ruby = "<ruby>親切<rp>（</rp><rt>しんせつ</rt><rp>）</rp></ruby>だ。"
+    surface = _flatten(ruby)
+    assert surface == "親切だ。"
+    assert surface is not None and "（" not in surface and "）" not in surface
+    # Latin-parenthesis form too, and rp with attributes.
+    assert _flatten("<ruby>読<rp >(</rp><rt>よ</rt><rp>)</rp></ruby>む") == "読む"
+
+
+def test_examples_strip_rp_from_the_surface_but_keep_it_in_the_annotated_html():
+    """The invariant that binds the two forms must hold for rp-bearing ruby."""
+    field = (
+        '<div class="example-item">'
+        '<div class="japanese"><ruby>親切<rp>（</rp><rt>しんせつ</rt><rp>）</rp></ruby>だ。</div>'
+        '<div class="english">It is kind.</div></div>'
+    )
+    (example,) = _examples(field)
+    assert example.japanese == "親切だ。"
+    annotated = example.japanese_html
+    assert annotated is not None and "<rp>" in annotated  # source markup verbatim
+    assert _flatten(annotated) == example.japanese
 
 
 def test_examples_pair_japanese_english_highlight_and_preserve_html():

@@ -8,7 +8,11 @@
 #   build    -> build/bees-ultimate-grammar-dictionary.zip
 #   validate -> pinned official Yomitan schema validation (python + node)
 
-PY ?= python3
+# Prefer the project venv over whatever `python3` happens to resolve to. A bare
+# `python3` can be an unrelated interpreter on PATH (here: the agent runner's own
+# venv), which lacks `zstandard` and fails `extract` on the Anki-backed sources
+# while the pure-Python schema fallback silently makes `build` ~7x slower.
+PY ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 
 # Resolve node through the shell rather than letting make exec a bare `node`.
 # make short-circuits single-word recipes to a direct exec and uses its own PATH
