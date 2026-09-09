@@ -20,12 +20,16 @@ import pathlib
 
 import pytest
 
+from bugd.jsonio import MalformedPayload
 from bugd.sources import SourceLockError
 from bugd.sources.yokubi import (
+    COVERAGE_NAME,
+    JSONL_NAME,
     LESSON_ONLY_REASON,
     YOKUBI_ATTRIBUTION,
     YokubiExtractor,
     parse_examples,
+    render_coverage,
     strip_inline_markup,
     title_headwords,
 )
@@ -304,3 +308,150 @@ def test_extractor_fails_closed_when_a_listed_lesson_is_absent_from_the_lock(tmp
     )
     with pytest.raises(SourceLockError):
         YokubiExtractor(target).extract()
+
+
+# ---------------------------------------------------------------------------
+# emitted artifacts: JSONL records + coverage report
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def emitted(tmp_path):
+    """The source directory after a real extraction, so the artifacts are on disk."""
+    target = write_source(
+        tmp_path,
+        {
+            "src/SUMMARY.md": SUMMARY,
+            "src/Section1/Part1.md": "# Part 1\n",
+            "src/Section1/Part1/Lesson1.md": LESSON1,
+            "src/Section1/Part1/Lesson4.md": LESSON4,
+        },
+    )
+    result = YokubiExtractor(target).extract()
+    return target, result
+
+
+def test_extract_writes_one_jsonl_record_per_point(emitted):
+    target, result = emitted
+    lines = (target / JSONL_NAME).read_text(encoding="utf-8").splitlines()
+    assert len(lines) == len(result.points)
+    assert [json.loads(line)["expression"] for line in lines] == [
+        point.expression for point in result.points
+    ]
+
+
+def test_jsonl_records_carry_attribution_and_provenance(emitted):
+    target, _ = emitted
+    for line in (target / JSONL_NAME).read_text(encoding="utf-8").splitlines():
+        record = json.loads(line)
+        assert record["source"] == "yokubi"
+        assert record["provenance"]["attribution"] == YOKUBI_ATTRIBUTION
+        assert record["provenance"]["licence"] == "CC-BY-4.0"
+        assert record["provenance"]["revision"] == "0" * 40
+
+
+def test_jsonl_is_one_json_object_per_line_and_ends_with_a_newline(emitted):
+    target, _ = emitted
+    raw = (target / JSONL_NAME).read_text(encoding="utf-8")
+    assert raw.endswith("\n")
+    for line in raw.splitlines():
+        assert isinstance(json.loads(line), dict)
+
+
+def test_jsonl_bytes_are_deterministic_across_runs(emitted):
+    target, _ = emitted
+    first = (target / JSONL_NAME).read_bytes()
+    YokubiExtractor(target).extract()
+    assert (target / JSONL_NAME).read_bytes() == first
+
+
+def test_coverage_report_is_written_and_names_the_source(emitted):
+    target, _ = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    assert YOKUBI_ATTRIBUTION in text
+    assert "CC-BY-4.0" in text
+    assert "0" * 40 in text
+
+
+def test_coverage_report_records_a_reason_for_every_skipped_lesson(emitted):
+    target, result = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    skipped = result.stats["skippedLessons"]
+    assert skipped
+
+    section = text.split("## Skipped lessons", 1)[1].split("## Skipped example groups", 1)[0]
+    rows = [
+        line
+        for line in section.splitlines()
+        if line.startswith("|") and not line.startswith("| ---") and "Lesson |" not in line
+    ]
+    assert len(rows) == len(skipped)
+    for row, entry in zip(rows, skipped):
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert cells[0] == str(entry["lesson"])
+        assert str(entry["title"]) in cells[1]
+        # The reason must be rendered, not merely present somewhere in the file.
+        assert cells[2] == str(entry["reason"])
+        assert cells[2]
+
+
+def test_coverage_report_lists_every_covered_lesson_with_its_headwords(emitted):
+    target, result = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    covered = result.stats["coveredLessons"]
+    assert covered
+
+    # Parse the rendered rows so an empty headword cell cannot pass: a lesson's
+    # headwords are the whole point of the covered table.
+    section = text.split("## Covered lessons", 1)[1].split("## Skipped lessons", 1)[0]
+    rows = [
+        line
+        for line in section.splitlines()
+        if line.startswith("|") and not line.startswith("| ---") and "Lesson |" not in line
+    ]
+    assert len(rows) == len(covered)
+    for row, entry in zip(rows, covered):
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert cells[0] == str(entry["lesson"])
+        assert str(entry["title"]) in cells[1]
+        assert cells[2] == ", ".join(f"`{head}`" for head in entry["headwords"])
+        assert cells[2]
+        assert cells[3] == str(entry["examplesAttached"])
+
+
+def test_coverage_report_accounts_for_every_listed_lesson(emitted):
+    _, result = emitted
+    stats = result.stats
+    assert stats["coveredCount"] + stats["skippedCount"] == stats["lessonsListed"]
+
+
+def test_coverage_report_records_skipped_example_groups_with_their_lesson(emitted):
+    target, result = emitted
+    text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
+    groups = result.stats["exampleGroupsSkipped"]
+    assert groups
+
+    # Read the rendered rows, not just the stats dict: a skip is only reportable
+    # when the report itself names the lesson that declared it. Asserting the
+    # key exists in stats passes even when the row renders an empty cell.
+    section = text.split("## Skipped example groups", 1)[1]
+    rows = [
+        line
+        for line in section.splitlines()
+        if line.startswith("|") and not line.startswith("| ---") and "Shape" not in line
+    ]
+    assert len(rows) == len(groups)
+    for row, group in zip(rows, groups):
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        assert cells[0] == str(group["lesson"])
+        assert cells[1] == f"`{group['shape']}`"
+        assert cells[-1] == str(group["reason"])
+
+
+def test_render_coverage_fails_closed_when_a_lesson_is_unaccounted_for(emitted):
+    """A report that silently loses a lesson must not be renderable."""
+    _, result = emitted
+    result.stats["lessonsListed"] = int(result.stats["lessonsListed"]) + 1
+    with pytest.raises(MalformedPayload):
+        render_coverage(result)
+
