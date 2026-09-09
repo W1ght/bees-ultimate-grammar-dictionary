@@ -26,3 +26,4 @@ node_modules/
 
 # Kanban board bookkeeping (card-id map), not part of the dictionary source
 /.card_ids.json
+data/sources/*/points.jsonl
