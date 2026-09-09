@@ -438,6 +438,78 @@ def test_chained_links_are_refused_rather_than_transitively_closed() -> None:
     assert "chained-not-pairwise" in {item.guard for item in refused}
 
 
+def test_a_reading_silent_source_does_not_block_an_orthographic_fold() -> None:
+    """A row that states no reading supplies no evidence -- and must not veto.
+
+    Only five of the ten sources state a reading at all, so a bucket routinely
+    mixes reading-bearing and reading-silent rows. Treating "no reading" as
+    disagreement meant any reading-less source joining the target bucket
+    permanently blocked the fold: `や否や` split from `やいなや` the moment
+    bunpou/511 landed there beside donna_toki.
+
+    Asserted as the property (silence does not veto), not as the one pair.
+    """
+    accepted, _ = link_between(
+        dojg=[record("や否や", "や否や", reading="やいなや", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        # An absent reading normalizes to "" (verified on the real bunpou row).
+        bunpou=[record("511", "やいなや", reading="")],
+    )
+    assert [link.reason for link in accepted] == ["reading-identity"]
+
+
+def test_a_contradicting_reading_still_refuses_the_fold() -> None:
+    """Silence is not evidence, but a DIFFERENT stated reading is a refusal.
+
+    The counterpart to the test above: the relaxation must only ignore rows that
+    say nothing, never rows that disagree. Without this, ignoring readings
+    wholesale proposed polarity errors such as `てはいく` <-> `てはいけない`.
+    """
+    accepted, _ = link_between(
+        dojg=[record("や否や", "や否や", reading="やいなや", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        nihongo_net=[record("other", "やいなや", reading="やひや")],
+    )
+    assert accepted == []
+
+
+def test_two_rows_stating_the_same_reading_remain_ambiguous() -> None:
+    """The linked endpoint must be the unique row that attests the reading.
+
+    Two rows both stating the proposer's reading is a homograph fan, not
+    corroboration: there is no single record to point at.
+    """
+    accepted, _ = link_between(
+        dojg=[record("や否や", "や否や", reading="やいなや", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        nihongo_net=[record("also", "やいなや", reading="やいなや")],
+    )
+    assert accepted == []
+
+
+def test_a_reading_silent_proposer_cannot_claim_a_multi_source_bucket() -> None:
+    """The proposer's own reading is the evidence; without it there is none.
+
+    Called directly rather than through the corpus: no reading-less row in the
+    real corpus reaches the multi-source branch (measured: 0), so a mutation
+    deleting this guard survives a full-suite run as a no-op. Guard branches that
+    the corpus does not exercise must be probed with synthetic inputs or they are
+    untested by construction.
+    """
+    from bugd.keymap import _link_target
+
+    rows, _, _ = rows_of(
+        dojg=[record("や否や", "や否や", reading="", variants=("やいなや",))],
+        donna_toki=[record("やいなや", "やいなや", reading="やいなや")],
+        bunpou=[record("511", "やいなや", reading="")],
+    )
+    proposer = next(r for r in rows if r.row_id.source == "dojg")
+    others = {
+        r.row_id.source: [r] for r in rows if r.row_id.source != "dojg"
+    }
+    assert _link_target(proposer, others) is None
+
+
 def test_variant_in_degree_counts_distinct_rows() -> None:
     rows, _, _ = rows_of(
         dojg=[

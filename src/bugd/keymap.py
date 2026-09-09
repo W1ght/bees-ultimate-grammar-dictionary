@@ -480,12 +480,9 @@ def propose_variant_links(
                 for name, found in per_source.items()
                 if name != row.row_id.source
             }
-            if len(others) != 1:
+            other = _link_target(row, others)
+            if other is None:
                 continue
-            (_, found), = others.items()
-            if len(found) != 1:
-                continue
-            other = found[0]
 
             reciprocal = row.key in variant_keys(other.record)
             guard = _link_guard(row, other, key, degree, reciprocal)
@@ -514,6 +511,56 @@ def propose_variant_links(
     strict, chained = _restrict_to_pairwise(accepted, by_id)
     refused.extend(chained)
     return strict, refused
+
+
+def _link_target(row: Row, others: dict[str, list[Row]]) -> Row | None:
+    """The one row a variant claim can point at, or None when it is ambiguous.
+
+    A variant key must resolve to a single row of a single *other* source. Where
+    exactly one other source owns the bucket that is immediate.
+
+    Where SEVERAL other sources own it, the bucket is not automatically a
+    homograph fan: several producers listing the same kana headword is
+    corroboration. The problem is that only five of the ten sources state a
+    reading at all -- 2,757 of 7,896 rows have none (bunpou 534/534, bunpro
+    964/964, imabi 494/494, yokubi 132/132, ninjal 633/800) -- so 791 of 2,985
+    buckets mix reading-bearing and reading-silent rows. Requiring every row in
+    the bucket to agree on a reading therefore let any reading-less source
+    permanently block orthographic folding into it: `や否や` stopped folding with
+    `やいなや` the moment bunpou/511 joined that bucket beside donna_toki.
+
+    Two looser rules were measured and rejected. Treating a missing reading as
+    agreement proposes 208 extra edges including outright polarity errors
+    (`てはいく` <-> `てはいけない`, `なければなる` <-> `なければならない`) and still nets
+    zero after the pairwise check while losing the `に即して`/`に則して` pair.
+    Linking to a bucket representative re-points existing edges and loses
+    `に反する`/`に反して` and `に応じた`/`に応じて`.
+
+    So require positive evidence on the endpoint actually linked: exactly one row
+    states the proposer's own reading, and every other row there states none, so
+    nothing contradicts. A row stating a DIFFERENT reading still refuses the
+    claim. Measured on the full corpus this adds 10 edges, all genuine kanji/kana
+    spellings of one point (`や否や`/`やいなや`, `甲斐`/`かい`, `の内`/`のうち`,
+    `振る`/`ぶる`, `抜く`/`ぬく`, `恐れがある`/`おそれがある`, ...) and loses none. The
+    `には当たる`/`にはあたらない` polarity ambiguity is still refused, by the existing
+    strict-pairwise degree check.
+    """
+    if not others:
+        return None
+    if len(others) == 1:
+        (_, found), = others.items()
+        return found[0] if len(found) == 1 else None
+    if any(len(found) != 1 for found in others.values()):
+        # A source contributing two rows to one bucket IS a homograph fan.
+        return None
+    if not row.reading_identity:
+        return None
+    candidates = [found[0] for found in others.values()]
+    matching = [r for r in candidates if r.reading_identity == row.reading_identity]
+    silent = [r for r in candidates if not r.reading_identity]
+    if len(matching) != 1 or len(matching) + len(silent) != len(candidates):
+        return None
+    return matching[0]
 
 
 def _link_guard(
