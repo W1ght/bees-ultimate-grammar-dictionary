@@ -17,6 +17,9 @@ Conversion policy:
 * media/interaction tags (`audio`, `button`, `svg`, `path`, `img`) are dropped
   *with* their subtree: this dictionary does not repackage deck audio, and a
   dangling `img` path would fail media-reference validation;
+* OMISSION tags (`del`/`s`/`strike`) are grammar content, not decoration, and
+  keep their marking on every surface — as a `line-through` span in structured
+  content and as a combining strike overlay in plain text. See `OMISSION_TAGS`.
 * anything unrecognised degrades to its text content rather than being emitted as
   an invalid tag, so a new source cannot silently break schema validation.
 
@@ -26,8 +29,10 @@ transformations are markup mapping, entity decoding, and whitespace collapsing.
 
 from __future__ import annotations
 
+import html
 import html.parser
 import re
+import unicodedata
 from typing import Any
 
 #: Tags the pinned Yomitan term-bank schema permits in structured content.
@@ -74,8 +79,6 @@ _TAG_MAP = {
     "em": "span",
     "i": "span",
     "u": "span",
-    "del": "span",
-    "s": "span",
     "sup": "span",
     "sub": "span",
     "mark": "span",
@@ -83,6 +86,33 @@ _TAG_MAP = {
     "font": "span",
     "center": "div",
 }
+
+#: Tags a source uses to mark text as OMITTED — the run that gets dropped before
+#: an ending is attached. These are load-bearing grammar content, not decoration:
+#: Bunpro writes `食べ<del>る</del> + ます` for "drop る, add ます", NINJAL writes
+#: `i-A<s>い</s>＋かったあまり`, and IMABI writes `Kangae<s>ru</s> → Kangae`. Losing
+#: the marking turns the rule into its own counterexample (`食べる + ます`, which is
+#: not Japanese), so these tags may never be dropped, hidden, or collapsed.
+OMISSION_TAGS = frozenset({"del", "s", "strike"})
+
+#: Plain-text stand-in for the marking those tags carry. A single-line surface
+#: (compact badge, sense-label heading, headword) has no styling channel, so the
+#: omitted run is struck with COMBINING LONG STROKE OVERLAY after each character:
+#: `食べる̶ + ます` reads as struck through in any renderer instead of reading as
+#: kept text. The overlay is a COMBINING mark, so it follows its base character
+#: and leaves the underlying character sequence intact — `食べる` is still a
+#: substring of the struck form, which keeps byte-anchored corrections, the
+#: structure audit's kana-run scan, and example dedup working on the same keys.
+_STRIKE_OVERLAY = "\u0336"
+
+#: One omission element, with its inner run. Matched non-greedily so two adjacent
+#: struck runs in one field stay separate.
+_OMISSION_ELEMENT = re.compile(
+    r"<(del|s|strike)\b[^>]*>(.*?)</\1\s*>", re.DOTALL | re.IGNORECASE
+)
+#: Ruby annotation inside an omitted run: the reading is not part of the surface.
+_RT_OR_RP = re.compile(r"<(rt|rp)\b[^>]*>.*?</\1\s*>", re.DOTALL | re.IGNORECASE)
+_ANY_TAG = re.compile(r"<[^>]+>")
 
 #: Emphasis carried across the mapping above, so a source's `<strong>` stays
 #: visually strong instead of silently flattening to plain text.
@@ -93,12 +123,25 @@ _TAG_STYLE: dict[str, dict[str, Any]] = {
     "em": {"fontStyle": "italic"},
     "i": {"fontStyle": "italic"},
     "u": {"textDecorationLine": "underline"},
-    "del": {"textDecorationLine": "line-through"},
-    "s": {"textDecorationLine": "line-through"},
     "sup": {"verticalAlign": "super", "fontSize": "0.8em"},
     "sub": {"verticalAlign": "sub", "fontSize": "0.8em"},
     "small": {"fontSize": "0.85em"},
 }
+
+#: Every omission tag carries the SAME struck-through style, derived from
+#: `OMISSION_TAGS` rather than listed by hand. Enumerating them separately is how
+#: `strike` came to be declared load-bearing while `html_to_content` silently
+#: dropped its marking: the tag was in `OMISSION_TAGS` but missing from both this
+#: table and `_TAG_MAP`, so `a<strike>b</strike>c` rendered as the bare string
+#: `abc`. Deriving the entries means adding a tag to `OMISSION_TAGS` is
+#: sufficient, and the two can no longer drift apart.
+_TAG_STYLE.update({tag: {"textDecorationLine": "line-through"} for tag in OMISSION_TAGS})
+
+#: ...and every omission tag maps to a `span`, for the same reason.
+_TAG_MAP.update({tag: "span" for tag in OMISSION_TAGS})
+
+#: Style value that marks a run as omitted, on the structured-content surface.
+OMISSION_STYLE: dict[str, Any] = {"textDecorationLine": "line-through"}
 
 #: Dropped together with their subtree: deck audio/interaction/vector chrome and
 #: raw `img` references this dictionary does not repackage.
@@ -555,12 +598,74 @@ def html_to_text(source: str | None) -> str:
     """Flatten a source HTML fragment to plain text.
 
     Used for headwords, ARIA-visible labels, and anywhere a single-line string is
-    required rather than structured content.
+    required rather than structured content. Text a source marked as OMITTED
+    (`<del>`/`<s>`/`<strike>`) keeps its marking here as a combining strike
+    overlay, because dropping it silently inverts the rule the source is
+    teaching — see `OMISSION_TAGS`.
     """
     if not source:
         return ""
     content = html_to_content(source)
     return collapse(_flatten(content))
+
+
+def strike(text: str) -> str:
+    """Mark every character of `text` as struck through, in plain text.
+
+    Applies COMBINING LONG STROKE OVERLAY after each visible character. Combining
+    marks are skipped (they attach to the base character that already carries an
+    overlay) and whitespace is left alone, so a struck run does not grow a stroke
+    in the gap between two words.
+    """
+    out: list[str] = []
+    for character in text:
+        out.append(character)
+        if character.isspace() or unicodedata.combining(character):
+            continue
+        out.append(_STRIKE_OVERLAY)
+    return "".join(out)
+
+
+def unstrike(text: str) -> str:
+    """Remove the strike overlay, recovering the underlying characters."""
+    return text.replace(_STRIKE_OVERLAY, "")
+
+
+def strike_omissions(source: str | None) -> str | None:
+    """Pre-render a source's omission markup as struck plain text, in place.
+
+    For the extractors that flatten their own HTML with a tag-stripping regex
+    rather than through `html_to_content`. Those strippers discard every tag
+    equally, which deletes the *marking* on an omitted run while keeping its
+    text: Bunpro's `食べ<del>る</del> + ます` ("drop る, add ます") flattened to
+    `食べる + ます`, asserting a form that is not Japanese. Rewriting the omission
+    element to struck text BEFORE the stripper runs means the stripper has no
+    marking left to lose.
+
+    Only the omission elements are touched; all other markup is returned
+    untouched for the caller's own flattening to handle.
+    """
+    if source is None:
+        return None
+    if not isinstance(source, str):
+        raise TypeError("strike_omissions expects a string or None")
+
+    def replace(match: re.Match[str]) -> str:
+        inner = match.group(2)
+        # The inner run may itself carry markup (IMABI writes
+        # `<em><s>ru</s></em>` and `<strong>n</strong><s>i</s>`); reduce it to its
+        # surface text first so the overlay lands on characters, not on `<`/`>`.
+        inner = _RT_OR_RP.sub("", inner)
+        inner = _ANY_TAG.sub("", inner)
+        return strike(html.unescape(inner))
+
+    previous = None
+    current = source
+    # Nested omission elements exist in principle; rewrite until stable.
+    while current != previous:
+        previous = current
+        current = _OMISSION_ELEMENT.sub(replace, current)
+    return current
 
 
 def collapse(text: str) -> str:
@@ -592,7 +697,18 @@ def _flatten(node: Any) -> str:
             # -- an empty pair of parentheses in the plain-text surface, which is
             # also the string example dedup and highlight matching compare on.
             return ""
-        return _flatten(node.get("content"))
+        inner = _flatten(node.get("content"))
+        style = node.get("style")
+        if (
+            inner
+            and isinstance(style, dict)
+            and style.get("textDecorationLine") == OMISSION_STYLE["textDecorationLine"]
+        ):
+            # A struck run is content, not decoration: plain text has no styling
+            # channel, so the marking has to travel in the characters themselves
+            # or a formation rule silently inverts into its own counterexample.
+            return strike(inner)
+        return inner
     return ""
 
 
@@ -607,9 +723,14 @@ def ruby_surface(node: Any) -> str:
 
 __all__ = [
     "ALLOWED_TAGS",
+    "OMISSION_STYLE",
+    "OMISSION_TAGS",
     "collapse",
     "html_to_content",
     "html_to_text",
     "ruby_surface",
+    "strike",
+    "strike_omissions",
     "strip_cloze",
+    "unstrike",
 ]
