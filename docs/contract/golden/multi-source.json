@@ -1,0 +1,788 @@
+[
+  "の上で",
+  "のうえで",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [
+              {
+                "content": "Upon ~; after ~",
+                "data": {
+                  "meaning": ""
+                },
+                "lang": "en",
+                "tag": "span"
+              },
+              {
+                "content": [
+                  {
+                    "content": "N3",
+                    "data": {
+                      "jlpt": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "data": {
+                  "metarow": ""
+                },
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "DoJG 日本語文法辞典(全集)",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": [
+                      {
+                        "content": "（の）上で A compound particle that is used to express a preparatory action for a relatively important action.",
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": "(i) Vinformal past · 上で",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "読んだ上で · Upon reading",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "研究した上で · Upon conducting research",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "(ii) Noun · の上で",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "調査の上で · After investigating",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "討議の上で · After discussion",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "patterns": ""
+                        },
+                        "tag": "ul"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": "よく考えた上で御返事いたします。",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              },
+                              {
+                                "content": "I will reply upon careful consideration.",
+                                "data": {
+                                  "en": ""
+                                },
+                                "lang": "en",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "話し合いの上で結論を出したいと思います。",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              },
+                              {
+                                "content": "I would like to draw a conclusion after discussion.",
+                                "data": {
+                                  "en": ""
+                                },
+                                "lang": "en",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "よく問題を話し合った上で決めたらどうでしょうか。",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              },
+                              {
+                                "content": "Why don't we decide after discussing the matter?",
+                                "data": {
+                                  "en": ""
+                                },
+                                "lang": "en",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "実験をした上で、理論の正しさを証明しなければならない。",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              },
+                              {
+                                "content": "We have to prove the correctness of the theory after conducting an experiment.",
+                                "data": {
+                                  "en": ""
+                                },
+                                "lang": "en",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "日本文学のスミス先生と相談した上で、修士論文の題目を決めました。",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              },
+                              {
+                                "content": "I decided the topic of my M.A. thesis after consulting with Japanese literature Professor Smith.",
+                                "data": {
+                                  "en": ""
+                                },
+                                "lang": "en",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "彼女とはお見合いをして、一年間交際した上で、結婚に踏み切りました。",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              },
+                              {
+                                "content": "I decided to get married after meeting her through an arranged match and dating her for one year.",
+                                "data": {
+                                  "en": ""
+                                },
+                                "lang": "en",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "毎日のんびり日本語教師",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Sense 1",
+                    "data": {
+                      "senseLabel": ""
+                    },
+                    "lang": "en",
+                    "tag": "div"
+                  },
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": "まずは前件の動作を行った後に、後件の動作を行うことを表します。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "前件が完全に終わらなければ後件に移らないことを強調するようなニュアンスを持ちます。",
+                            "tag": "div"
+                          }
+                        ],
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": "「上」シリーズ",
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": "動た形＋上（で）",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "名詞＋の上（で）",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "patterns": ""
+                        },
+                        "tag": "ul"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "両親と相談し",
+                                  {
+                                    "content": "た上で",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、Ａ大学への進学を決めた。（和父母商量后，决定上A大学。）"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "どこが悪いのかしっかり理解し",
+                                  {
+                                    "content": "た上で",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "謝ってください。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "死ぬことは覚悟",
+                                  {
+                                    "content": "の上",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "だ。（做好死的觉悟。）"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "内容をご確認",
+                                  {
+                                    "content": "の上",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、三日以内にご返信ください。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "身長とか年収とか、諸々のことを加味し",
+                                  {
+                                    "content": "た上で",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "今の彼に決めた。（加上身高、年收入等各种因素，才决定是现在的他。）"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "現状を正確に把握し",
+                                  {
+                                    "content": "た上で",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "目標を設定することが大事だ。（在正确把握现状的基础上设定目标很重要。）"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  },
+                  {
+                    "content": "Sense 2",
+                    "data": {
+                      "senseLabel": ""
+                    },
+                    "lang": "en",
+                    "tag": "div"
+                  },
+                  {
+                    "content": [
+                      {
+                        "content": "何らかのデータや根拠を表す名詞につき、それらを参照することを表します。",
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": "「上」シリーズ",
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": "名詞＋の上で（は）",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "名詞＋上（じょう）",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "patterns": ""
+                        },
+                        "tag": "ul"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "データ",
+                                  {
+                                    "content": "上で",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "しか物事を見るのではなく、目の前の実態も観察したほうがいい。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "明日から暦",
+                                  {
+                                    "content": "の上では",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "新学期が始まる。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "資料",
+                                  {
+                                    "content": "の上では",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "昔ここに墓地があったらしい。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "今の情報",
+                                  {
+                                    "content": "の上では",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "新たな被害者は確認されていない。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "富士山は地図",
+                                  {
+                                    "content": "の上では",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "静岡県と山梨県に跨がっている。（富士山在地图上横跨静冈县和山梨县。）"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "地図",
+                                  {
+                                    "content": "上では",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "国境線が引かれているが、実際そこには線など何もない。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by DoJG 日本語文法辞典(全集), 毎日のんびり日本語教師.",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  1587,
+  ""
+]

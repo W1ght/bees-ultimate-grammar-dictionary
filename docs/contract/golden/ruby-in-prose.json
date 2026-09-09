@@ -1,0 +1,1015 @@
+[
+  "でしょう",
+  "",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [
+              {
+                "content": "don't you think?",
+                "data": {
+                  "meaning": ""
+                },
+                "lang": "en",
+                "tag": "span"
+              },
+              {
+                "content": [
+                  {
+                    "content": "〔普通形〕（ナA／N）＋でしょう",
+                    "data": {
+                      "structure": ""
+                    },
+                    "lang": "ja",
+                    "tag": "span"
+                  },
+                  {
+                    "content": "N3",
+                    "data": {
+                      "jlpt": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "data": {
+                  "metarow": ""
+                },
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "どんなときどう使う 日本語表現文型辞典",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": "でしょう〈同意求め 確認〉",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "父：ほら、机の上にちゃんとあるだろう。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "B：ええ、行きます。いっしょに行きましょうよ。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "１） ❶ ❷ のように、自分の側のものについて相手に同意を求めたり、 ❸ のように、相手の気持ちや状況を思いやって同情したりするときの言い方。 ❹ ❺ のように、相手に確認する場合にも使われる。 ❺ のように会話を始めるきっかけの言葉として使われることもある。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "２）「だろう」は主として男性が親しい相手に話すときに使う。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "２）The copula だろう is mainly used in familiar male speech.でしょう",
+                            "data": {
+                              "proseTranslation": ""
+                            },
+                            "lang": "en",
+                            "tag": "div"
+                          },
+                          {
+                            "content": [
+                              "確",
+                              {
+                                "content": "かく",
+                                "tag": "rt"
+                              },
+                              "認",
+                              {
+                                "content": "にん",
+                                "tag": "rt"
+                              }
+                            ],
+                            "tag": "ruby"
+                          },
+                          {
+                            "content": "〉",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "１）As in sentences ❶ and ❷ , used to seek agreement for speaker's opinion, or as in sentence ❸ to express sympathy for listener's feelings or situation. Also used for verification from listener, as in sentences ❹ and ❺ . Can be used to start a conversation, as in sentence ❺ .",
+                            "data": {
+                              "proseTranslation": ""
+                            },
+                            "lang": "en",
+                            "tag": "div"
+                          }
+                        ],
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：このセーター、わたしが編んだんです。いい色でしょう。",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：ほんとうにきれいですね。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：これ、いいだろう。きのう買ったんだ。",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：うん、いいバイクだね。ぼくにも貸してよ。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：ただいま。",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：おかえりなさい。外は寒かったでしょう。"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "子ども：お父さん、はさみはどこ？",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "A：あした、お茶の会があるでしょう。あなたは出席しますか？",
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "絵でわかる日本語",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "相手に確認・質問をする",
+                    "data": {
+                      "senseLabel": ""
+                    },
+                    "lang": "ja",
+                    "tag": "div"
+                  },
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": "「〜だろう」「〜でしょう」は、相手に［確認］［質問］する時に使われる文型です。多くの場合、相手が同意してくれることを期待して質問や確認をする時に使われます。［推量］を表す「〜だろう」とは反対で、文末を上げて発音します。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "［例］",
+                            "data": {
+                              "exampleLabel": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "①母：わぁ！１００点じゃない！",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "娘：すごいでしょう〜？（⤴︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→「うん、すごいね」と言ってくれることを期待して質問",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "②父：お土産だよ！それ、欲しかったんだろう？（⤴︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→「うん、欲しかった」と言ってくれることを期待して質問",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "③A：明日のイベントに参加するだろう？（⤴︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→相手が「うん」と言うことを期待して質問",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "④A：今日の飲み会に来るでしょう？（⤴︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→相手が「うん」と言うことを期待して質問・確認",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "⑤兄：お母さんが新しい靴を買ってくれたんだ〜いいだろう？（⤴︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→弟が「うん」ということを期待して質問",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "［確認・質問］を表す「〜だろう・〜でしょう」の口語形は「〜だろ・〜でしょ」です。日常会話（にちじょうかいわ）でよく使われますので復習しておきましょう😉",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "【関連文型】",
+                            "data": {
+                              "proseHeading": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "語学(日本語)ランキング",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "――以上――",
+                            "tag": "div"
+                          }
+                        ],
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": "動詞［普通形］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "い形容詞［ーい］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "な形容詞［ーな］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "名詞［辞書形］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "patterns": ""
+                        },
+                        "tag": "ul"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "母：わぁ！１００点じゃない！",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "娘：すごい",
+                                  {
+                                    "content": "でしょう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "〜？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "母：うん、がんばったね！"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "父：お土産だよ！それ、欲しかったん",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "娘：うん！お父さんありがとう！！"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：明日のイベントに参加する",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：もちろん！"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：今日の飲み会に来る",
+                                  {
+                                    "content": "でしょう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：うん、行くつもりだよ"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "兄：お母さんが新しい靴を買ってくれたんだ！いい",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "弟：いいな〜。ぼくもお母さんに買ってもらおうっと"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  },
+                  {
+                    "content": "たぶん〜だと思う",
+                    "data": {
+                      "senseLabel": ""
+                    },
+                    "lang": "ja",
+                    "tag": "div"
+                  },
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": "「〜だろう」は「たぶん〜と思う」という意味で、話し手の［推量］を表す文型です。「〜だろう」の丁寧形は「〜でしょう」です。［推量］の「〜だろう・〜でしょう」は、文末を下げて発音します。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "［例］",
+                            "data": {
+                              "exampleLabel": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "①このケーキを食べたら、お腹が痛くなるだろう（⤵︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "②明日は雨が降るだろう（⤵︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "③この漢字は、きっとテストに出るでしょう（⤵︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "④お父さんは、もうすぐ帰ってくるでしょう（⤵︎）",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "「〜だろう」がつく文型は、たくさんありますので復習しておきましょう😉",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "語学(日本語)ランキング",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "――以上――",
+                            "tag": "div"
+                          }
+                        ],
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": "動詞［普通形］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "い形容詞［ーい］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "な形容詞［ーな］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "名詞［辞書形］＋だろう・でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "patterns": ""
+                        },
+                        "tag": "ul"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "このケーキを食べたら、お腹が痛くなる",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "な…\n→このケーキを食べたら、たぶんお腹が痛くなると思う…"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "明日は雨が降る",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "\n→明日はたぶん雨が降ると思う"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "この漢字は、きっとテストに出る",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "\n→この漢字は、きっとテストに出ると思う"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "お父さんは、もうすぐ帰ってくる",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "\n→お父さんは、たぶんもうすぐ帰ってくると思う"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "ダイヤモンドをプレゼントしたら、彼女は喜ぶ",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "\n→ダイヤモンドをプレゼントしたら、彼女はきっと喜ぶと思う"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "彼は「最近忙しい」と言っていたから、パーティーには来ない",
+                                  {
+                                    "content": "だろう",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "\n→彼はたぶんパーティーには来ないと思う"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "日本語NET JLPT文法解説まとめ",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": "V（普通形）+ でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "イA（普通形）+でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "ナA（普通形）\b+ でしょう ※ナAな + でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": "N（普通形） + でしょう ※Nだ + でしょう",
+                            "data": {
+                              "pattern": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "patterns": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by どんなときどう使う 日本語表現文型辞典, 絵でわかる日本語, 日本語NET JLPT文法解説まとめ.",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  868,
+  ""
+]

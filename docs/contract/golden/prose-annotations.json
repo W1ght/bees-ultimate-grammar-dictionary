@@ -1,0 +1,400 @@
+[
+  "にあっても",
+  "",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [
+              {
+                "content": "〜でも",
+                "data": {
+                  "meaning": ""
+                },
+                "lang": "ja",
+                "tag": "span"
+              },
+              {
+                "content": [
+                  {
+                    "content": "名詞［辞書形］＋にあっても",
+                    "data": {
+                      "structure": ""
+                    },
+                    "lang": "ja",
+                    "tag": "span"
+                  },
+                  {
+                    "content": "N1",
+                    "data": {
+                      "jlpt": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "data": {
+                  "metarow": ""
+                },
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "絵でわかる日本語",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": "「AにあってもB」は「Aという特別な状況でもB」という意味の文型です。「Aの状況でも、Bという意外な結果になっている」と言いたい時に使われ、「B」には「A」の状況から予想したことと反対のことが入ります。かたい書き言葉です。",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "［例］",
+                            "data": {
+                              "exampleLabel": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "①あのケーキ屋さんは、最近の不況下にあっても売り上げが上がっているらしい",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "【予想】",
+                                "data": {
+                                  "proseLabel": ""
+                                },
+                                "tag": "span"
+                              },
+                              "売り上げは下がるだろう"
+                            ],
+                            "data": {
+                              "exampleAnnotation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→不況下なのに売り上げが上がっているらしい",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "②彼は苦しい状況にあっても、あきらめずにがんばっている",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "【予想】",
+                                "data": {
+                                  "proseLabel": ""
+                                },
+                                "tag": "span"
+                              },
+                              "苦しいからあきらめるだろう"
+                            ],
+                            "data": {
+                              "exampleAnnotation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→苦しい状況でも、あきらめずにがんばっている",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "③サラリーマンやOLは、これほどの大雪にあっても会社に行かなければいけない",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "【予想】",
+                                "data": {
+                                  "proseLabel": ""
+                                },
+                                "tag": "span"
+                              },
+                              "大雪だから会社に行かなくてもいいだろう"
+                            ],
+                            "data": {
+                              "exampleAnnotation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→これほどの大雪でも、会社に行かなければいけない",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "④彼女は就職するのが難しい状況にあっても、５つも内定をもらっているそうだ",
+                            "data": {
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": "【予想】",
+                                "data": {
+                                  "proseLabel": ""
+                                },
+                                "tag": "span"
+                              },
+                              "内定をもらうのは難しいだろう"
+                            ],
+                            "data": {
+                              "exampleAnnotation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "→就職するのが難しい状況でも、５つも内定をもらっているそうだ",
+                            "data": {
+                              "exampleDerivation": "",
+                              "inlineExample": ""
+                            },
+                            "tag": "div"
+                          },
+                          {
+                            "content": "類似文型に「〜にあって」「〜にあっては」がありますので一緒に覚えておきましょう😉",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "語学(日本語)ランキング",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "にほんブログ村",
+                            "tag": "div"
+                          },
+                          {
+                            "content": "――以上――",
+                            "tag": "div"
+                          }
+                        ],
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      },
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "あのケーキ屋さんは、最近の不況下",
+                                  {
+                                    "content": "にあっても",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "売り上げが上がっているらしい"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "彼は苦しい状況",
+                                  {
+                                    "content": "にあっても",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、あきらめずにがんばっている"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "サラリーマンやOLは、これほどの大雪",
+                                  {
+                                    "content": "にあっても",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "会社に行かなければいけない"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "彼女は就職するのが難しい状況",
+                                  {
+                                    "content": "にあっても",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、５つも内定をもらっているそうだ"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by 絵でわかる日本語.",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  1314,
+  ""
+]

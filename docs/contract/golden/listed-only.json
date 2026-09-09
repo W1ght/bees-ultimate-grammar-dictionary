@@ -1,0 +1,59 @@
+[
+  "それまでだ",
+  "",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": "Listed by どんなときどう使う 日本語表現文型辞典 without an explanation.",
+            "data": {
+              "listedOnly": ""
+            },
+            "lang": "en",
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by どんなときどう使う 日本語表現文型辞典.",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  494,
+  ""
+]

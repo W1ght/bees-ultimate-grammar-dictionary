@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://beesgrammar/contract/shape.schema.json",
+  "title": "Bee's Ultimate Grammar Dictionary — canonical Yomitan term-bank entry",
+  "description": "Frozen shape for every merged term-bank row. See CONTRACT.md for the role hierarchy, invariants, and census values.",
+  "type": "array",
+  "minItems": 8,
+  "maxItems": 8,
+  "items": false,
+  "prefixItems": [
+    { "type": "string", "minLength": 1, "description": "expression (headword form; indexed)" },
+    { "type": "string", "description": "reading (kana; may be empty; must not equal expression)" },
+    { "type": "string", "const": "", "description": "definitionTags (always empty)" },
+    { "type": "string", "const": "", "description": "deinflectionRules (always empty)" },
+    { "type": "number", "const": 0, "description": "score (always 0)" },
+    {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type", "content"],
+        "properties": {
+          "type": { "const": "structured-content" },
+          "content": { "$ref": "#/$defs/grammarCard" }
+        },
+        "additionalProperties": false
+      }
+    },
+    { "type": "integer", "minimum": 1, "description": "sequence (unique, contiguous; groups aliases)" },
+    { "type": "string", "const": "", "description": "termTags (always empty)" }
+  ],
+  "$defs": {
+    "role": {
+      "description": "A structured-content node. The semantic role is the single key of data (e.g. {\"compact\":\"\"}).",
+      "type": "object",
+      "required": ["tag"],
+      "properties": {
+        "tag": { "enum": ["div", "span", "details", "summary", "ul", "li", "a", "ruby", "rt", "br"] },
+        "content": {},
+        "data": {
+          "type": "object",
+          "description": "Exactly one role key with empty-string value.",
+          "propertyNames": {
+            "enum": ["grammarCard", "compact", "meaning", "metarow", "jlpt", "structure",
+                     "sourceBlock", "sourceName", "sense", "senseLabel", "prose",
+                     "patterns", "pattern", "examples", "example", "ja", "en", "hl",
+                     "crossref", "listedOnly", "attribution"]
+          }
+        },
+        "lang": { "enum": ["ja", "en"] },
+        "href": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "grammarCard": {
+      "description": "Root node: div role=grammarCard, lang=ja. Children in order: compact, sourceBlock(s), optional crossref/listedOnly, and a trailing data-less details (attribution).",
+      "allOf": [{ "$ref": "#/$defs/role" }],
+      "properties": {
+        "tag": { "const": "div" },
+        "lang": { "const": "ja" },
+        "data": { "required": ["grammarCard"] }
+      }
+    }
+  }
+}

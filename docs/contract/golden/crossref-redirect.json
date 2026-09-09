@@ -1,0 +1,66 @@
+[
+  "け",
+  "",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              "see ",
+              {
+                "content": "っけ",
+                "href": "?query=っけ&wildcards=off",
+                "lang": "ja",
+                "tag": "a"
+              }
+            ],
+            "data": {
+              "crossref": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by どんなときどう使う 日本語表現文型辞典.",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  268,
+  ""
+]

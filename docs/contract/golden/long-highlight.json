@@ -1,0 +1,509 @@
+[
+  "なんで",
+  "",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "絵でわかる日本語",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": [
+                      {
+                        "content": [
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：",
+                                  {
+                                    "content": "なんで",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "日本語を勉強しているの？→",
+                                  {
+                                    "content": "なぜ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "日本語を勉強しているの？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "日本が大好きだ",
+                                  {
+                                    "content": "からだよ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "！ →",
+                                  {
+                                    "content": "なぜかというと",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、日本が大好きだ",
+                                  {
+                                    "content": "からだよ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "！"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：",
+                                  {
+                                    "content": "なんで",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "パーティーに行かなかったの？→",
+                                  {
+                                    "content": "なぜ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "パーティーに行かなかったの？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "昨日は寒かった",
+                                  {
+                                    "content": "から",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "…→",
+                                  {
+                                    "content": "なぜかというと",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、昨日は寒かった",
+                                  {
+                                    "content": "から",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "…"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：",
+                                  {
+                                    "content": "なんで",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "食べないの？→",
+                                  {
+                                    "content": "どうして",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "食べないの？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "辛いんだ",
+                                  {
+                                    "content": "もの",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "（〜",
+                                  {
+                                    "content": "もの",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "・〜んだ",
+                                  {
+                                    "content": "もの",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "） →",
+                                  {
+                                    "content": "どうしてかというと",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "辛い",
+                                  {
+                                    "content": "からだよ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  }
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          },
+                          {
+                            "content": [
+                              {
+                                "content": [
+                                  "A：昨日は",
+                                  {
+                                    "content": "なんで",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "学校を休んだの？→",
+                                  {
+                                    "content": "なぜ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "昨日は学校を休んだの？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "頭が痛かった",
+                                  {
+                                    "content": "んだもん",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "（〜もん・〜",
+                                  {
+                                    "content": "んだもん",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "） →",
+                                  {
+                                    "content": "なぜかというと",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "、頭が痛かった",
+                                  {
+                                    "content": "からだよ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "この口語形「",
+                                  {
+                                    "content": "なんで",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "」は「",
+                                  {
+                                    "content": "なぜ",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "・",
+                                  {
+                                    "content": "どうして",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "」の意味で、相手に原因や理由を聞く表現です。",
+                                  {
+                                    "content": "「だって」は理由を聞かれた時の答えとして「なぜかというと・どうしてかというと」の意味で使われます",
+                                    "data": {
+                                      "hl": "",
+                                      "hlLong": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "😀",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "A：",
+                                  {
+                                    "content": "なんで",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "〜？",
+                                  {
+                                    "tag": "br"
+                                  },
+                                  "B：",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "〜",
+                                  {
+                                    "content": "から",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "・ので・",
+                                  {
+                                    "content": "もの",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "・んだ",
+                                  {
+                                    "content": "もの",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "どちらも家族や友達の間で使われる",
+                                  {
+                                    "content": "もの",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "で、ほとんどの場合上のようにセットで使用されます😄",
+                                  {
+                                    "content": "「だって」の後ろには「〜から・〜ので・〜もの・〜んだもの」など、原因理由を表すものがくるというのも覚えておくといいですね",
+                                    "data": {
+                                      "hl": "",
+                                      "hlLong": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "😉口語形「たって・",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "」とは違う「",
+                                  {
+                                    "content": "だって",
+                                    "data": {
+                                      "hl": ""
+                                    },
+                                    "tag": "span"
+                                  },
+                                  "」ですので、区別して覚えてください😊――以上――"
+                                ],
+                                "data": {
+                                  "ja": ""
+                                },
+                                "lang": "ja",
+                                "tag": "span"
+                              }
+                            ],
+                            "data": {
+                              "example": ""
+                            },
+                            "tag": "li"
+                          }
+                        ],
+                        "data": {
+                          "examples": ""
+                        },
+                        "tag": "ul"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by 絵でわかる日本語.",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  1302,
+  ""
+]

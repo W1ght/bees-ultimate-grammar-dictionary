@@ -1,0 +1,92 @@
+[
+  "しい",
+  "",
+  "",
+  "",
+  0,
+  [
+    {
+      "content": {
+        "content": [
+          {
+            "content": [],
+            "data": {
+              "compact": ""
+            },
+            "tag": "div"
+          },
+          {
+            "content": [
+              {
+                "content": [
+                  {
+                    "content": "DoJG 日本語文法辞典(全集)",
+                    "data": {
+                      "sourceName": ""
+                    },
+                    "tag": "span"
+                  }
+                ],
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": [
+                      {
+                        "content": "An infix attached to the stem of an adjective い to indicate something that one cannot objectively measure on any scale (e.g. human emotion).",
+                        "data": {
+                          "prose": ""
+                        },
+                        "lang": "ja",
+                        "tag": "div"
+                      }
+                    ],
+                    "data": {
+                      "sense": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "data": {
+              "sourceBlock": ""
+            },
+            "tag": "details"
+          },
+          {
+            "content": [
+              {
+                "content": "Sources",
+                "tag": "summary"
+              },
+              {
+                "content": [
+                  {
+                    "content": "Contributed by DoJG 日本語文法辞典(全集).",
+                    "data": {
+                      "attribution": ""
+                    },
+                    "tag": "div"
+                  }
+                ],
+                "tag": "div"
+              }
+            ],
+            "tag": "details"
+          }
+        ],
+        "data": {
+          "grammarCard": ""
+        },
+        "lang": "ja",
+        "tag": "div"
+      },
+      "type": "structured-content"
+    }
+  ],
+  372,
+  ""
+]
