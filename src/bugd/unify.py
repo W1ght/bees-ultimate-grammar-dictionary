@@ -74,6 +74,7 @@ from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .reading_corrections import ReadingCorrection, StaleCorrection
 from .keymap import alias_targets, is_declared_alias, substance_hash
 from .model import JLPT_LEVELS, Example, GrammarPoint, row_uid_matches
+from .normalize import PLACEHOLDER_TILDES
 
 if typing.TYPE_CHECKING:  # pragma: no cover - import cycle broken at runtime
     from .merge import MergedEntry
@@ -522,6 +523,31 @@ def _group_of(point: dict[str, object]) -> tuple[str, str, str]:
     return axes["variety"], axes["era"], str(point.get("bucketKey") or "")
 
 
+def display_headword(form: str) -> str:
+    """Strip leading placeholder marks from a form used as the LOOKUP headword.
+
+    A leading `〜`/`～`/`~` is a producer's slot placeholder meaning "something
+    attaches here", not part of the written form -- `normalize.PLACEHOLDER_TILDES`
+    already documents this and `lookup_key` already discards them, which is why
+    stripping here cannot move any bucket's identity.
+
+    It has to be stripped from the emitted headword too, because Yomitan's
+    `termsFind` matches from the START of the query text. A headword stored as
+    `〜あとで` is unreachable: the learner types `あとで` and the scan never
+    matches. Measured on the convergence artifact, 1,198 of 4,623 entries (26%)
+    were stored tilde-first and therefore unlookupable, against 0 in the
+    pre-convergence 5-source baseline -- the five source families landed by
+    UGD-16 publish their headwords with the placeholder attached, while the
+    original five did not.
+
+    Only LEADING marks go: an interior tilde (`〜たりとも〜ない`) carries real
+    structure about where the second slot falls, and a form that is nothing but
+    placeholders is returned untouched rather than reduced to an empty string.
+    """
+    stripped = form.lstrip(PLACEHOLDER_TILDES + "\u3000 ")
+    return stripped if stripped else form
+
+
 def choose_headword(bucket_key: str, expressions: list[str]) -> str:
     """The written form the unified entry is looked up under.
 
@@ -530,12 +556,15 @@ def choose_headword(bucket_key: str, expressions: list[str]) -> str:
     it keeps the entry's identity and its headword in agreement. Otherwise the
     lexicographically first contributing expression is used, which is stable and
     is always a form some source really publishes -- never a synthesised string.
+
+    The chosen form then has leading placeholder marks stripped so it is actually
+    reachable by `termsFind`; see `display_headword`.
     """
     if bucket_key in expressions:
-        return bucket_key
+        return display_headword(bucket_key)
     if not expressions:
         raise MalformedPayload("cannot choose a headword with no expressions")
-    return sorted(expressions)[0]
+    return display_headword(sorted(expressions)[0])
 
 
 def _entry_reading(contributions: tuple[Contribution, ...], expression: str) -> str | None:
