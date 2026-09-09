@@ -11,6 +11,32 @@ from ..model import GrammarPoint
 
 SOURCE_LOCK_NAME = "SOURCE.lock.json"
 
+#: Per-source JSONL lands beside the locked bytes so a reviewer can read one
+#: source's normalized records without running the merge stage. Shared by every
+#: extractor family, not only the community-bank one, so a reviewer never has to
+#: learn a per-source artifact name.
+JSONL_NAME = "points.jsonl"
+
+
+def write_points_jsonl(
+    input_dir: pathlib.Path, points: list[GrammarPoint]
+) -> pathlib.Path:
+    """Write one source's records as JSONL into its own source directory.
+
+    Deterministic by construction: records are written in the order the extractor
+    emitted them, one canonical JSON object per line, so two runs over identical
+    locked bytes produce identical files.
+    """
+    from ..jsonio import dump_json
+    from ..pipeline import point_to_json
+
+    path = pathlib.Path(input_dir) / JSONL_NAME
+    path.write_text(
+        "".join(dump_json(point_to_json(point)) + "\n" for point in points),
+        encoding="utf-8",
+    )
+    return path
+
 
 class SourceLockError(MalformedPayload):
     """A source directory's lock is missing, malformed, or does not match bytes."""
@@ -115,5 +141,7 @@ __all__ = [
     "ExtractResult",
     "SourceLockError",
     "SOURCE_LOCK_NAME",
+    "JSONL_NAME",
     "load_source_lock",
+    "write_points_jsonl",
 ]

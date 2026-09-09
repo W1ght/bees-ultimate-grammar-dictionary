@@ -67,7 +67,13 @@ reachable = {e.expression for e in entries}
 missing = sorted(corpus_forms - reachable)
 unresolved = {u["expression"] for u in stats["redirects"]["unresolved"]}
 check("unreachable forms == reported unresolved", set(missing), unresolved)
-check("unresolved count", len(unresolved), 5)
+# Was 5 before the Bunpro source existed. Bunpro supplies それまでだ as a real N1
+# point (source_id 943, 11 examples), which resolves the redirect donna_toki had
+# declared as `aliasOf: それまでだ` and that previously dangled because no source
+# carried that headword. Attributed by running keymap+merge with and without
+# data/extracted/bunpro.json: the only difference is それまでだ leaving this set,
+# and nothing new enters it.
+check("unresolved count", len(unresolved), 4)
 
 # --- every redirect points somewhere real ---
 heads = {e.expression for e in entries if e.kind == KIND_POINT}

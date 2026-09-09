@@ -8,13 +8,16 @@ file.
 
 from __future__ import annotations
 
+import json
 import pathlib
 
 import pytest
 
 from bugd.jsonio import dump_json
 from bugd.model import Example
-from bugd.sources.base import SOURCE_LOCK_NAME, SourceLockError
+from bugd.normalize import sentence_key, split_alternatives
+from bugd.pipeline import point_from_json
+from bugd.sources.base import JSONL_NAME, SOURCE_LOCK_NAME, SourceLockError
 from bugd.sources.bunpro import (
     APKG_NAME,
     NOTETYPE,
@@ -133,6 +136,95 @@ def test_licence_tier_and_attribution_travel_on_every_record(result):
         assert provenance["sourceLabel"] == "Bunpro Grammar Reference"
         assert provenance["licenseTier"] == "C"
         assert provenance["redistributable"] is False
+
+
+def test_normalized_jsonl_lands_beside_the_locked_bytes(result):
+    """The card's deliverable: one normalized record per line in the source dir."""
+    path = BUNPRO_DIR / JSONL_NAME
+    assert result.stats["jsonl"] == JSONL_NAME
+    assert path.is_file()
+    lines = path.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == len(result.points)
+    records = [json.loads(line) for line in lines]
+    # Every line round-trips back into the same record the extractor emitted, so
+    # the artifact is the corpus rather than a lossy summary of it.
+    assert [point_from_json(record) for record in records] == list(result.points)
+    assert all(record["source"] == "bunpro" for record in records)
+
+
+def test_jsonl_is_deterministic_over_identical_locked_bytes():
+    """Two runs over the same bytes produce byte-identical JSONL."""
+    path = BUNPRO_DIR / JSONL_NAME
+    BunproExtractor(BUNPRO_DIR).extract()
+    first = path.read_bytes()
+    BunproExtractor(BUNPRO_DIR).extract()
+    assert path.read_bytes() == first
+
+
+def test_the_audited_furigana_fixups_are_actually_applied(result):
+    """UGD-11a's table must reach the records, not just exist in the tree.
+
+    The 13 occurrences below were verified present in the raw deck HTML, so a
+    corrected corpus must contain none of them and the extractor must report
+    having changed the fields that carried them.
+    """
+    assert result.stats["furiganaFixupsApplied"] > 0
+    wrong_pairs = {
+        ("思", "あも"),
+        ("私", "またし"),
+        ("学", "なな"),
+        ("対", "つか"),
+        ("使", "かた"),
+    }
+    # The wrong reading must not survive anywhere the annotated form is kept.
+    for point in result.points:
+        for example in point.examples:
+            if example.japanese_html is None:
+                continue
+            for base, wrong in wrong_pairs:
+                assert f"<ruby>{base}<rt>{wrong}</rt></ruby>" not in example.japanese_html
+
+
+def test_headword_alternates_become_lookup_variants(result):
+    """`けど・だけど` must resolve under both spellings, not only the first."""
+    with_variants = [point for point in result.points if point.variants]
+    assert with_variants
+    for point in with_variants:
+        # A variant is a genuine alternate of the same headword, never a repeat.
+        assert point.expression not in point.variants
+        assert len(set(point.variants)) == len(point.variants)
+        assert set(point.variants) <= set(split_alternatives(point.expression))
+    assert result.stats["pointsWithVariants"] == len(with_variants)
+
+
+def test_dedup_relevant_keys_are_reported_and_unique_where_claimed(result):
+    stats = result.stats
+    # source_id: Bunpro's own per-note ID, unique across the corpus.
+    assert stats["distinctSourceIds"] == len(result.points)
+    # Alternates expand the corpus's lookup surface beyond one key per point.
+    assert stats["distinctLookupKeys"] > len(result.points)
+    # Example identity is reported on the same normalized key the merge stage
+    # dedupes on, so a reviewer can see the duplicate budget before merging.
+    keys = {
+        sentence_key(example.japanese)
+        for point in result.points
+        for example in point.examples
+    }
+    assert stats["distinctSentenceKeys"] == len(keys)
+    assert stats["distinctSentenceKeys"] <= stats["examples"]
+
+
+def test_off_scale_levels_survive_as_notes_not_as_a_guessed_badge(result):
+    off_scale = [
+        point
+        for point in result.points
+        if point.provenance.get("bunproLevel") in {"Non-JLPT", "関西弁"}
+    ]
+    assert off_scale
+    for point in off_scale:
+        assert point.jlpt is None
+        # The marker itself is preserved rather than discarded.
+        assert point.notes in {"Non-JLPT", "関西弁"}
 
 
 def test_fails_closed_when_a_locked_file_is_missing(tmp_path):

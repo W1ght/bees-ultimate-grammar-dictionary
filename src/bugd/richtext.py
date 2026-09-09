@@ -503,8 +503,14 @@ def _flatten(node: Any) -> str:
     if isinstance(node, dict):
         if node.get("tag") == "br":
             return " "
-        if node.get("tag") == "rt":
-            # Ruby annotation text is not part of the surface string.
+        if node.get("tag") in ("rt", "rp"):
+            # Ruby annotation text is not part of the surface string, and neither
+            # is `rp`: those are the fallback parentheses a browser shows ONLY
+            # when it cannot render ruby, so a renderer that paints `rt` never
+            # paints them. Flattening them produced `親切（）だ。` for the one
+            # Bunpro sentence that ships `<rp>（</rp><rt>しんせつ</rt><rp>）</rp>`
+            # -- an empty pair of parentheses in the plain-text surface, which is
+            # also the string example dedup and highlight matching compare on.
             return ""
         return _flatten(node.get("content"))
     return ""

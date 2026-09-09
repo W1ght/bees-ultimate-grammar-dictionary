@@ -332,6 +332,11 @@ def point_from_json(payload: dict) -> GrammarPoint:
                 english=item.get("english"),
                 highlight=tuple(item.get("highlight") or ()),
                 ai_generated=bool(item.get("ai_generated")),
+                # Rebuilt explicitly: this is the stage seam between extract and
+                # merge, so a field omitted here is silently deleted from the
+                # corpus. `japanese_html` carries the source's own furigana for
+                # 98.7% of Bunpro's sentences.
+                japanese_html=item.get("japanese_html"),
             )
             for item in examples
         ),
