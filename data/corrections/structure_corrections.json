@@ -11,7 +11,9 @@
       {
         "task": "UGD-11b (t_f936109e)",
         "count": 1,
-        "targets": ["bunpou/222 meaning"],
+        "targets": [
+          "bunpou/222 meaning"
+        ],
         "note": "One source-authoring inconsistency in 文法.apkg: the 〜によって（誤用） note drops によって from its second counterexample, marking the grammatical 「箸でご飯を食べます」 as an error while its sibling note teaching the identical 誤用 pair writes 「箸によってご飯を食べます」. Corrected to the sibling's form, which is what this card's own stated rule evidences."
       }
     ],
@@ -24,6 +26,15 @@
     }
   },
   "corrections": [
+    {
+      "source": "bunpou",
+      "source_id": "222",
+      "field": "meaning",
+      "op": "replace_all",
+      "anchor": "×箸でご飯を食べます。",
+      "replacement": "×箸によってご飯を食べます。",
+      "rationale": "UGD-11b finding 1. Note 1647848745958 (〜によって（誤用）) and note 1647848690228 (〜によって) teach the SAME 誤用 pair, and the 誤用 note drops によって from the second counterexample: 「×箸でご飯を食べます。」 marks a GRAMMATICAL sentence as an error, since 手段の で is exactly the correct particle here. Both notes' shared first counterexample (×毎日、自転車によって学校へ行く。) is identical, and both state the same rule 単に手段の選択を表す場合には使わない, so the sibling note's own 「×箸によってご飯を食べます。」 is the form this card's rule evidences. Mechanically derivable from the card's own asserted rule plus its sibling's verbatim text; no rule is invented."
+    },
     {
       "source": "dojg",
       "source_id": "ことにする",
@@ -131,24 +142,6 @@
       "anchor": "日本語へ留学",
       "replacement": "日本へ留学",
       "rationale": "the point is 〜について with place noun 日本; 日本語へ is a typo (へ + wrong noun)"
-    },
-    {
-      "source": "dojg",
-      "source_id": "にほかならない",
-      "field": "examples",
-      "op": "replace_all",
-      "anchor": "ことにほならない",
-      "replacement": "ことにほかならない",
-      "rationale": "missing か: the headword and every other example read にほかならない; にほならない is a source typo."
-    },
-    {
-      "source": "dojg",
-      "source_id": "にほかならない",
-      "field": "structure",
-      "op": "replace_all",
-      "anchor": "にはかならない",
-      "replacement": "にほかならない",
-      "rationale": "headword にほかならない and every example use にほかならない; にはかならない (は for ほ) is a source typo"
     },
     {
       "source": "dojg",
@@ -428,15 +421,6 @@
       "anchor": "ほからなぬ",
       "replacement": "ほかならぬ",
       "rationale": "ほかならぬ + 名詞 (連体); ほからなぬ is a source metathesis typo (sibling headword variant sharing the same structure; reviewer flagged にほかならない)"
-    },
-    {
-      "source": "bunpou",
-      "source_id": "222",
-      "field": "meaning",
-      "op": "replace_all",
-      "anchor": "×箸でご飯を食べます。",
-      "replacement": "×箸によってご飯を食べます。",
-      "rationale": "UGD-11b finding 1. Note 1647848745958 (〜によって（誤用）) and note 1647848690228 (〜によって) teach the SAME 誤用 pair, and the 誤用 note drops によって from the second counterexample: 「×箸でご飯を食べます。」 marks a GRAMMATICAL sentence as an error, since 手段の で is exactly the correct particle here. Both notes' shared first counterexample (×毎日、自転車によって学校へ行く。) is identical, and both state the same rule 単に手段の選択を表す場合には使わない, so the sibling note's own 「×箸によってご飯を食べます。」 is the form this card's rule evidences. Mechanically derivable from the card's own asserted rule plus its sibling's verbatim text; no rule is invented."
     }
   ],
   "documented_not_corrected": [
@@ -1174,5 +1158,29 @@
     "debatable": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
     "copied_foreign_block": "Cluster C: the structure block was copied wholesale from a DIFFERENT grammar point. The correct rule for THIS point is not present anywhere in the card, so any replacement would be invented. Per acceptance #2 this is reported, not guessed.",
     "headword_orthography": "An orthography preference on the headword (kanji vs kana citation), not a formation-rule defect in a rendered field; the reading is already correct. Out of scope for this structure-corrections task."
-  }
+  },
+  "superseded": [
+    {
+      "source": "dojg",
+      "source_id": "にほかならない",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "ことにほならない",
+      "replacement": "ことにほかならない",
+      "rationale": "missing か: the headword and every other example read にほかならない; にほならない is a source typo.",
+      "superseded_by": "UGD-11d-A correction A1 in src/bugd/source_corrections.py",
+      "reason": "UGD-11d-A fixes the identical dojg misspelling at the extraction choke point (ReplaceIn structure にはかならない->にほかならない x6, examples ことにほならない->ことにほかならない x1), so this pipeline-stage anchor is already gone and the fail-closed check aborted `make extract`. Verified equivalent: the extracted field already carries this correction's exact replacement."
+    },
+    {
+      "source": "dojg",
+      "source_id": "にほかならない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "にはかならない",
+      "replacement": "にほかならない",
+      "rationale": "headword にほかならない and every example use にほかならない; にはかならない (は for ほ) is a source typo",
+      "superseded_by": "UGD-11d-A correction A1 in src/bugd/source_corrections.py",
+      "reason": "UGD-11d-A fixes the identical dojg misspelling at the extraction choke point (ReplaceIn structure にはかならない->にほかならない x6, examples ことにほならない->ことにほかならない x1), so this pipeline-stage anchor is already gone and the fail-closed check aborted `make extract`. Verified equivalent: the extracted field already carries this correction's exact replacement."
+    }
+  ]
 }
