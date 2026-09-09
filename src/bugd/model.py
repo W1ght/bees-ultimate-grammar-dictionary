@@ -34,12 +34,25 @@ class Example:
     `japanese` is the surface sentence. `english` is a translation when the
     source supplies one — never machine-translated by this build. `highlight`
     holds the substrings the source marked as the grammar point in context.
+
+    `japanese_html` carries the source's own inline markup for the same sentence
+    when it ships any — Bunpro annotates 98.7% of its 21,142 example sentences
+    with `<ruby>`/`<rt>` furigana, which flattening to `japanese` would silently
+    discard. It is kept as raw source HTML rather than converted structured
+    content because conversion is the bank stage's job, not an extractor's, and
+    because `japanese` must stay a plain string for `sentence_key` duplicate
+    counting and for `highlight` substring matching.
+
+    Invariant: when `japanese_html` is set, its flattened surface text equals
+    `japanese`. The two can never disagree about what the sentence says; one is
+    strictly the annotated form of the other.
     """
 
     japanese: str
     english: str | None = None
     highlight: tuple[str, ...] = ()
     ai_generated: bool = False
+    japanese_html: str | None = None
 
 
 @dataclass(frozen=True)
@@ -65,6 +78,13 @@ class GrammarPoint:
     explanation: str | None = None
     notes: str | None = None
     jlpt: str | None = None
+
+    # Japanese-language counterparts of `nuance`/`explanation`. Sources that
+    # author both languages (Bunpro's Nuance_JP/Explanation_JP) keep them apart
+    # from the English fields so the card can disclose them under their own
+    # `lang="ja"` section instead of concatenating two languages into one blob.
+    nuance_ja: str | None = None
+    explanation_ja: str | None = None
 
     examples: tuple[Example, ...] = ()
     tags: tuple[str, ...] = ()

@@ -2,7 +2,9 @@
 #
 # Stages, each reading only the previous stage's on-disk artifact:
 #   extract  -> data/extracted/<source>.json
-#   merge    -> data/merged/corpus.json
+#   keymap   -> data/merge/keymap.json + AMBIGUITY.md
+#   merge    -> data/merge/unified.jsonl (+ unified.stats.json)
+#               and data/merged/corpus.json (bank-generator input)
 #   build    -> build/bees-ultimate-grammar-dictionary.zip
 #   validate -> pinned official Yomitan schema validation (python + node)
 
@@ -39,8 +41,13 @@ keymap:
 	$(PY) scripts/audit_keymap.py
 	$(PY) scripts/render_ambiguity_report.py
 
+# Unified dataset (data/merge/unified.jsonl + unified.stats.json) and its
+# projection onto the bank generator's input (data/merged/corpus.json). The audit
+# runs as part of the target: it re-derives conservation, findability and
+# ordering from the emitted artifact, so a merge that lost rows cannot pass.
 merge:
 	$(PY) -m bugd.cli merge
+	$(PY) scripts/audit_unified.py
 
 build:
 	$(PY) -m bugd.cli build

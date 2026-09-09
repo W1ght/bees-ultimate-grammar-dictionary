@@ -18,6 +18,7 @@ import pathlib
 import shutil
 
 from . import DICTIONARY_SLUG, YOMITAN_SCHEMA_REVISION
+from . import unify
 from .banks import build_banks, build_index, build_tag_bank
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .merge import MergedEntry, merge_points
@@ -60,29 +61,57 @@ def run_extract(
     sources_dir: pathlib.Path = DEFAULT_SOURCES_DIR,
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     only: list[str] | None = None,
+    corrections_path: pathlib.Path | None = None,
 ) -> dict[str, object]:
-    """Run every registered extractor and write one artifact per source."""
+    """Run every registered extractor and write one artifact per source.
+
+    After a source is extracted, the byte-anchored corrections overlay
+    (`bugd.corrections`) is applied to its normalized points. The overlay fixes
+    formation/gloss defects that live in the immutable source term-bank bytes —
+    the SOURCE.lock digests and the locked bytes are never touched, so the
+    integrity gate stays intact and every edit remains an auditable, reviewable
+    entry rather than a laundered rewrite. Application is fail-closed: a
+    correction whose anchor no longer matches its source raises, so a drifted
+    source can never silently ship an un-reviewed edit.
+    """
+    from . import corrections as corrections_module
     from .sources import all_extractors, get_extractor
 
     extracted_dir.mkdir(parents=True, exist_ok=True)
     classes = [get_extractor(name) for name in only] if only else all_extractors()
 
+    overlay = corrections_module.load_corrections(
+        corrections_path or corrections_module.DEFAULT_CORRECTIONS_PATH
+    )
+
     written: dict[str, int] = {}
+    corrected_total = 0
     for cls in classes:
         result = cls(sources_dir / cls.name).extract()
+        points, applied = corrections_module.apply_corrections(
+            result.points, overlay, source=cls.name
+        )
+        corrected_total += len(applied)
+        stats = dict(result.stats)
+        if applied:
+            stats["corrections"] = applied
         payload = {
             "source": result.source,
             "label": cls.label or cls.name,
             "aiGeneratedSource": cls.ai_generated_source,
             "consumed": result.consumed,
-            "stats": result.stats,
-            "points": [point_to_json(point) for point in result.points],
+            "stats": stats,
+            "points": [point_to_json(point) for point in points],
         }
         (extracted_dir / f"{cls.name}.json").write_text(
             dump_json(payload) + "\n", encoding="utf-8"
         )
-        written[cls.name] = len(result.points)
-    return {"sources": written, "total": sum(written.values())}
+        written[cls.name] = len(points)
+    return {
+        "sources": written,
+        "total": sum(written.values()),
+        "corrections": corrected_total,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -94,18 +123,39 @@ def run_merge(
     *,
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     merged_dir: pathlib.Path = DEFAULT_MERGED_DIR,
+    keymap_path: pathlib.Path | None = None,
+    unified_path: pathlib.Path | None = None,
 ) -> dict[str, object]:
-    """Merge every extracted artifact into the one unified corpus."""
-    points: list[GrammarPoint] = []
-    labels: dict[str, str] = {}
-    for path in sorted(extracted_dir.glob("*.json")):
-        payload = load_json(path.read_text(encoding="utf-8"))
-        if not isinstance(payload, dict) or not isinstance(payload.get("points"), list):
-            raise MalformedPayload(f"malformed extracted artifact: {path}")
-        labels[payload["source"]] = payload.get("label") or payload["source"]
-        points.extend(point_from_json(item) for item in payload["points"])
+    """Merge every extracted artifact into the one unified corpus.
 
-    entries = merge_points(points)
+    The real cross-source policy lives in `bugd.unify`, driven by the keymap
+    `make keymap` emits. It fails closed when the keymap and the extraction are
+    not self-consistent, because the tolerant alternative silently deletes rows
+    (a stale keymap left 1,664 substantive rows unresolved and a best-effort
+    merge would have dropped them while reporting success).
+
+    `data/merge/unified.jsonl` is the reviewable artifact; `data/merged/corpus.json`
+    is its projection onto the bank generator's input contract, so the renderer
+    keeps consuming the stage boundary it was written against.
+    """
+    keymap_path = keymap_path or unify.DEFAULT_KEYMAP_PATH
+    unified_path = unified_path or unify.DEFAULT_UNIFIED_PATH
+
+    rows, labels = unify.load_extracted(extracted_dir)
+    keymap = unify.load_keymap(keymap_path)
+    unified, stats = unify.unify(rows, keymap, labels)
+
+    byte_count, digest = unify.write_unified(unified, unified_path)
+    stats["artifact"] = {
+        "path": str(unified_path),
+        "byteCount": byte_count,
+        "contentHash": digest,
+        "keymapPath": str(keymap_path),
+    }
+    stats_path = unified_path.with_name(f"{unified_path.stem}.stats.json")
+    stats_path.write_text(dump_json(stats) + "\n", encoding="utf-8")
+
+    entries = unify.to_merged_entries(unified)
     corpus = {
         "sourceLabels": labels,
         "entries": [entry_to_json(entry) for entry in entries],
@@ -113,9 +163,14 @@ def run_merge(
     merged_dir.mkdir(parents=True, exist_ok=True)
     (merged_dir / MERGED_CORPUS_NAME).write_text(dump_json(corpus) + "\n", encoding="utf-8")
     return {
-        "points": len(points),
+        "points": len(rows),
         "entries": len(entries),
+        "pointEntries": stats["unified"]["pointEntries"],
+        "redirectEntries": stats["unified"]["redirectEntries"],
+        "contributions": stats["unified"]["contributions"],
         "sources": sorted(labels),
+        "unifiedPath": str(unified_path),
+        "statsPath": str(stats_path),
         "contentHash": content_hash(corpus),
     }
 
@@ -305,6 +360,11 @@ def point_from_json(payload: dict) -> GrammarPoint:
                 english=item.get("english"),
                 highlight=tuple(item.get("highlight") or ()),
                 ai_generated=bool(item.get("ai_generated")),
+                # Rebuilt explicitly: this is the stage seam between extract and
+                # merge, so a field omitted here is silently deleted from the
+                # corpus. `japanese_html` carries the source's own furigana for
+                # 98.7% of Bunpro's sentences.
+                japanese_html=item.get("japanese_html"),
             )
             for item in examples
         ),
