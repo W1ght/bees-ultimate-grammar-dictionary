@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import pathlib
+import subprocess
+import sys
 
 import pytest
 
@@ -11,6 +14,8 @@ from bugd.jsonio import dump_json
 from bugd.sources import Extractor, ExtractResult, SourceLockError, load_source_lock
 from bugd.sources.base import SOURCE_LOCK_NAME
 from bugd.sources.registry import register_extractor, source_names
+
+REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
 class _Fixture(Extractor):
@@ -120,14 +125,76 @@ def test_registry_rejects_unnamed_extractor():
         register_extractor(Unnamed)
 
 
-def test_no_sources_registered_yet_by_import():
-    """The scaffold ships no source logic; later cards register real sources."""
-    import importlib
+def test_the_registry_discovers_every_source_in_a_fresh_interpreter():
+    """Registration must not depend on someone remembering to import a module.
 
+    This replaces `test_no_sources_registered_yet_by_import`, a scaffold-era
+    tripwire that asserted a freshly reloaded registry knew NO sources. It kept
+    passing after five extractors landed, because reloading the module discards
+    the registry while the source modules stay cached in `sys.modules`, so their
+    `@register_extractor` decorators never ran again. That hid the actual defect:
+    nothing in the shipped code imported the concrete source modules, so
+    `bugd.cli extract` reported `{"sources": {}, "total": 0}` and exited 0 in a
+    complete checkout, and only throwaway scripts with hard-coded
+    `import bugd.sources.dojg` lines ever produced the real artifacts.
+
+    Measured in a SUBPROCESS on purpose: a fresh interpreter is what `make
+    extract` actually gets, and it is the only way to observe first-import
+    behaviour. Reloading in-process cannot see it.
+    """
+    probe = (
+        "from bugd.pipeline import run_extract;"
+        "from bugd.sources import source_names;"
+        "print(','.join(source_names()))"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", probe],
+        cwd=REPO,
+        env={**os.environ, "PYTHONPATH": str(REPO / "src")},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    discovered = [name for name in completed.stdout.strip().split(",") if name]
+    assert discovered, "importing the pipeline must leave the registry populated"
+
+    # Every concrete extractor module on disk must be represented. `community`
+    # (the shared bank base class) and `yomitan_bank` (the bank reader) are
+    # infrastructure: they are imported but register nothing, which is correct.
+    expected = {
+        path.stem
+        for path in (REPO / "src/bugd/sources").glob("*.py")
+        if path.stem not in {"__init__", "base", "registry", "community", "yomitan_bank"}
+    }
+    assert expected, "expected concrete source modules to be present"
+    assert set(discovered) == expected, f"expected {sorted(expected)}, discovered {discovered}"
+
+
+def test_source_discovery_is_deterministic_and_skips_infrastructure():
+    from bugd.sources.registry import _NON_SOURCE_MODULES, load_source_modules
+
+    imported = load_source_modules()
+    assert imported == sorted(imported), "discovery order must be deterministic"
+    assert not (set(imported) & _NON_SOURCE_MODULES)
+    assert not any(name.startswith("_") for name in imported)
+    # Idempotent: a second call must not double-register or raise.
+    assert load_source_modules() == imported
+
+
+def test_source_discovery_propagates_a_broken_module_instead_of_skipping_it(monkeypatch):
+    """A source that cannot be imported is a build defect, not a smaller build.
+
+    Swallowing the ImportError would silently ship a dictionary missing a whole
+    source, which is exactly the failure mode the fail-closed policy forbids.
+    """
     import bugd.sources.registry as registry
 
-    fresh = importlib.reload(registry)
-    assert fresh.source_names() == []
+    def boom(name):
+        raise ImportError(f"deliberately broken: {name}")
+
+    monkeypatch.setattr(registry.importlib, "import_module", boom)
+    with pytest.raises(ImportError):
+        registry.load_source_modules()
 
 
 def test_donna_toki_drops_the_appended_index_key_but_keeps_variant_lists():

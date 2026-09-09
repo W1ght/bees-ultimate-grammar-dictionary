@@ -50,17 +50,108 @@ def test_validate_stage_fails_without_a_build(tmp_path):
     assert main(_args("validate", tmp_path)) == 1
 
 
+def _locked_dojg_source(sources_dir):
+    """Write a real, digest-locked one-row DoJG term bank.
+
+    Built through the production lock shape rather than a stub: the extractor
+    verifies sha256 and byteCount over the exact bytes on disk, so a fixture that
+    faked the lock would not exercise the path the pipeline actually takes.
+    """
+    import hashlib
+
+    target = sources_dir / "dojg"
+    target.mkdir(parents=True, exist_ok=True)
+    member = "term_bank_1.json"
+    raw = dump_json(
+        [
+            [
+                "そうです",
+                "そうです",
+                "",
+                "",
+                0,
+                ["文法項目|そうです|Basic\n解説\nHearsay.\n意味\nI hear that\n接続\nVerb + そうです"],
+                1,
+                "dojg1",
+            ]
+        ]
+    ).encode("utf-8")
+    (target / member).write_bytes(raw)
+    (target / "SOURCE.lock.json").write_text(
+        dump_json(
+            {
+                "source": "dojg",
+                "files": {
+                    member: {
+                        "sha256": hashlib.sha256(raw).hexdigest(),
+                        "byteCount": len(raw),
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    return target
+
+
+def _keymap_for_extracted(tmp_path):
+    """Build the keymap from the extracted artifacts via the production builder."""
+    from bugd.keymap import build_keymap
+
+    payload = build_keymap(tmp_path / "extracted")
+    (tmp_path / "keymap.json").write_text(dump_json(payload) + "\n", encoding="utf-8")
+    return tmp_path / "keymap.json"
+
+
 def test_all_stage_runs_the_whole_pipeline(tmp_path, capsys):
-    assert main(_args("all", tmp_path, "--revision", "2026.09.08")) == 0
+    # `all` runs `extract` first, and extract now really discovers the registered
+    # sources, so a stage test cannot point it at an empty --sources-dir: every
+    # extractor fails closed on a missing SOURCE.lock.json. Restricting the stage
+    # to one source with a real locked bank keeps this a wiring test (does each
+    # stage hand off to the next?) while still exercising the discovery seam.
+    #
+    # The keymap is built from the artifact extract just wrote, through the same
+    # production builder `make keymap` uses. `all` deliberately does NOT build it
+    # (merge refuses to invent keys, because a derived-key fallback silently drops
+    # rows), so the keymap is a real prerequisite of the merge stage.
+    _locked_dojg_source(tmp_path / "sources")
+    assert main(_args("extract", tmp_path, "--source", "dojg")) == 0
+    _keymap_for_extracted(tmp_path)
+
+    assert (
+        main(_args("all", tmp_path, "--revision", "2026.09.08", "--source", "dojg")) == 0
+    )
     out = capsys.readouterr().out
     assert "[extract]" in out
+    assert "[merge]" in out
     assert "[build]" in out
     assert "validation passed" in out
 
 
-def test_extract_stage_with_no_registered_sources_writes_nothing(tmp_path):
-    assert main(_args("extract", tmp_path)) == 0
-    assert list((tmp_path / "extracted").glob("*.json")) == []
+def test_extract_stage_discovers_registered_sources_without_being_told_them(tmp_path):
+    """Extract must find the sources by itself, not report an empty build.
+
+    This replaces `test_extract_stage_with_no_registered_sources_writes_nothing`,
+    which asserted extract wrote NOTHING when handed an empty sources dir. That
+    passed for the wrong reason: nothing in the shipped code ever imported the
+    concrete source modules, so the registry was empty in a complete checkout and
+    `extract` was a silent no-op that still exited 0. The durable property is the
+    opposite one -- extract discovers every registered source through the registry
+    seam and actually produces that source's artifact.
+    """
+    _locked_dojg_source(tmp_path / "sources")
+    assert main(_args("extract", tmp_path, "--source", "dojg")) == 0
+    written = sorted(p.name for p in (tmp_path / "extracted").glob("*.json"))
+    assert written == ["dojg.json"]
+
+
+def test_extract_stage_fails_closed_on_a_source_with_no_locked_input(tmp_path):
+    # The counterpart honesty property: an unacquired source is a hard error, not
+    # a quietly smaller dictionary.
+    from bugd.sources import SourceLockError
+
+    with pytest.raises(SourceLockError):
+        main(_args("extract", tmp_path, "--source", "dojg"))
 
 
 def _fixture_keymap(tmp_path, sample_point):

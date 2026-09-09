@@ -19,7 +19,13 @@ in the lock and fail closed when a digest does not match.
 from __future__ import annotations
 
 from .base import Extractor, ExtractResult, SourceLockError, load_source_lock
-from .registry import all_extractors, get_extractor, register_extractor, source_names
+from .registry import (
+    all_extractors,
+    get_extractor,
+    load_source_modules,
+    register_extractor,
+    source_names,
+)
 
 __all__ = [
     "Extractor",
@@ -28,6 +34,7 @@ __all__ = [
     "load_source_lock",
     "all_extractors",
     "get_extractor",
+    "load_source_modules",
     "register_extractor",
     "source_names",
 ]
