@@ -1162,6 +1162,55 @@ def test_a_source_with_no_level_and_no_substance_earns_no_disclosure():
     assert labels == [SOURCE_LABELS["dojg"]]
 
 
+def test_the_level_row_is_the_only_thing_this_change_adds_to_a_card():
+    """Containment: the level row must not perturb the rest of the card.
+
+    This change touched the disclosure builder that every card goes through, so a
+    regression here would silently reshape 2,441 cards. When the beauty gate
+    returned 13 must-fix findings, this property is what allowed them to be
+    attributed to the corpus rather than to this card: strip every `sourceLevel`
+    node from the rendered output and the result must be exactly what the renderer
+    produced before, with no reordering, no lost sense, and no changed prose.
+
+    Asserted against the production composer rather than a fixture diff, so it
+    keeps biting if `_source_blocks` is refactored.
+    """
+    def strip(node):
+        if isinstance(node, list):
+            return [
+                strip(item) for item in node
+                if not (isinstance(item, dict) and "sourceLevel" in (item.get("data") or {}))
+            ]
+        if isinstance(node, dict):
+            copy = dict(node)
+            if "content" in copy:
+                copy["content"] = strip(copy["content"])
+            return copy
+        return node
+
+    points = [
+        _point(source="dojg", source_id="a", jlpt="N3", meaning="one", explanation="One."),
+        _point(source="dojg", source_id="b", jlpt="N2", meaning="two", explanation="Two."),
+        _point(source="edewakaru", source_id="c", jlpt="N5", explanation="Three.",
+               provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]}),
+    ]
+    entry = MergedEntry(expression="あまり", contributions=points)
+
+    with_levels = build_term_entry(entry, 1)
+    without = [_point(**{**dict(
+        source=p.source, source_id=p.source_id, expression=p.expression,
+        reading=p.reading, meaning=p.meaning, structure=p.structure,
+        explanation=p.explanation, examples=p.examples, provenance=p.provenance,
+    ), "jlpt": None}) for p in points]
+    baseline = build_term_entry(MergedEntry(expression="あまり", contributions=without), 1)
+
+    # The compact badge is fed by point.jlpt too, so compare below the fold only.
+    stripped = strip(with_levels[5][0]["content"]["content"][1:])
+    assert stripped == baseline[5][0]["content"]["content"][1:]
+    # ...and the levels really were there to strip.
+    assert _levels_in(with_levels[5][0]["content"]["content"][1:]) == ["N3", "N2", "N5"]
+
+
 def test_a_per_source_level_never_replaces_the_compact_badge():
     """The compact block stays one line; the disclosures are the added surface."""
     n2 = _point(source="edewakaru", source_id="a", jlpt="N2", explanation="Ede.",

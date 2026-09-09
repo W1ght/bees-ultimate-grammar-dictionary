@@ -68,6 +68,18 @@ MUTATIONS: tuple[tuple[pathlib.Path, str, str, str], ...] = (
         "        if False:\n            jlpt = point.jlpt",
     ),
     (
+        BANKS,
+        "reorder the disclosure body so the level displaces the first sense",
+        "        level_block = _source_level_block(levels)\n        if level_block is not None:\n            body.append(level_block)\n        for ordinal, (point, sense_body) in enumerate(shown, start=1):",
+        "        level_block = _source_level_block(levels)\n        for ordinal, (point, sense_body) in enumerate(shown, start=1):",
+    ),
+    (
+        BANKS,
+        "truncate a source's senses by one while emitting the level",
+        "        shown = rendered[:SENSES_PER_SOURCE]",
+        "        shown = rendered[:SENSES_PER_SOURCE - 1]",
+    ),
+    (
         STYLES,
         "set the provenance row at body size, competing with the explanation",
         "[data-sc-source-level] {\n  margin-bottom: var(--bugd-space-tight);\n  font-size: 0.86em;",
