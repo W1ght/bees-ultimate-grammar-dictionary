@@ -989,6 +989,53 @@ def _paragraphs(content: object) -> object:
     return content
 
 
+def _source_levels(points: list[GrammarPoint]) -> list[str]:
+    """The JLPT levels one SOURCE asserts for this point, in its own order.
+
+    Repeats are collapsed, distinct assertions are not. Measured over the corpus,
+    160 of the 207 multi-sense disclosures repeat one level on every sense inside
+    them (2x on 128, 3x on 23, 4x on 9), so a per-SENSE badge would stack the
+    identical string up to four times while adding nothing. But `あまり` really
+    does carry N2 AND N5 from `edewakaru` alone, so a source that disagrees with
+    itself keeps both.
+    """
+    levels: list[str] = []
+    for point in points:
+        if point.jlpt and point.jlpt not in levels:
+            levels.append(point.jlpt)
+    return levels
+
+
+def _source_level_block(levels: list[str]) -> dict | None:
+    """One source's own JLPT claim, stated inside that source's disclosure.
+
+    `_compact_block` renders JLPT above the fold from the FIRST contribution that
+    supplies a level, which is right for a deliberately one-line compact block --
+    but it meant the 158 entries carrying a cross-source disagreement showed a
+    single badge and the other levels appeared nowhere in the packaged bytes. A
+    learner reading the 絵でわかる日本語 section could not tell that source called
+    `あまり` N2 while 毎日のんびり日本語教師 called it N3.
+
+    Nothing is reconciled, voted on, or preferred here: both statements are true
+    about their own source, so each is stated where that source speaks. The level
+    is introduced by name because a bare `N2` in running prose does not say what
+    it measures, unlike the compact badge which sits in a metadata row.
+    """
+    if not levels:
+        return None
+    body: list[object] = ["JLPT "]
+    for position, level in enumerate(levels):
+        if position:
+            body.append(" · ")
+        body.append(_span("jlpt", level))
+    return {
+        "tag": "div",
+        "data": {"sourceLevel": ""},
+        "lang": "en",
+        "content": body,
+    }
+
+
 def _source_block(point: GrammarPoint) -> list[object]:
     """One contributing source's substance, as renderable nodes.
 
@@ -1057,6 +1104,16 @@ def _source_blocks(entry: MergedEntry, headline: str = "") -> list[dict]:
     word ('Approximately; about' appeared twice, ~15px apart, on くらい). Only an
     exact repeat is dropped -- a differing label still distinguishes its sense, and
     the numbered fallback still applies when a source has several senses.
+
+    A source that asserts ONLY a JLPT level earns a disclosure too. 7 of the 158
+    cross-source level conflicts (`たい`, `で`, `方`, `もう`, `てはいけない`,
+    `たらどうですか`, `を余儀なくされる`) hid behind a source whose whole record is a
+    level plus a meaning/structure the compact block already absorbed, so it
+    produced no disclosure at all and its level was unreachable in the packaged
+    bytes. Admission is gated on the LEVEL, not on the bare record: letting every
+    substance-less record in would give 24 cards a first `sourceBlock` alongside
+    the compact fallback they already render, which the frozen contract forbids
+    (invariant 4).
     """
     grouped: dict[str, list[GrammarPoint]] = {}
     for point in entry.contributions:
@@ -1069,11 +1126,18 @@ def _source_blocks(entry: MergedEntry, headline: str = "") -> list[dict]:
             body = _source_block(point)
             if body:
                 rendered.append((point, body))
-        if not rendered:
+        levels = _source_levels(points)
+        if not rendered and not levels:
             continue
 
         shown = rendered[:SENSES_PER_SOURCE]
         body: list[object] = []
+        # The level heads the disclosure: it qualifies everything this source goes
+        # on to say, and it must be reachable even when the source ships nothing
+        # else (the 7 conflicts above).
+        level_block = _source_level_block(levels)
+        if level_block is not None:
+            body.append(level_block)
         for ordinal, (point, sense_body) in enumerate(shown, start=1):
             sense_label = _sense_label(point, ordinal, len(shown))
             if sense_label and headline and sense_label == headline:
