@@ -590,50 +590,28 @@ def corpus() -> dict[str, object]:
 @pytestmark_corpus
 def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     report = corpus["report"]
-    # 5772 = 4972 + 800: UGD-06 integrated NINJAL 日本語文型データベース
-    # (CC BY 4.0, 800 XML members, one row each — no alias rows, no duplicate
-    # collapses). Reviewed, not rubber-stamped: rebuilding the keymap with and
-    # without data/extracted/ninjal_bunkei.json shows the without-build
-    # reproduces every previous pin EXACTLY, the non-ninjal assignment identity
-    # set is unchanged at 3732 with ZERO lost, and every delta below decomposes
-    # into ninjal-driven effects:
-    #   * points 2609 -> 3107 (+498) = 485 ninjal-only points + 315 existing
-    #     points gaining a ninjal contributor + 13 net group reshapes;
-    #   * tierA bijective 570 -> 657 (+87) and refused collisions 179 -> 189
-    #     (+10): new buckets from ninjal keys, plus buckets the extra rows made
-    #     ambiguous — refusal is the fail-closed direction;
-    #   * tierB accepted 60 -> 52 (-8): with ninjal rows present, hub keys got
-    #     busier and the generic-hub (116 -> 157) and one-way-different-reading
-    #     (98 -> 144) guards fired more, e.g. ことがある now stays as three
-    #     separate points and しかない as four instead of guard-approved merges.
-    #     Splitting apart is conservative: no wrong merge can result.
-    assert report["corpus"]["rows"] == 5772
+    # Re-pinned at UGD-16 integration, when all 10 sources and every 11* defect fix
+    # had landed. The full corpus is now 7896 rows (was 5772 at UGD-06). That total
+    # still decomposes cleanly and fail-closed:
+    #   rows 7896 = substantiveRows 6656 + declaredAliasRows 1167
+    #             + duplicateRowsCollapsed 73.
+    # declaredAliasRows (1167) and duplicateRowsCollapsed (73) are UNCHANGED from
+    # UGD-06/UGD-14 -- the new sources (bunpou/UGD-02 etc.) ship no declared-alias
+    # rows and introduced no new byte-identical duplicate collapses -- so the entire
+    # +2124 row delta is substantive content, and substantiveRows == the number of
+    # assignments (6656) with zero lost. The tier splits grew accordingly (tierA
+    # bijective 657 -> 844, refused collisions 189 -> 202, tierB accepted 52 -> 81),
+    # and refusal/splitting is always the conservative fail-closed direction: no
+    # wrong merge can result from a bucket becoming ambiguous. Canonical points
+    # 3107 -> 4387, which equals the unified sense count downstream.
+    assert report["corpus"]["rows"] == 7896
     assert report["corpus"]["declaredAliasRows"] == 1167
-    # 73, from 71 and originally 63: UGD-14 stopped shipping the edewakaru
-    # blog-ring footer (`にほんブログ村` / `――以上――` / `語学(日本語)ランキング`) as
-    # content. Those lines were the ONLY difference between otherwise
-    # byte-identical records, so removing site chrome let the existing duplicate
-    # collapse do its job.
-    #
-    # The 71 -> 73 step is the round-8 fix to `_strip_post_chrome`, which
-    # previously dropped a marker only when it was the WHOLE line and therefore
-    # missed 29 occurrences the producer had concatenated onto the end of real
-    # text (`…イラストリスト】語学(日本語)ランキングにほんブログ村にほんブログ村――以上――`).
-    # Four of those were still visible in the packaged banks (`だって`, `なんで`,
-    # `みたいな`, `みたいに`).
-    #
-    # Verified, not rubber-stamped: distinct (expression, meaning, structure,
-    # explanation, examples) signatures for edewakaru went 1179 -> 1177 -- exactly
-    # the two extra collapses -- while contributor identities stayed at 3259 with
-    # ZERO lost, so no record was dropped. The two affected canonical points
-    # (`にくい#sense6`, `やすい#sense6`) were ordinal renumbering: their nihongo_net
-    # contributor now sits in `#sense5`.
     assert report["corpus"]["duplicateRowsCollapsed"] == 73
-    assert report["corpus"]["substantiveRows"] == 4532
-    assert report["tierA"]["bijectiveBuckets"] == 657
-    assert report["tierA"]["refusedCollisionBuckets"] == 189
-    assert report["tierB"]["accepted"] == 52
-    assert len(corpus["points"]) == 3107
+    assert report["corpus"]["substantiveRows"] == 6656
+    assert report["tierA"]["bijectiveBuckets"] == 844
+    assert report["tierA"]["refusedCollisionBuckets"] == 202
+    assert report["tierB"]["accepted"] == 81
+    assert len(corpus["points"]) == 4387
 
 
 @pytestmark_corpus

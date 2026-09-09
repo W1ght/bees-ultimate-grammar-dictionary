@@ -118,8 +118,21 @@ def test_all_stage_runs_the_whole_pipeline(tmp_path, capsys):
     assert main(_args("extract", tmp_path, "--source", "dojg")) == 0
     _keymap_for_extracted(tmp_path)
 
+    # `--no-corrections`: this stage runs an ISOLATED single-source (dojg) corpus,
+    # which the canonical reading-correction overlay (data/corrections/readings.json)
+    # does not describe -- the overlay carries corrections for rows this minimal
+    # extraction never produces, and it fails closed on a correction that matches no
+    # row. Merging without it keeps this a wiring test (does each stage hand off to
+    # the next?) rather than a correction-coverage test. The overlay itself is
+    # exercised against the full corpus by the merge/keymap suites and `bugd.cli all`.
     assert (
-        main(_args("all", tmp_path, "--revision", "2026.09.08", "--source", "dojg")) == 0
+        main(
+            _args(
+                "all", tmp_path, "--revision", "2026.09.08", "--source", "dojg",
+                "--no-corrections",
+            )
+        )
+        == 0
     )
     out = capsys.readouterr().out
     assert "[extract]" in out

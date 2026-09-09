@@ -57,6 +57,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--revision", default=None, help="explicit YYYY.MM.DD[.N] revision")
     parser.add_argument("--source", action="append", dest="only", help="limit extract to a source")
+    parser.add_argument(
+        "--no-corrections",
+        action="store_true",
+        help="merge without the canonical reading-correction overlay "
+        "(for an isolated corpus the overlay does not describe, e.g. a "
+        "single-source stage run; the overlay fails closed on a correction "
+        "that matches no row)",
+    )
 
     subparsers = parser.add_subparsers(dest="stage", required=True)
     for stage in ("extract", "merge", "build", "validate", "all"):
@@ -98,6 +106,7 @@ def main(argv: list[str] | None = None) -> int:
                         merged_dir=args.merged_dir,
                         keymap_path=args.keymap,
                         unified_path=args.unified,
+                        **({"corrections_path": None} if args.no_corrections else {}),
                     )
                 )
             )

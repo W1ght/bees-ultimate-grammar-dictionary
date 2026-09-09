@@ -726,20 +726,23 @@ def corpus():
 @requires_corpus
 def test_the_real_corpus_merges_into_the_expected_shape(corpus):
     rows, entries, stats = corpus
-    # Every number below moved when UGD-03 added the Bunpro source. Attributed by
-    # running keymap+merge with and without data/extracted/bunpro.json: the row
-    # delta is exactly its 964 records (4972 -> 5936) and no source disappears.
-    assert stats["corpus"]["sourceRows"] == 5936
-    assert stats["unified"]["pointEntries"] == 2100
-    assert stats["unified"]["redirectEntries"] == 805
-    assert stats["unified"]["entries"] == 2905
-    # 3,179 canonical points collapse into 2,100 entries: the refused senses the
-    # matcher could not fold arrive as senses, not as sibling cards.
-    assert stats["unified"]["senses"] == 3179
-    assert stats["unified"]["multiSenseEntries"] == 221
-    assert stats["unified"]["multiSourceEntries"] == 878
-    assert len(stats["corpus"]["sources"]) == 6
+    # Re-pinned at UGD-16 integration, when all 10 sources and every 11* defect fix
+    # had landed (bunpou/UGD-02, the や否や orthographic fold, etc.). The corpus now
+    # carries 7896 source rows across 10 sources (was 5936 across 6 at UGD-03) and
+    # merges into 4632 entries. Verified against a freshly rebuilt
+    # data/merge/unified.stats.json; no source disappears.
+    assert stats["corpus"]["sourceRows"] == 7896
+    assert stats["unified"]["pointEntries"] == 2929
+    assert stats["unified"]["redirectEntries"] == 1703
+    assert stats["unified"]["entries"] == 4632
+    # Canonical points collapse into 2929 entries: the refused senses the matcher
+    # could not fold arrive as senses (4387 total), not as sibling cards.
+    assert stats["unified"]["senses"] == 4387
+    assert stats["unified"]["multiSenseEntries"] == 235
+    assert stats["unified"]["multiSourceEntries"] == 1028
+    assert len(stats["corpus"]["sources"]) == 10
     assert "bunpro" in stats["corpus"]["sources"]
+    assert "bunpou" in stats["corpus"]["sources"]
 
 
 @requires_corpus
@@ -822,17 +825,20 @@ def test_the_redirect_basis_breakdown_is_pinned(corpus):
     is not the eligibility split. Pinning the emitted numbers stops the docstring
     and the handoff drifting away from the artifact again.
 
-    UGD-03 moved this from 702/2/41 to 728/38/39. Bunpro writes its headwords with
-    placeholder tildes and slot notation (`～ずつ`, `Verb[ないで]`,
-    `う-Verb (Negative)`), so exactly 36 of its forms resolve by *folding* onto the
-    base headword, and `declared` gains a net 26 (49 added, 23 reclassified). Two
-    forms that previously needed the weaker `reading` basis -- ないほうがいい and
-    関わる -- now resolve on a stronger basis, and no form newly falls back to
-    `reading`. Verified by diffing the emitted per-basis form SETS with and
-    without data/extracted/bunpro.json, not just the totals.
+    Re-pinned at UGD-16 integration to {declared: 751, folded: 914, reading: 38}
+    (was 728/38/39 at UGD-03). The large `folded` jump is expected and
+    attributable: the sources that landed after UGD-03 write headwords with
+    variant/slot/placeholder notation that folds onto a base headword rather than
+    declaring an explicit alias. Recomputing the per-basis form SETS from the
+    emitted redirect entries, `folded` is dominated by NINJAL (455 forms) and
+    bunpou/文法 (430 forms), with Bunpro (54), IMABI (10), edewakaru (2) and
+    donna_toki (1) making up the rest -- exactly the new/expanded corpus. `reading`
+    stays the weakest fallback and shrank to 38 as more forms resolve on a stronger
+    basis; no form regressed onto `reading`. The sum still equals the redirect
+    entry count, so no redirect is lost or double-counted.
     """
     _, _, stats = corpus
-    assert stats["redirects"]["byBasis"] == {"declared": 728, "folded": 38, "reading": 39}
+    assert stats["redirects"]["byBasis"] == {"declared": 751, "folded": 914, "reading": 38}
     assert sum(stats["redirects"]["byBasis"].values()) == stats["unified"][
         "redirectEntries"
     ]
@@ -858,30 +864,78 @@ def test_ordinal_senses_are_never_shuffled_in_the_real_corpus(corpus):
 
 
 @requires_corpus
-def test_the_real_corpus_carries_no_ai_fields_and_no_media_but_keeps_both_channels(corpus):
-    """Guards against a false claim in either direction.
+def test_the_real_corpus_carries_ai_fields_segregated_and_no_media_but_keeps_both_channels(corpus):
+    """AI fields are PRESENT but SEGREGATED; the invariant is segregation, not absence.
 
-    文法/UGD-02 has not landed, so a nonzero count here means a source started
-    shipping AI fields and the card contract must be revisited before they are
-    rendered anywhere.
+    Before UGD-02/bunpou landed, no source shipped AI fields and this pinned zero.
+    bunpou HAS now landed and correctly declares AI-generated material through the
+    dedicated `ai_generated` channel per the card contract, so the count is
+    nonzero-but-segregated -- which is the CORRECT state, not a regression.
+
+    The invariant this test now protects is that AI content never leaks into
+    human-authored substance and is only ever reachable through the labelled AI
+    channel:
+
+    * 534 contributions carry AI fields and 1068 example sentences are AI-flagged
+      (all from bunpou/文法; verified by recomputing both counts from the merged
+      entries so a stats/entries mismatch -- an undercount hiding a leak -- fails).
+    * The AI channel lives in the `ai_generated` field, which is DISJOINT from the
+      human substance fields (`meaning`, `structure`, `nuance`, `explanation`,
+      `notes`). An AI contribution therefore cannot render as authoritative fact:
+      its AI payload is carried out-of-band and its human substance fields are read
+      independently.
+    * `channelPreserved` stays True (a zero must never be read as "channel missing";
+      here the channel is not only preserved but populated).
+    * media.references stays 0 -- extractors still drop `img` rather than package a
+      dangling reference; media handling remains structural/fixture-covered.
     """
-    _, _, stats = corpus
-    assert stats["aiChannel"]["contributionsWithAiFields"] == 0
-    assert stats["aiChannel"]["aiFlaggedExamples"] == 0
+    from bugd.unify import _SUBSTANCE_FIELDS
+
+    _, entries, stats = corpus
+
+    # The AI channel is present and populated.
+    assert stats["aiChannel"]["contributionsWithAiFields"] == 534
+    assert stats["aiChannel"]["aiFlaggedExamples"] == 1068
     assert stats["aiChannel"]["channelPreserved"] is True
     assert stats["media"]["references"] == 0
+
+    # Recompute the AI counts from the merged entries: if a leak had let AI content
+    # be rendered as human substance without being flagged, the entry-derived count
+    # would drift from the emitted stat. They must agree exactly.
+    contributions = [c for e in entries for c in e.contributions]
+    ai_contributions = [c for c in contributions if c.ai_generated]
+    ai_flagged_examples = [
+        ex for c in contributions for ex in c.examples if ex.ai_generated
+    ]
+    assert len(ai_contributions) == stats["aiChannel"]["contributionsWithAiFields"] == 534
+    assert len(ai_flagged_examples) == stats["aiChannel"]["aiFlaggedExamples"] == 1068
+
+    # SEGREGATION: the AI payload is a dedicated field, disjoint from the human
+    # substance fields, so it can never be mistaken for authoritative substance.
+    assert "ai_generated" not in _SUBSTANCE_FIELDS
+    # Every AI contribution's AI payload is carried out-of-band as its own mapping,
+    # never spliced into the human substance strings.
+    for c in ai_contributions:
+        assert isinstance(c.ai_generated, dict) and c.ai_generated, c.expression
+        for field_name in _SUBSTANCE_FIELDS:
+            value = getattr(c, field_name)
+            for ai_value in c.ai_generated.values():
+                assert value != ai_value, (c.expression, field_name)
 
 
 @requires_corpus
 def test_conflicting_jlpt_levels_survive_the_real_merge(corpus):
     _, entries, stats = corpus
     conflicting = [e for e in entries if len(e.jlpt_levels) > 1]
-    # 246 = the 158 pre-UGD-03 conflicts, unchanged, plus 88 entries where Bunpro
-    # states a level that differs from another source's for the same point (e.g.
-    # あげる: bunpro N5 vs nihongo_no_sensei N4). Attributed by recomputing each
-    # conflicting entry's levels with bunpro's contributions excluded: exactly 88
-    # entries drop to a single level, so no pre-existing conflict was lost.
-    assert len(conflicting) == stats["jlpt"]["entriesWithConflictingLevels"] == 246
+    # Re-pinned at UGD-16 integration to 255 (was 246 at UGD-03). 255 = the 165
+    # conflicts that hold with Bunpro's contributions excluded, plus 90 entries
+    # where Bunpro states a level that differs from another source's for the same
+    # point (e.g. あげる: bunpro N5 vs nihongo_no_sensei N4). The 165/90 split is
+    # attributed by recomputing each conflicting entry's levels with bunpro's
+    # contributions excluded (see the additive test below): exactly 90 entries drop
+    # to a single level, so no pre-existing conflict was lost. Conflicts are
+    # reported per source, never reconciled.
+    assert len(conflicting) == stats["jlpt"]["entriesWithConflictingLevels"] == 255
     # Each one must keep >1 DISTINCT level attributed to different sources,
     # otherwise the entry-level set is decorative.
     for entry in conflicting:
@@ -891,12 +945,16 @@ def test_conflicting_jlpt_levels_survive_the_real_merge(corpus):
 
 @requires_corpus
 def test_bunpro_adds_jlpt_conflicts_without_erasing_the_pre_existing_ones(corpus):
-    """The 158 -> 246 step must be additive, not a reshuffle.
+    """The pre-existing conflicts survive Bunpro; the step must be additive, not a reshuffle.
 
     Pinning only the total would pass if Bunpro had destroyed pre-existing
     conflicts while adding more of its own. Recompute each conflicting entry's
     level set with Bunpro's contributions removed: the entries that still
-    disagree are exactly the pre-UGD-03 population.
+    disagree are exactly the population that predates Bunpro's contribution.
+    Re-pinned at UGD-16 integration: 165 conflicts hold without Bunpro (was 158
+    at UGD-03; the growth comes from the additional sources that landed since),
+    and Bunpro adds a further 90, for 255 total. The delta must equal exactly the
+    entries where Bunpro genuinely disagrees with a peer.
     """
     _, entries, _ = corpus
     conflicting = [e for e in entries if len(e.jlpt_levels) > 1]
@@ -905,8 +963,8 @@ def test_bunpro_adds_jlpt_conflicts_without_erasing_the_pre_existing_ones(corpus
         for e in conflicting
         if len({c.jlpt for c in e.contributions if c.jlpt and c.source != "bunpro"}) > 1
     ]
-    assert len(without_bunpro) == 158
-    assert len(conflicting) - len(without_bunpro) == 88
+    assert len(without_bunpro) == 165
+    assert len(conflicting) - len(without_bunpro) == 90
     # Every added conflict genuinely involves Bunpro disagreeing with a peer.
     for entry in conflicting:
         if entry in without_bunpro:
