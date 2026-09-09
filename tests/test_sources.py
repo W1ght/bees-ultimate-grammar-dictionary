@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import pathlib
 
 import pytest
 
@@ -127,3 +128,269 @@ def test_no_sources_registered_yet_by_import():
 
     fresh = importlib.reload(registry)
     assert fresh.source_names() == []
+
+
+def test_donna_toki_drops_the_appended_index_key_but_keeps_variant_lists():
+    """The producer glues the entry's own reading onto its English prose.
+
+    Measured over the corpus: 302 prose fields end with their reading right after
+    a sentence terminator (`...conditions follow.あいだ`) -- that is the anchor key
+    its site uses, and it rendered as a text-run bug. 48 other fields end with
+    their reading as a deliberate variant list on its own line, which must stay.
+    """
+    from bugd.sources.donna_toki import _strip_trailing_index_key as strip
+
+    assert strip("...conditions follow.あいだ", "あいだ") == "...conditions follow."
+    assert strip("...sentences ❸ and ❹ ．からすると", "からすると") == "...sentences ❸ and ❹ ．"
+    # Own-line variant lists are real content.
+    assert strip("関連文法\n～ばいい／なければいい", "～ばいい／なければいい") == (
+        "関連文法\n～ばいい／なければいい"
+    )
+    # No sentence terminator: the reading is part of the sentence.
+    assert strip("often used with あいだ", "あいだ") == "often used with あいだ"
+    assert strip(None, "あいだ") is None
+    assert strip("あいだ", "あいだ") == "あいだ"
+
+
+def test_edewakaru_drops_the_blog_ring_footer():
+    """2,246 `にほんブログ村`, 1,057 `――以上――` and 492 `語学(日本語)ランキング` lines.
+
+    The ranking caption was found by the UGD-14 round-6 visual gate, which
+    reported it as "unstyled, purposeless text" appearing twice inside a grammar
+    explanation. It occurs in exactly one form, always as its own line.
+    """
+    from bugd.sources.edewakaru import _strip_post_chrome
+
+    body = "本文です。\nにほんブログ村\nにほんブログ村\n――以上――"
+    assert _strip_post_chrome(body) == "本文です。"
+    assert _strip_post_chrome(None) is None
+    # A line that merely mentions the phrase inline is not a footer line.
+    assert _strip_post_chrome("にほんブログ村に登録しました") == "にほんブログ村に登録しました"
+    # The blog-ranking widget caption, in both bracket styles.
+    assert _strip_post_chrome("本文です。\n語学(日本語)ランキング") == "本文です。"
+    assert _strip_post_chrome("本文です。\n語学（日本語）ランキング") == "本文です。"
+    # Real prose that happens to discuss rankings must survive.
+    assert (_strip_post_chrome("ランキング上位の人たちは皆すごい")
+            == "ランキング上位の人たちは皆すごい")
+
+
+def test_a_line_opening_with_closing_punctuation_rejoins_the_line_above():
+    """The producer puts a highlighted grammar point on its own line.
+
+    So one sentence arrives as three lines and the card rendered
+    `１時間悩んだ あげく 、買わなかった` -- reported by the UGD-14 round-8 visual gate as
+    "unnatural extra spaces ... even before Japanese punctuation". A line starting
+    with closing punctuation cannot begin a paragraph. Measured over the corpus:
+    1,122 occurrences, 1,022 in edewakaru explanations.
+    """
+    from bugd.sources.community import clean
+
+    assert clean("１時間悩んだ\nあげく\n、買わなかった") == "１時間悩んだ\nあげく、買わなかった"
+    assert clean("「感極まる\n」は慣用表現です。") == "「感極まる」は慣用表現です。"
+    assert clean("〜ていく\n。") == "〜ていく。"
+    # A genuine paragraph break is preserved.
+    assert clean("一つ目です。\n二つ目です。") == "一つ目です。\n二つ目です。"
+
+
+def test_a_space_before_japanese_punctuation_is_removed():
+    """Japanese has no inter-word space, so `だけに 、いい点が` is a producer artifact.
+
+    16 occurrences across 3 sources, all defects.
+    """
+    from bugd.sources.community import clean
+
+    assert clean("彼は野球選手なだけに 、体格がいい。") == "彼は野球選手なだけに、体格がいい。"
+    assert clean("頼りないやつばかりだ 。") == "頼りないやつばかりだ。"
+    # A space before the FULLWIDTH comma is left alone: this corpus uses it in
+    # Latin enumerations (`as in ❹ ～ ❻ 、`) where the space can be intentional.
+    assert clean("as in A ～ B ，next") == "as in A ～ B ，next"
+    # Ordinary text is untouched.
+    assert clean("これは丁寧です。") == "これは丁寧です。"
+
+
+def test_the_chinese_line_detector_catches_the_producers_gloss_placeholder():
+    """毎日のんびり日本語教師's Chinese column was leaking onto the card.
+
+    The extractor already routes Chinese lines to `provenance["meaningZh"]`, but
+    its detector recognised only a hand-listed set of Simplified characters, so
+    487 of 1,990 packaged compact meaning lines and 124 of 718 sense labels still
+    rendered as Chinese gloss lists. The UGD-14 round-8 visual gate reported
+    `…左右 大概… …多 与…相同 和…一样` as an unreadable heading.
+
+    The vocabulary cannot be enumerated (`非常…`, `按照…`, `极其…` were 870 more
+    misses). The reliable signal is the producer's `…` slot placeholder: measured
+    over the whole corpus, kana-free Latin-free Han-bearing lines containing `…`
+    number 2,513 and every one is Chinese, while the source's Japanese glosses use
+    the corpus's `〜` placeholder instead.
+    """
+    from bugd.sources.nihongo_no_sensei import is_chinese_line
+
+    # The placeholder form the marker set missed.
+    assert is_chinese_line("取决于…")
+    assert is_chinese_line("非常…")
+    assert is_chinese_line("与…相同 和…一样")
+    assert is_chinese_line("…左右 大概…")
+    # The Chinese enumeration comma.
+    assert is_chinese_line("正因为有了Ａ，才有Ｂ的存在")
+    # Simplified characters still work.
+    assert is_chinese_line("这个问题")
+
+    # Kana is decisive evidence of Japanese.
+    assert not is_chinese_line("～によっては")
+    assert not is_chinese_line("～次第で（は）")
+    # An English gloss is not Chinese.
+    assert not is_chinese_line("difficult to do")
+    # All-shared-Han with no Chinese mark stays Japanese: under-claiming a
+    # translation is safer than mislabelling Japanese text.
+    assert not is_chinese_line("以前")
+    assert not is_chinese_line("五段動詞")
+    assert not is_chinese_line("名詞＋以前")
+    # A line with no Han at all is not a Chinese gloss, even with an ellipsis --
+    # `母：…` is a speaker label.
+    assert not is_chinese_line("母：…")
+
+
+def test_the_chinese_column_is_recognised_when_it_opens_with_its_ambiguous_line():
+    """This producer sometimes writes its shortest Chinese gloss FIRST.
+
+    The position pass only scanned forward from an already-confirmed Chinese line,
+    so `一样` (`ながらに`) and `首屈一指` (`きっての`) stayed in the Japanese column and
+    reached the card as the entry's compact meaning and sense heading. The UGD-14
+    round-8 visual gate filed `…左右 大概… …多 与…相同 和…一样` as an unreadable
+    heading. Measured over the source: 26 records change, and zero gain a line.
+    """
+    from bugd.sources.nihongo_no_sensei import _split_by_language
+
+    # The reported defect: ambiguous line before the confirmed Chinese ones.
+    assert _split_by_language("一样\n…状\n保持…的状态") == (None, "一样\n…状\n保持…的状态")
+    assert _split_by_language("首屈一指\n第一的\n在…中最好的") == (
+        None, "首屈一指\n第一的\n在…中最好的",
+    )
+    # The Japanese gloss after the Chinese column still survives.
+    assert _split_by_language("不该有的\n作为…不应该有的行为\n～してはいけない") == (
+        "～してはいけない", "不该有的\n作为…不应该有的行为",
+    )
+
+    # A record the producer wrote NO Chinese for is untouched: the pass requires a
+    # confirmed Chinese line in the same field.
+    assert _split_by_language("強調\n程度") == ("強調\n程度", None)
+
+    # `によって` proves its enumerated column is Japanese by carrying kana in it, so
+    # its kana-free sense labels are NOT absorbed...
+    japanese, chinese = _split_by_language(
+        "①根拠\n根据…／依据…／通过…\n②手段\n通过…／凭借…／靠…\n④受身（受身文の動作主）\n被…／由…"
+    )
+    assert japanese == "①根拠\n②手段\n④受身（受身文の動作主）"
+    assert chinese == "根据…／依据…／通过…\n通过…／凭借…／靠…\n被…／由…"
+
+    # ...but an enumerated line with no such evidence in its entry is treated like
+    # any other ambiguous line, because enumerated Chinese exists too.
+    assert _split_by_language("②表示后悔,遗憾\n…完／…了") == (
+        None, "②表示后悔,遗憾\n…完／…了",
+    )
+
+
+def test_edewakaru_drops_a_chrome_run_glued_onto_real_text():
+    """The producer sometimes appends the footer with NO newline before it.
+
+    The whole-line rule could not see those, and 4 leaks reached the packaged
+    banks of three successive candidates (`だって`, `なんで`, `みたいな`, `みたいに`),
+    where a card ended with `…区別して覚えてください😊――以上――`. Measured over the
+    source the glued form is 29 occurrences and is always a TAIL, so the rule is
+    anchored at end-of-line and may repeat.
+    """
+    from bugd.sources.edewakaru import _strip_post_chrome
+
+    assert (_strip_post_chrome("区別して覚えてください😊――以上――")
+            == "区別して覚えてください😊")
+    # A repeated run goes in one pass.
+    assert _strip_post_chrome(
+        "【イラストリスト】語学(日本語)ランキングにほんブログ村にほんブログ村――以上――"
+    ) == "【イラストリスト】"
+    # Trailing marker plus trailing whitespace.
+    assert _strip_post_chrome("本文です。\nリスト）にほんブログ村") == "本文です。\nリスト）"
+
+    # A line with NO marker is returned byte-identical, including its own
+    # trailing whitespace -- the rule must not double as a whitespace trimmer.
+    assert _strip_post_chrome("本文です。  ") == "本文です。  "
+    # And an inline mention that is not a tail still survives.
+    assert (_strip_post_chrome("にほんブログ村に登録しました。次の話です。")
+            == "にほんブログ村に登録しました。次の話です。")
+
+
+def test_edewakaru_strips_chrome_from_examples_too():
+    """`_numbered_examples` was parsing the raw section, bypassing the stripper.
+
+    That is why a chrome tail was still visible inside an EXAMPLE sentence on the
+    `だって` and `なんで` cards rather than only in prose.
+    """
+    import pathlib
+
+    from bugd.sources.edewakaru import EdewakaruExtractor
+    from bugd.sources.yomitan_bank import TermRow
+
+    body = "\n".join([
+        "見出し｜JLPT　N３文法",
+        "【意味】",
+        "ほんとうの意味です。",
+        "【例文】",
+        "①これは本当の例文です。――以上――",
+    ])
+    row = TermRow(
+        expression="わけだ",
+        reading="わけだ",
+        definition_tags="",
+        deinflectors="",
+        sequence=1,
+        term_tags="中級",
+        text=body,
+    )
+    point = EdewakaruExtractor(pathlib.Path(".")).parse(row)
+    assert point is not None
+    assert point.examples, "the example must survive the strip"
+    for example in point.examples:
+        assert "――以上――" not in example.japanese
+    assert "これは本当の例文です。" in point.examples[0].japanese
+
+
+def test_edewakaru_strips_chrome_from_every_prose_field():
+    """`structure` was the one prose field bypassing the chrome stripper.
+
+    After the ranking caption was added to the footer set, 4 of the original 492
+    occurrences survived re-extraction because `structure` was passed to `clean`
+    directly. Asserts the extracted BEHAVIOUR: no prose field a card renders may
+    contain a chrome line.
+    """
+    from bugd.sources.edewakaru import _POST_CHROME, EdewakaruExtractor
+    from bugd.sources.yomitan_bank import TermRow
+
+    chrome = "語学(日本語)ランキング"
+    assert chrome in _POST_CHROME
+    body = "\n".join([
+        "見出し｜JLPT　N３文法",
+        "【意味】",
+        "ほんとうの意味です。",
+        chrome,
+        "【接続】",
+        "Ｖ（辞書形）＋わけだ",
+        chrome,
+        "【説明】",
+        "ほんとうの解説です。",
+        chrome,
+    ])
+    row = TermRow(
+        expression="わけだ",
+        reading="わけだ",
+        definition_tags="",
+        deinflectors="",
+        sequence=1,
+        term_tags="中級",
+        text=body,
+    )
+    point = EdewakaruExtractor(pathlib.Path(".")).parse(row)
+    assert point is not None
+    for field in ("meaning", "structure", "explanation"):
+        value = getattr(point, field) or ""
+        assert chrome not in value, f"{field} still carries site chrome: {value!r}"
+    # The real content around the chrome must survive.
+    assert "ほんとうの解説です。" in (point.explanation or "")

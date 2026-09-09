@@ -592,12 +592,31 @@ def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     report = corpus["report"]
     assert report["corpus"]["rows"] == 4972
     assert report["corpus"]["declaredAliasRows"] == 1167
-    assert report["corpus"]["duplicateRowsCollapsed"] == 63
-    assert report["corpus"]["substantiveRows"] == 3742
-    assert report["tierA"]["bijectiveBuckets"] == 568
-    assert report["tierA"]["refusedCollisionBuckets"] == 181
-    assert report["tierB"]["accepted"] == 58
-    assert len(corpus["points"]) == 2625
+    # 73, from 71 and originally 63: UGD-14 stopped shipping the edewakaru
+    # blog-ring footer (`にほんブログ村` / `――以上――` / `語学(日本語)ランキング`) as
+    # content. Those lines were the ONLY difference between otherwise
+    # byte-identical records, so removing site chrome let the existing duplicate
+    # collapse do its job.
+    #
+    # The 71 -> 73 step is the round-8 fix to `_strip_post_chrome`, which
+    # previously dropped a marker only when it was the WHOLE line and therefore
+    # missed 29 occurrences the producer had concatenated onto the end of real
+    # text (`…イラストリスト】語学(日本語)ランキングにほんブログ村にほんブログ村――以上――`).
+    # Four of those were still visible in the packaged banks (`だって`, `なんで`,
+    # `みたいな`, `みたいに`).
+    #
+    # Verified, not rubber-stamped: distinct (expression, meaning, structure,
+    # explanation, examples) signatures for edewakaru went 1179 -> 1177 -- exactly
+    # the two extra collapses -- while contributor identities stayed at 3259 with
+    # ZERO lost, so no record was dropped. The two affected canonical points
+    # (`にくい#sense6`, `やすい#sense6`) were ordinal renumbering: their nihongo_net
+    # contributor now sits in `#sense5`.
+    assert report["corpus"]["duplicateRowsCollapsed"] == 73
+    assert report["corpus"]["substantiveRows"] == 3732
+    assert report["tierA"]["bijectiveBuckets"] == 570
+    assert report["tierA"]["refusedCollisionBuckets"] == 179
+    assert report["tierB"]["accepted"] == 60
+    assert len(corpus["points"]) == 2609
 
 
 @pytestmark_corpus

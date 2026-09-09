@@ -20,6 +20,8 @@ machine translation.
 
 from __future__ import annotations
 
+import re
+
 from . import (
     DICTIONARY_AUTHOR,
     DICTIONARY_FORMAT,
@@ -111,6 +113,84 @@ def _lang_of(text: str) -> str:
     return "ja" if _is_japanese_text(text) else "en"
 
 
+#: Kana. The presence of kana is what distinguishes Japanese from Chinese here:
+#: both scripts use Han, and Han alone sits inside `_JAPANESE_RANGES`.
+_KANA = re.compile(r"[\u3040-\u309f\u30a0-\u30ff\u31f0-\u31ff\uff66-\uff9d]")
+
+#: A run of Latin letters, enough to mark an English gloss.
+_LATIN_WORD = re.compile(r"[A-Za-z]{3}")
+
+#: Every Latin letter, and every kana/Han character, for a DOMINANCE test.
+#:
+#: `_lang_of` answers "does this contain Japanese at all", which is the right
+#: question for declaring a field's language but the wrong one for a mixed line.
+#: A translation like `２）Generally, くらい becomes ぐらい…` quotes the Japanese it
+#: is explaining, so it contains kana and `_lang_of` calls it `ja` -- which is why
+#: 1,412 English lines rendered identically to the Japanese beside them.
+_LATIN_CHARS = re.compile(r"[A-Za-z]")
+_JA_CHARS = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+
+#: A line needs this many Latin letters before it can be called a translation, so
+#: a Japanese line quoting a short Latin token (`N1`, `イA`, `A：`) is never
+#: misread as English.
+_TRANSLATION_MIN_LATIN = 8
+
+
+def _is_latin_dominant(text: str) -> bool:
+    """Is this line predominantly Latin script, i.e. a translation?
+
+    Requires BOTH an absolute floor and a clear majority over the Japanese in the
+    same line: a Japanese explanation may quote an English word or a JLPT level
+    without becoming a translation, and a translation habitually quotes the
+    Japanese pattern it explains.
+    """
+    latin = len(_LATIN_CHARS.findall(text))
+    if latin < _TRANSLATION_MIN_LATIN:
+        return False
+    return latin > 2 * len(_JA_CHARS.findall(text))
+
+#: The Chinese ellipsis/placeholder these glosses use (`太…`, `与…相同`).
+_HAN = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+
+#: Chinese punctuation: the gloss slot placeholder `…` and the enumeration comma
+#: `，`. Japanese uses `〜` and `、` respectively.
+_CHINESE_MARKS = re.compile(r"[\uff0c\u2026]")
+
+#: A speaker label opening the line (`母：`, `A:`). Dialogue, not a gloss.
+_SPEAKER_PREFIX = re.compile(r"^[^：:\s]{1,4}[：:]")
+
+
+def _is_chinese_gloss(text: str) -> bool:
+    """True when a source gloss is Chinese rather than Japanese or English.
+
+    毎日のんびり日本語教師 publishes a Chinese translation column and its extractor
+    already routes those lines to `provenance["meaningZh"]` -- but its detector's
+    false negatives were still reaching the card: 487 of 1,990 compact meaning
+    lines and 124 of 718 sense labels rendered as Chinese gloss lists, which the
+    UGD-14 round-8 visual gate reported as unreadable headings
+    (`…左右 大概… …多 与…相同 和…一样`). Because Han sits inside `_JAPANESE_RANGES`
+    they were additionally declared `lang="ja"`.
+
+    That producer-specific detector has been fixed at its own layer. This is the
+    card's own defence in depth, and it uses the same evidence: in a kana-free,
+    Latin-free line, Han plus the Chinese `…` slot placeholder or the Chinese
+    enumeration comma `，` means Chinese. Japanese glosses in this corpus use `〜`
+    for the slot and `、` for enumeration. An all-shared-Han line with no Chinese
+    mark (`以前`, `五段動詞`, `程度`) is treated as Japanese: under-claiming is safer
+    than mislabelling Japanese as Chinese.
+    """
+    if not text:
+        return False
+    if _KANA.search(text) or _LATIN_WORD.search(text):
+        return False
+    if not _HAN.search(text):
+        return False
+    # A dialogue turn is not a gloss: `母：…` is a speaker trailing off.
+    if _SPEAKER_PREFIX.match(text):
+        return False
+    return bool(_CHINESE_MARKS.search(text))
+
+
 def _text(value: object) -> str:
     """Collapse a source scalar to a single-line string, or '' when absent."""
     if value is None:
@@ -127,11 +207,51 @@ def _prose(value: object) -> object | None:
     return html_to_content(value)
 
 
+def _readable_meaning(value: object) -> str:
+    """The first line of a source `meaning` this dictionary can actually display.
+
+    毎日のんびり日本語教師 writes its meaning field as a Chinese gloss list, sometimes
+    followed by a Japanese one:
+
+        取决于…
+        根据…
+        ～によっては
+        ～次第で（は）
+
+    Taking the field verbatim put the Chinese lines on the card's primary line
+    (487 of 1,990 compact meanings) and in its sense headings (124 of 718), which
+    the round-8 visual gate reported as garbled unreadable headings. Skipping the
+    Chinese lines keeps the SOURCE'S OWN words -- nothing is translated,
+    reordered, or invented -- and returns '' when every line is Chinese so the
+    caller can fall back to another field rather than print an empty heading.
+
+    Lines are split from the RAW value, before `_text`: that helper collapses a
+    multi-line field into one line, which would hide the per-line boundary this
+    selection depends on.
+    """
+    if not isinstance(value, str) or not value.strip():
+        return ""
+    for raw_line in value.split("\n"):
+        line = _text(raw_line).strip()
+        if line and not _is_chinese_gloss(line):
+            return line
+    return ""
+
+
 def _span(role: str, content: object, *, lang: str | None = None) -> dict:
     node: dict = {"tag": "span", "data": {role: ""}, "content": content}
     if lang is not None:
         node["lang"] = lang
     return node
+
+
+#: A highlight this long or shorter is held on one line (`white-space: nowrap`),
+#: so the grammar point the reader is looking for can never be split mid-word.
+#: Above it, containment wins: a producer occasionally marks a WHOLE sentence,
+#: which cannot be held unbroken in a 320px popup without overflowing it.
+#: Measured over the packaged banks: 6,079 spans, 6,072 at or below this bound
+#: and 7 above (20-60 chars).
+HIGHLIGHT_NOWRAP_BUDGET = 18
 
 
 def _highlight_sentence(sentence: str, highlights: tuple[str, ...] | list[str]) -> object:
@@ -140,6 +260,10 @@ def _highlight_sentence(sentence: str, highlights: tuple[str, ...] | list[str]) 
     Only substrings the SOURCE marked are highlighted — nothing is inferred. The
     longest marker is applied first so a source shipping both `があっての` and
     `あっての` highlights the larger span rather than nesting the smaller one.
+
+    A sentence-length marker additionally carries `hl-long`, which restores
+    wrapping: CSS cannot measure text length, so the length decision is made here
+    where it is known.
     """
     text = sentence
     if not text:
@@ -159,7 +283,10 @@ def _highlight_sentence(sentence: str, highlights: tuple[str, ...] | list[str]) 
             pieces = part.split(marker)
             for position, piece in enumerate(pieces):
                 if position:
-                    nxt.append(_span("hl", marker))
+                    node = _span("hl", marker)
+                    if len(marker) > HIGHLIGHT_NOWRAP_BUDGET:
+                        node["data"]["hlLong"] = ""
+                    nxt.append(node)
                 if piece:
                     nxt.append(piece)
         parts = nxt
@@ -197,24 +324,49 @@ def _headline(meaning: str) -> str:
 def _is_badge_structure(structure: str) -> bool:
     """True when a construction reads as ONE formula fit for a compact badge.
 
-    A source's `structure` is only badge-worthy when it is short and free of
-    table punctuation. DoJG's multi-pattern tables fail both tests and are shown
-    as a Construction disclosure instead.
+    A source's `structure` is only badge-worthy when it is short, free of table
+    punctuation, and describes a SINGLE pattern. A multi-pattern structure fails
+    the last test and is shown as a Construction disclosure instead.
+
+    Checking only for `|` was not enough. Three of the four sources separate their
+    patterns with a NEWLINE rather than a pipe, and `_text` collapses whitespace,
+    so `名詞＋ほど＋名詞＋は～ない / 名詞＋くらい＋… / 名詞＋ぐらい＋…` arrived as one
+    space-joined line that fit the budget and was badged. Round 13 filed exactly
+    that as a must-fix: "three grammar-pattern variants (ほど/くらい/ぐらい) are
+    concatenated on a single line separated only by spaces, creating a dense
+    run-on segment". Measured over the extracted corpus: 2,547 multi-line
+    structures (nihongo_no_sensei 1,197, edewakaru 544, dojg 475,
+    nihongo_net 331), so this was corpus-wide rather than one entry.
     """
     if not structure or len(structure) > COMPACT_STRUCTURE_BUDGET:
         return False
     return "|" not in structure
 
 
+def _structure_pattern_lines(point: GrammarPoint) -> list[str]:
+    """The source's construction patterns, one per line, in source order."""
+    raw = point.structure if isinstance(point.structure, str) else ""
+    return [line.strip() for line in raw.splitlines() if line.strip()]
+
+
+def _has_badge_structure(point: GrammarPoint) -> bool:
+    """Is this source's construction renderable as one compact badge?"""
+    structure = _text(point.structure)
+    if not structure or not _is_badge_structure(structure):
+        return False
+    return len(_structure_pattern_lines(point)) <= 1
+
+
 def _construction_section(point: GrammarPoint) -> dict | None:
     """A source's full construction table, rendered as real structured content.
 
-    Used for sources (DoJG) whose `structure` describes several patterns in a
-    pipe-delimited table. Rows become list items so the popup shows the source's
-    own patterns instead of a wall of `|` characters.
+    Used for sources whose `structure` describes several patterns -- DoJG in a
+    pipe-delimited table, and three other sources one per LINE. Rows become list
+    items so the popup shows the source's own patterns instead of a wall of `|`
+    characters or a space-joined run-on line.
     """
     structure = _text(point.structure)
-    if not structure or _is_badge_structure(structure):
+    if not structure or _has_badge_structure(point):
         return None
     raw = point.structure if isinstance(point.structure, str) else ""
     rows: list[dict] = []
@@ -229,6 +381,258 @@ def _construction_section(point: GrammarPoint) -> dict | None:
     return {"tag": "ul", "data": {"patterns": ""}, "content": rows}
 
 
+#: A run of two or more wide spaces. DoJG uses a double EM SPACE (U+2003) to
+#: separate the turns of a two-speaker example (`A:...\u2003\u2003B:...`) in 31
+#: examples. Rendered inline it reads as a broken justification gap, so the turn
+#: boundary becomes a real line break instead.
+_TURN_SEPARATOR = re.compile(r"[\u2000-\u200a\u3000]{2,}")
+
+#: The speaker labels the corpus actually uses. Two kinds appear: a Latin letter
+#: with an optional index (`A：`, `Ｂ：`, `Ｓ２：`) and a ROLE NOUN (`母：`, `店員：`,
+#: `上司：`). The role nouns are enumerated rather than matched as "one to four
+#: kana/kanji", because an open-ended class splits in the wrong place: the corpus
+#: contains `夫：…すまん妻：もっと…` and `娘：…父：…そうか娘：…`, where a generic
+#: `{1,4}` label anchored on the preceding `…` consumes the tail of the previous
+#: turn (`すまん妻`, `そうか娘`) and moves those words into the next speaker's line.
+#: Measured over the corpus, the enumeration below reaches 806 of the 813 fields
+#: a generic class reaches, and every one of the 7 it declines is a mis-split.
+_SPEAKER_ROLES = (
+    "お母さん", "母親", "彼女", "彼氏", "同僚", "部下", "上司", "社員", "店員", "店長",
+    "学生", "先生", "医者", "患者", "観客", "歌手", "犯人", "警察", "息子", "娘",
+    "母", "父", "夫", "妻", "兄", "弟", "姉", "妹", "客", "孫", "祖母", "祖父",
+)
+
+#: A role may carry a Latin index when a scene has several of the same role
+#: (`客A：ハンバーガーにします客B：…`). The indexed forms are listed FIRST so `客A`
+#: wins over a bare `客`: Python's alternation is leftmost-first, not longest, so
+#: putting the bare roles first split between `客` and `A：` and orphaned the role
+#: onto its own line.
+_SPEAKER_LABEL = (
+    "(?:"
+    + "|".join(
+        f"{role}[A-Za-zＡ-Ｚ0-9０-９]"
+        for role in sorted(_SPEAKER_ROLES, key=len, reverse=True)
+    )
+    + "|"
+    + "|".join(sorted(_SPEAKER_ROLES, key=len, reverse=True))
+    + r"|[A-Za-zＡ-Ｚａ-ｚ][0-9０-９]?)"
+)
+
+#: A speaker label opening a NEW turn. edewakaru, DoJG and donna_toki write
+#: dialogue as `Ａ：…Ｂ：…` with no separator at all, so the wide-space rule above
+#: misses them and the turns render as one run-on line. Measured over the corpus:
+#: 806 example fields across 352 records in 3 sources (edewakaru 558, dojg 195,
+#: donna_toki 53).
+#:
+#: A break is inserted only when the label is preceded by sentence-final
+#: punctuation or a closing bracket -- i.e. the previous turn actually ended --
+#: and never at the start of a fragment, so the first speaker gets no leading
+#: break. That keeps ordinary prose (`ratio A:B`, a gloss ending in `B：`) intact.
+#:
+#: The WAVE DASH (U+301C) and FULLWIDTH TILDE (U+FF5E) count as turn-final too.
+#: This corpus's casual dialogue routinely lengthens the last vowel instead of
+#: closing with `。`/`！` (`娘：ただいま〜母：いいところに帰ってきたわね`), and round 8
+#: filed two of those as run-ons. `〜` is also the corpus's grammar-pattern
+#: placeholder (`〜くらい`, `〜ほど〜はない`), so it is only accepted in the same
+#: position as any other turn-final mark -- immediately before a speaker label
+#: bearing a colon. Measured over the corpus that matches 46 boundaries, all in
+#: edewakaru, and every one is a real turn change.
+_SPEAKER_TURN = re.compile(
+    r"(?<=[。．？！?!、」』）\)\u2026\u3001\u301c\uff5e])[\u2000-\u200a\u3000\u00a0 ]*"
+    rf"(?={_SPEAKER_LABEL})(?=[^：:]{{1,5}}[：:])"
+)
+
+#: The run OPENS with a speaker label, i.e. it is a transcribed dialogue.
+#:
+#: A producer prefix is allowed before the label because edewakaru writes
+#: `［例］ A：…B：…` and `（デパートで）客：…` -- a bracketed section marker or a stage
+#: direction, not part of the dialogue. Only brackets and spaces may precede it,
+#: so ordinary prose that merely contains a colon later is not misread as a
+#: transcript.
+_OPENS_WITH_SPEAKER = re.compile(
+    rf"^[\u2000-\u200a\u3000\s]*"
+    rf"(?:[［\[（(【「][^］\]）)】」]{{0,20}}[］\]）)】」][\u2000-\u200a\u3000\s]*)*"
+    rf"(?:{_SPEAKER_LABEL})[：:]"
+)
+
+#: Any later speaker label, with no requirement on what precedes it.
+#:
+#: Punctuation anchoring cannot finish the job. Measured over the corpus, 35
+#: distinct characters precede a second speaker label, and the long tail is
+#: sentence-final PARTICLES with no punctuation at all -- `よ` (60), `ね` (58),
+#: `い` (47), `の` (26), `わ` (12), `て`/`す` (10), `し` (9), `た` (7), `か` (6) --
+#: as in `A：今日はすごく寒いねB：うん。雪が降るかもね`. Anchoring on "any kana" would
+#: fire throughout ordinary prose.
+#:
+#: The LINE supplies the missing evidence instead: when it opens with a speaker
+#: label it is a transcript, and inside a transcript a later label is a turn
+#: change. Applied only under `_OPENS_WITH_SPEAKER`, this splits 1,080 dialogue
+#: lines with 2 turns in 925 of them, and the only mis-splits it produced before
+#: `_SPEAKER_LABEL` was made longest-first were the three `客A/客B/客C` rows.
+_LATER_SPEAKER = re.compile(rf"(?<=.)(?={_SPEAKER_LABEL}[：:])")
+
+#: A well-formed turn: the piece a split produced must itself begin with a
+#: complete speaker label. Used to REJECT a split that landed inside one.
+_STARTS_WITH_SPEAKER = re.compile(rf"^{_SPEAKER_LABEL}[：:]")
+
+
+def _mark_later_speakers(text: str) -> str:
+    """Insert a boundary marker before each later speaker label in a transcript.
+
+    `re.sub` cannot do this directly. In `客A：…客B：…` BOTH offsets match -- before
+    `客A` and before `A` -- because a bare role and an indexed role are both valid
+    labels, and a zero-width `sub` takes every match, which orphans `客` onto the
+    previous line. So candidate offsets are collected and the EARLIEST wins,
+    consuming the whole `客A` label; any later offset inside a label already
+    claimed is discarded.
+
+    Scanning starts AFTER the run's opening label, so the first speaker never
+    gets a leading break. Without that, `［例］ A：…B：…` marked before `A：` too and
+    the leading `［例］` was torn onto its own line.
+    """
+    opening = _OPENS_WITH_SPEAKER.match(text)
+    start_at = opening.end() if opening else 0
+    marks: list[int] = []
+    for match in _LATER_SPEAKER.finditer(text, start_at):
+        start = match.start()
+        if marks and start <= marks[-1] + _label_length(text, marks[-1]):
+            continue
+        marks.append(start)
+    if not marks:
+        return text
+    out: list[str] = []
+    previous = 0
+    for start in marks:
+        out.append(text[previous:start])
+        previous = start
+    out.append(text[previous:])
+    return "\x00".join(out)
+
+
+def _label_length(text: str, start: int) -> int:
+    """Character length of the speaker label beginning at `start`."""
+    match = _STARTS_WITH_SPEAKER.match(text, start)
+    return (match.end() - start) if match else 1
+
+
+def _split_dialogue_turns(content: object) -> object:
+    """Turn a source's turn separator into a `br`.
+
+    Handles all three forms the corpus uses: a run of wide spaces (DoJG), a
+    speaker label following the end of the previous turn (edewakaru, donna_toki),
+    and -- when the text is recognisably a transcript -- a label following a bare
+    sentence-final particle with no punctuation at all.
+
+    Applied AFTER highlighting so a marker spanning the separator is unaffected,
+    and only to string fragments, so highlight/ruby nodes pass through intact.
+    The transcript test reads the JOINED text, because highlighting has already
+    split the sentence into several fragments and the opening label may sit in a
+    different fragment from a later one.
+    """
+    parts: list[object] = content if isinstance(content, list) else [content]
+    joined = "".join(part for part in parts if isinstance(part, str))
+    transcript = bool(_OPENS_WITH_SPEAKER.match(joined))
+    out: list[object] = []
+    for index, part in enumerate(parts):
+        if not isinstance(part, str):
+            out.append(part)
+            continue
+        # Normalise the wide-space form to the same boundary, then split once, so
+        # `A:…\u2003\u2003B:…` yields ONE break rather than two.
+        marked = _TURN_SEPARATOR.sub("\x00", part)
+        marked = _SPEAKER_TURN.sub("\x00", marked)
+        if transcript:
+            # The producer's stage direction ends in `）`, which the punctuation
+            # rule above reads as turn-final -- so `（デパートで）客：…` split the
+            # direction onto its own line. Drop a marker that falls inside the
+            # run's opening prefix; the first speaker never opens a new turn.
+            opening = _OPENS_WITH_SPEAKER.match(marked.replace("\x00", ""))
+            if index == 0 and opening:
+                head, sep, tail = marked.partition("\x00")
+                if sep and len(head) < opening.end():
+                    marked = head + tail
+            # A highlight node splits the sentence, so a fragment AFTER the first
+            # one can begin with the next speaker's label:
+            #   ["A：…教え", <hl てください>, "B：いいですよ"]
+            # Its label is at offset 0 of its own fragment, which the "later
+            # label" rule cannot see. Treat any non-first fragment as continuing
+            # the run, so an opening label there is still a turn change.
+            offset = 0 if index == 0 else 1
+            prefixed = ("\ufffd" + marked) if offset else marked
+            prefixed = _mark_later_speakers(prefixed)
+            marked = prefixed[offset:] if offset else prefixed
+            # Collapse a boundary the punctuation rule and the transcript rule
+            # both found, so one turn change never yields two breaks.
+            marked = re.sub("\x00{2,}", "\x00", marked)
+            # Reject a split that landed INSIDE a word rather than before a
+            # label: `夫：…すまん妻：…` breaks before `妻：` where the real turn
+            # boundary is mid-word. A well-formed turn starts with a complete
+            # label, so a piece that does not is re-joined to the one before it.
+            fragments = marked.split("\x00")
+            rebuilt = [fragments[0]]
+            for fragment in fragments[1:]:
+                if _STARTS_WITH_SPEAKER.match(fragment):
+                    rebuilt.append(fragment)
+                else:
+                    rebuilt[-1] += fragment
+            marked = "\x00".join(rebuilt)
+            # A leading marker means this fragment OPENS a new turn; emit the
+            # break before the fragment instead of an empty first piece.
+            if marked.startswith("\x00"):
+                out.append({"tag": "br"})
+                marked = marked[1:]
+        pieces = [p for p in marked.split("\x00")]
+        if len(pieces) == 1:
+            # `marked` rather than `part`: a leading turn marker may already have
+            # been consumed above, and the rest of the fragment is unchanged.
+            out.append(pieces[0])
+            continue
+        for position, piece in enumerate(pieces):
+            if position:
+                out.append({"tag": "br"})
+            if piece:
+                out.append(piece)
+    if not out:
+        return content
+    return out[0] if len(out) == 1 else out
+
+
+#: A cell delimiter from a source that writes its construction table as text.
+#: DoJG's `structure` fields look like `(i) A: | Sentence1 | |`, where `A:` is a
+#: TABLE COLUMN HEADER, not a speaker. A turn break there would split a table row
+#: mid-notation, so a line carrying pipe delimiters is never treated as dialogue.
+_TABLE_LINE = re.compile(r"\|")
+
+
+def _split_dialogue_prose(content: object) -> object:
+    """Apply the turn splitter to prose, one line at a time.
+
+    The splitter normally only runs on example sentences, but two sources wrote a
+    two-speaker exchange inside an explanation/meaning field instead, and it
+    shipped as a run-on line: `A：あした、晴れたらいいな。B：そうですね、…`.
+    Measured over the corpus this is 2 real cases plus 2 DoJG table rows, which
+    `_TABLE_LINE` excludes.
+
+    Prose already carries the producer's own newlines (see `_paragraphs`), so each
+    line is considered independently and a line without a turn boundary is
+    returned unchanged.
+    """
+    if isinstance(content, str):
+        if _TABLE_LINE.search(content):
+            return content
+        return _split_dialogue_turns(content)
+    if isinstance(content, list):
+        out: list[object] = []
+        for item in content:
+            split = _split_dialogue_prose(item)
+            if isinstance(split, list) and isinstance(item, str):
+                out.extend(split)
+            else:
+                out.append(split)
+        return out
+    return content
+
+
 def _examples_section(point: GrammarPoint) -> dict | None:
     """A closed `details` block of this source's example sentences."""
     items: list[dict] = []
@@ -241,12 +645,14 @@ def _examples_section(point: GrammarPoint) -> dict | None:
                 "tag": "span",
                 "data": {"ja": ""},
                 "lang": "ja",
-                "content": _highlight_sentence(japanese, example.highlight),
+                "content": _split_dialogue_turns(
+                    _highlight_sentence(japanese, example.highlight)
+                ),
             }
         ]
         english = _text(example.english)
         if english:
-            body.append(_span("en", english, lang="en"))
+            body.append(_span("en", _split_dialogue_turns(english), lang="en"))
         items.append({"tag": "li", "data": {"example": ""}, "content": body})
     if not items:
         return None
@@ -259,6 +665,278 @@ def _source_label(point: GrammarPoint) -> str:
     if isinstance(label, str) and label.strip():
         return label.strip()
     return point.source
+
+
+#: The producer's own in-prose example marker. edewakaru and donna_toki write
+#: their examples INSIDE the explanation field under an ［例］ / ［例文］ heading, so
+#: those examples arrive as ordinary prose lines and received none of the example
+#: styling that lifted `point.examples` items get. Round 9 filed that twice as a
+#: must-fix ("example dialogue, derived-meaning arrows (→) and 【具体的な例】
+#: annotations are not visually separated"). Measured over the corpus: 923 runs,
+#: mean 4.4 lines.
+_INLINE_EXAMPLE_MARKER = re.compile(r"^[\s\u3000]*[［\[]\s*例[^］\]]{0,6}[］\]][\s\u3000]*$")
+#: A run of examples ends here.
+#:
+#: The producer separates the run from the prose after it with a BLANK line (886
+#: of 923 runs) or a 【…】 section heading (36). But `bugd.richtext` collapses a
+#: blank line to a single `\n` -- `_PARA_BREAK` writes one sentinel per run of
+#: newlines -- so by the time `_paragraphs` sees the text the blank line is gone.
+#: Round 10's screenshot caught the consequence: the tinted block swallowed the
+#: closing explanatory sentence and the 【関連文法】 heading that followed it.
+#:
+#: So the run is ended on what survives into the node stream:
+#:   * a 【…】 / 〈…〉 heading line, which is never example content;
+#:   * a line that is neither an enumerated example nor a `→`/`＝` derivation and
+#:     reads as an explanatory sentence -- the producer's closing remark.
+_EXAMPLE_RUN_HEADING = re.compile(r"^[\s\u3000]*[【〈][^】〉]{1,24}[】〉][\s\u3000]*$")
+#: A prose line that is structurally a SECTION HEADING rather than body text.
+#:
+#: The producers write their own subsection headings inline, fully bracketed on
+#: their own line (`【関連文型】`, `［使い分け］`). Because every prose paragraph was
+#: emitted as an identical `div`, those headings shipped at body weight and body
+#: size. Round 9's visual gate filed that as the dominant systematic drag: 30 of
+#: 92 images scored below 8, and their notes name it directly -- "the 【...】
+#: bracket-style headers", "text hierarchy is mostly flat", "a dense wall of
+#: Japanese text with little differentiation", "lacks visual hierarchy". Measured
+#: over the packaged v23 banks: 917 `【…】` + 206 `［…］` heading lines against
+#: 18,897 body lines, so this is a corpus-wide data-shape defect, not a
+#: per-entry one.
+#:
+#: The pattern deliberately requires the WHOLE line to be one bracketed run: an
+#: ordinary sentence that merely contains a bracketed quotation
+#: (`「だって」は理由を…`) must stay body text.
+_PROSE_HEADING = re.compile(r"^[\s\u3000]*[【〈［\[]([^】〉］\]]{1,24})[】〉］\]][\s\u3000]*$")
+_EXAMPLE_ITEM = re.compile(r"^[\s\u3000]*(?:[①-⑳❶-❿]|[１-９][）)]|[→⇒➡＝=])")
+#: The producer's closing remark is a full sentence, and it is not an example line.
+#: `。`/`！`/`？` covers most, but edewakaru habitually signs off with a polite verb
+#: ending and an emoji instead of any punctuation at all
+#: (`…しっかりと覚えておきましょう😊`), which is why the run over-ran in round 10.
+#: Sentence-final polite endings are added as their own signal.
+_EXAMPLE_RUN_CLOSER = re.compile(
+    r"(?:[。！？]|ましょう|ください|です|ます|でしょう|ですね|ますね)"
+    r"(?:[\s\u3000]*[\U0001F300-\U0001FAFF\u2600-\u27bf\ufe0f])*[\s\u3000]*$"
+)
+
+
+def _recurring_bracketed_labels(lines: list[str]) -> frozenset[str]:
+    """Bracketed lines whose exact text RECURS inside one prose field.
+
+    edewakaru does not use `【…】` only as a section heading. It also uses it as a
+    per-example CLASSIFIER, repeating the same bracket after every specimen:
+
+        ［例］
+        このバッグは若い女の子の間で人気があるようだ
+        【複数の人の中での状態】
+        複数の人→若い女の子たち状態→人気
+        OLの間で話題になっているカフェ
+        【複数の人の中での状態】          <- the same label again
+        ...
+
+    Because `_ends_example_run` treated ANY bracketed heading as a boundary, the
+    first specimen was boxed and every later one fell out as plain prose. Round 19
+    filed that three separate times on 間 ("some get a shaded box with left rule
+    while others are plain bold text ... for the same content role"), and
+    `probe_role_sequence.py` confirmed the exact interleaving in the packaged
+    bytes.
+
+    Recurrence is the discriminator: a genuine section heading (`［説明］`,
+    `［「〜ようだ」の形］`) appears ONCE in its field, while a per-example classifier
+    repeats by construction. Measured over the whole source corpus, this reclaims
+    31 example lines across 8 fields, all in edewakaru, and leaves the three
+    entries `verify_round10_fixes.py` guards (ないものだ, ものだ, ようだ) untouched.
+    """
+    counts: dict[str, int] = {}
+    for line in lines:
+        stripped = line.strip()
+        if _PROSE_HEADING.match(stripped) and not _INLINE_EXAMPLE_MARKER.match(stripped):
+            counts[stripped] = counts.get(stripped, 0) + 1
+    return frozenset(text for text, n in counts.items() if n > 1)
+
+
+def _ends_example_run(line: str, recurring: frozenset[str] = frozenset()) -> bool:
+    """Does this prose line end the producer's ［例］ run?
+
+    `recurring` carries the bracketed labels that repeat within the same field
+    (see `_recurring_bracketed_labels`); those are per-example classifiers and
+    must keep the run OPEN, or every specimen after the first loses its box.
+    """
+    if line.strip() in recurring:
+        return False
+    if _EXAMPLE_RUN_HEADING.match(line):
+        return True
+    # ANY bracketed section heading ends the run, not only a 【…】 one. The
+    # narrower check let `［説明］` and `［「〜ようだ」の形］` stay inside the tinted
+    # block, where they came out carrying an example role AND a heading role at
+    # once -- caught by verify_round10_fixes.py against the packaged bytes on 3
+    # entries (ないものだ, ものだ, ようだ). The producer's own ［例］ marker is
+    # excluded: it OPENS a run and is handled before this call.
+    if _PROSE_HEADING.match(line) and not _INLINE_EXAMPLE_MARKER.match(line):
+        return True
+    if _EXAMPLE_ITEM.match(line):
+        return False
+    # A dialogue turn is example content even though it ends like a sentence:
+    # `妻：もう１０時よ！早く起きて！！` would otherwise close the run in the middle of
+    # a two-speaker exchange and orphan the `夫：` reply outside the block.
+    if _OPENS_WITH_SPEAKER.match(line):
+        return False
+    return bool(_EXAMPLE_RUN_CLOSER.search(line))
+
+
+#: A bracketed label at the START of a prose line, with content following it on
+#: the SAME line (`【変化】日本語が話せなかった→…`, `【Ｎ４文法】～あげる／やる`).
+#:
+#: `_PROSE_HEADING` deliberately requires the whole line to be one bracketed run,
+#: so it does not match these -- and reviewing a real-host v25 tile with my own
+#: vision caught the consequence: `【具体的な例】涙が出る程度` still rendered at body
+#: weight, indistinguishable from the sentences around it, which is the same flat
+#: hierarchy round 9 complained about. Measured over the packaged v25 banks: 868
+#: inline-prefix labels alongside 896 whole-line headings, so both shapes have to
+#: be handled or the fix covers only half the corpus.
+#:
+#: Only the LEADING run is taken, and only when content follows it: a label is an
+#: inline lead-in, not a heading, so it is emphasised in place rather than given
+#: its own block.
+_PROSE_INLINE_LABEL = re.compile(r"^[\s\u3000]*([【〈][^】〉]{1,24}[】〉])[\s\u3000]*(?=\S)")
+#: An in-example line that DERIVES a meaning from the specimen above it
+#: (`→とても疲れた`, `＝１時間悩んだあげくに、…`).
+#:
+#: A 7/10 tile review named this as the single biggest remaining improvement: the
+#: specimen sentence and the `→` line paraphrasing it render identically, so a
+#: derived meaning reads as a peer of the example rather than as something hanging
+#: off it -- and because the gap within a set equals the gap between sets, uniform
+#: spacing spends the cheapest grouping cue on nothing. Measured over the packaged
+#: v26 banks: 1,416 derivation lines against 3,339 specimen lines.
+_EXAMPLE_DERIVATION = re.compile(r"^[\s\u3000]*[→⇒➡＝=]")
+#: An in-example line that ANNOTATES the set above it, opening with the producer's
+#: own bracketed label (`【具体的な例】涙が出る程度`).
+#:
+#: It closes a set rather than opening one, which matters for where the grouping
+#: gap goes. Reviewing the v27 real-host tile caught the consequence of ignoring
+#: it: the gap landed above the annotation, detaching `【具体的な例】涙が出る程度`
+#: from the ③ example it describes and gluing it to ④, so the reviewer read the
+#: labels as "off by one" and the trailing annotation as an example-less orphan
+#: block. Both complaints were one CSS adjacency bug, not a source-order defect --
+#: the extracted source order is specimen, derivation, annotation, next specimen.
+_EXAMPLE_ANNOTATION = re.compile(r"^[\s\u3000]*[【〈［\[][^】〉］\]]{1,24}[】〉］\]]")
+
+
+def _prose_paragraph(line: str) -> dict:
+    """One prose paragraph, tagged as a section heading when it is one.
+
+    A fully bracketed short line is the producer's own subsection heading, so it
+    is emitted with a `proseHeading` role instead of as an identical body `div`.
+    The stylesheet then gives it weight and space, which is what supplies the
+    hierarchy round 9 reported missing across 30 of 92 images.
+
+    A line that OPENS with a bracketed label and continues on the same line gets
+    that label emphasised inline instead, because it leads into its own content
+    rather than heading a following block.
+
+    A predominantly-Latin line inside a Japanese field is a TRANSLATION of the
+    explanation beside it, so it is marked `proseTranslation` and declares
+    `lang="en"`. Reviewing a 7/10 v28 tile: `２）基本的に、名詞につく場合は…` and
+    `２）Generally, くらい becomes ぐらい…` rendered at the same size, weight, colour
+    and indent, so the reader could not tell a translation from the primary
+    explanation -- and because the producer emits the numbered Japanese points and
+    then the numbered English ones, the visible numerals appeared to run 2,1,2,1,3.
+    Measured 1,412 such lines in the packaged v28 banks. The source order is NOT
+    changed; only the rendering distinguishes the two.
+
+    The bracket characters are KEPT in every case: they are the producer's own
+    typography, and stripping them would silently edit source text. Only the
+    rendering weight changes.
+    """
+    stripped = line.strip()
+    if _PROSE_HEADING.match(stripped):
+        return {"tag": "div", "data": {"proseHeading": ""}, "content": stripped}
+    match = _PROSE_INLINE_LABEL.match(stripped)
+    if match:
+        rest = stripped[match.end():]
+        content: list[object] = [_span("proseLabel", match.group(1))]
+        if rest:
+            tail = _split_dialogue_prose(rest)
+            content.extend(tail) if isinstance(tail, list) else content.append(tail)
+        return {"tag": "div", "content": content}
+    if _is_latin_dominant(stripped):
+        return {
+            "tag": "div",
+            "data": {"proseTranslation": ""},
+            "lang": "en",
+            "content": _split_dialogue_prose(line),
+        }
+    return {"tag": "div", "content": _split_dialogue_prose(line)}
+
+
+def _paragraphs(content: object) -> object:
+    """Split preserved paragraph breaks into sibling blocks.
+
+    `bugd.richtext` keeps the producer's paragraph breaks as `\\n`, and the card
+    sets `white-space: pre-line`, so they already render as line breaks. But a
+    400-character explanation carrying eight breaks still reads as one dense
+    block when consecutive lines merely touch. Emitting one `div` per paragraph
+    lets the stylesheet space them, and keeps a single-paragraph field as a plain
+    string so nothing is wrapped unnecessarily.
+
+    A run following the producer's own ［例］ marker is additionally tagged
+    `data-sc-inline-example`, so the stylesheet gives it the same bounded,
+    rule-and-tint treatment as a lifted example instead of leaving it
+    indistinguishable from the prose around it.
+    """
+    if isinstance(content, str):
+        # The BLANK line is what ends an example run (measured: 739 of 739 blocks
+        # end at one), so the raw split is kept and empty parts are used as the
+        # terminator rather than filtered out up front.
+        raw_parts = content.split("\n")
+        if len([p for p in raw_parts if p.strip()]) <= 1:
+            return _split_dialogue_prose(content)
+        out: list[object] = []
+        in_example = False
+        recurring = _recurring_bracketed_labels(raw_parts)
+        for part in raw_parts:
+            if not part.strip():
+                in_example = False
+                continue
+            if _INLINE_EXAMPLE_MARKER.match(part):
+                # The marker is a heading for the run, not an example itself.
+                in_example = True
+                out.append({"tag": "div", "data": {"exampleLabel": ""}, "content": part.strip()})
+                continue
+            if in_example and _ends_example_run(part, recurring):
+                # The producer's closing remark or the next section heading. It is
+                # prose, so it must fall OUTSIDE the tinted block.
+                in_example = False
+                out.append(_prose_paragraph(part))
+                continue
+            node = _prose_paragraph(part)
+            if in_example:
+                if part.strip() in recurring:
+                    # A repeated bracketed label inside a run classifies the
+                    # specimen ABOVE it, so it is an annotation, not a section
+                    # heading. Left as a heading it would carry proseHeading,
+                    # inlineExample and exampleAnnotation at once -- the same
+                    # triple-role defect `verify_round10_fixes.py` guards -- and
+                    # would be drawn as a section landmark inside the example box.
+                    node = {"tag": "div", "content": part.strip()}
+                node["data"] = dict(node.get("data") or {}, inlineExample="")
+                # A derived meaning is subordinate to the specimen above it, not a
+                # peer of it, so it carries its own role and the stylesheet indents
+                # and quiets it.
+                if _EXAMPLE_DERIVATION.match(part.strip()):
+                    node["data"]["exampleDerivation"] = ""
+                elif _EXAMPLE_ANNOTATION.match(part.strip()):
+                    # Closes the set above it, so the grouping gap must NOT land
+                    # here -- that is what detached it from the example it
+                    # describes and made it look like an orphan block.
+                    node["data"]["exampleAnnotation"] = ""
+            out.append(node)
+        return out
+    if isinstance(content, list):
+        out2: list[object] = []
+        for item in content:
+            split = _paragraphs(item)
+            out2.extend(split) if isinstance(split, list) and isinstance(item, str) else out2.append(split)
+        return out2
+    return content
 
 
 def _source_block(point: GrammarPoint) -> list[object]:
@@ -276,7 +954,7 @@ def _source_block(point: GrammarPoint) -> list[object]:
             # Prose is Japanese for most sources but English for DoJG (373 of its
             # explanations); the card root declares `ja`, so an English block must
             # say so explicitly or it inherits the wrong language.
-            node: dict = {"tag": "div", "data": {"prose": ""}, "content": content}
+            node: dict = {"tag": "div", "data": {"prose": ""}, "content": _paragraphs(content)}
             if isinstance(raw, str):
                 node["lang"] = _lang_of(raw)
             body.append(node)
@@ -301,16 +979,20 @@ def _sense_label(point: GrammarPoint, ordinal: int, total: int) -> str:
     """
     if total <= 1:
         return ""
-    meaning = _text(point.meaning)
+    meaning = _readable_meaning(point.meaning)
     if meaning:
         return _headline(meaning)
-    structure = _text(point.structure)
-    if structure and _is_badge_structure(structure):
-        return structure
+    # A structure only serves as a label when it is ONE formula. A multi-pattern
+    # structure collapses to a space-joined run-on here exactly as it did in the
+    # compact badge -- round 14 caught the surviving instance in a sense-label
+    # heading after the badge and Construction-list call sites were fixed, which is
+    # why the label is gated on the point rather than on the flattened text.
+    if _has_badge_structure(point):
+        return _text(point.structure)
     return f"Sense {ordinal}"
 
 
-def _source_blocks(entry: MergedEntry) -> list[dict]:
+def _source_blocks(entry: MergedEntry, headline: str = "") -> list[dict]:
     """One disclosure per contributing SOURCE, senses nested inside it.
 
     Grouping by source (rather than by source record) is what keeps a card
@@ -318,6 +1000,13 @@ def _source_blocks(entry: MergedEntry) -> list[dict]:
     produced 25 sibling disclosures with repeated identical summary labels. Now
     each source is one disclosure whose summary names the source once, and its
     individual senses are labelled subsections inside it.
+
+    `headline` is the compact block's already-visible meaning. A sense label that
+    repeats it verbatim is dropped: the compact meaning is selected FROM the first
+    contribution, so the first sense of the first source reproduced it word for
+    word ('Approximately; about' appeared twice, ~15px apart, on くらい). Only an
+    exact repeat is dropped -- a differing label still distinguishes its sense, and
+    the numbered fallback still applies when a source has several senses.
     """
     grouped: dict[str, list[GrammarPoint]] = {}
     for point in entry.contributions:
@@ -337,6 +1026,8 @@ def _source_blocks(entry: MergedEntry) -> list[dict]:
         body: list[object] = []
         for ordinal, (point, sense_body) in enumerate(shown, start=1):
             sense_label = _sense_label(point, ordinal, len(shown))
+            if sense_label and headline and sense_label == headline:
+                sense_label = ""
             if sense_label:
                 body.append(
                     {
@@ -479,8 +1170,11 @@ def _crossreference_block(entry: MergedEntry) -> dict | None:
     return {"tag": "div", "data": {"crossref": ""}, "content": body}
 
 
-def _compact_block(entry: MergedEntry) -> dict:
+def _compact_block(entry: MergedEntry) -> tuple[dict, str]:
     """Above-the-fold block: meaning, then a quiet construction/JLPT row.
+
+    Returns the block and the headline it rendered, so the disclosures below can
+    avoid repeating that exact string as their first sense label.
 
     Selection is deterministic: the first contribution (merge order) that
     supplies each field wins, and conflicting values are NOT averaged or
@@ -493,14 +1187,19 @@ def _compact_block(entry: MergedEntry) -> dict:
     jlpt = ""
     for point in entry.contributions:
         if not meaning:
-            candidate = _text(point.meaning)
+            # A source's Chinese translation column is skipped rather than shown
+            # as this card's primary line; the next contribution may still
+            # supply a Japanese or English gloss.
+            candidate = _readable_meaning(point.meaning)
             if candidate:
                 meaning = _headline(candidate)
         if not structure:
             candidate = _text(point.structure)
             # Only a single readable formula earns a compact badge; multi-pattern
-            # tables are rendered in that source's Construction list instead.
-            if _is_badge_structure(candidate):
+            # structures are rendered in that source's Construction list instead.
+            # `_has_badge_structure` also rejects NEWLINE-separated patterns, which
+            # `_text` had been collapsing into one space-joined run-on badge.
+            if _has_badge_structure(point):
                 structure = candidate
         if not jlpt and point.jlpt:
             jlpt = point.jlpt
@@ -519,7 +1218,7 @@ def _compact_block(entry: MergedEntry) -> dict:
     if metarow:
         body.append({"tag": "div", "data": {"metarow": ""}, "content": metarow})
 
-    return {"tag": "div", "data": {"compact": ""}, "content": body}
+    return {"tag": "div", "data": {"compact": ""}, "content": body}, meaning
 
 
 def _attribution_block(entry: MergedEntry) -> dict:
@@ -564,8 +1263,9 @@ def build_term_entry(entry: MergedEntry, sequence: int) -> list:
     if not isinstance(sequence, int) or isinstance(sequence, bool) or sequence < 1:
         raise MalformedPayload("term-entry sequence must be a positive integer")
 
-    content: list[object] = [_compact_block(entry)]
-    source_blocks = _source_blocks(entry)
+    compact, headline = _compact_block(entry)
+    content: list[object] = [compact]
+    source_blocks = _source_blocks(entry, headline)
     if not source_blocks:
         # Nothing but attribution would render. Two honest fallbacks, in order:
         # an alias-only spelling variant points at the form carrying the
