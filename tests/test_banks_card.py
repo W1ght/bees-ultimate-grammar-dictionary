@@ -998,6 +998,223 @@ def test_dialogue_examples_reach_the_built_card_as_separate_lines():
     assert '"br"' in blob
 
 
+# --------------------------------------------- UGD-08b per-source JLPT level
+
+
+def _source_disclosures(row: list) -> list[dict]:
+    """Every `sourceBlock` disclosure in a built row, in render order."""
+    found: list[dict] = []
+
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("tag") == "details" and "sourceBlock" in (node.get("data") or {}):
+                found.append(node)
+            walk(node.get("content"))
+        elif isinstance(node, list):
+            for child in node:
+                walk(child)
+
+    walk(row[5])
+    return found
+
+
+def _levels_in(node) -> list[str]:
+    """Every `jlpt`-role value inside a node subtree, in render order."""
+    found: list[str] = []
+
+    def walk(current):
+        if isinstance(current, dict):
+            if "jlpt" in (current.get("data") or {}):
+                content = current.get("content")
+                if isinstance(content, str):
+                    found.append(content)
+            walk(current.get("content"))
+        elif isinstance(current, list):
+            for child in current:
+                walk(child)
+
+    walk(node)
+    return found
+
+
+def _summary_of(disclosure: dict) -> dict:
+    return disclosure["content"][0]
+
+
+def test_each_source_states_its_own_jlpt_level_inside_its_disclosure():
+    """A cross-source level disagreement must be readable, not collapsed.
+
+    158 unified entries carry more than one level, each attributed to a named
+    source. The compact badge is deliberately ONE line and takes the first
+    contribution that supplies a level, so before this the `あまり` card showed a
+    single badge while `N2` and `N3` appeared nowhere in the packaged bytes — a
+    learner reading the 絵でわかる日本語 section could not tell that source called
+    it N2 while 毎日のんびり日本語教師 called it N3.
+
+    Neither level is reconciled, voted on, or preferred: both statements are true
+    about their own source, so each is stated where that source speaks.
+    """
+    n2 = _point(source="edewakaru", source_id="a", jlpt="N2", explanation="Ede.",
+                provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]})
+    n3 = _point(source="dojg", source_id="b", jlpt="N3", explanation="DoJG.")
+    row = build_term_entry(MergedEntry(expression="あまり", contributions=[n2, n3]), 1)
+
+    by_source = {
+        _summary_of(d)["content"][0]["content"]: _levels_in(d["content"][1:])
+        for d in _source_disclosures(row)
+    }
+
+    assert by_source == {
+        SOURCE_LABELS["edewakaru"]: ["N2"],
+        SOURCE_LABELS["dojg"]: ["N3"],
+    }
+
+
+def test_a_source_disclosure_states_its_level_exactly_once():
+    """One source, several senses: the level belongs to the SOURCE, not each sense.
+
+    Measured over the corpus, 160 of 207 multi-sense disclosures repeat the same
+    level on every sense inside them (max repeats: 2 on 128, 3 on 23, 4 on 9). A
+    per-sense badge would therefore stack the identical string up to four times
+    inside one disclosure while adding no information.
+    """
+    senses = [
+        _point(source_id="a", jlpt="N3", meaning="one", explanation="One."),
+        _point(source_id="b", jlpt="N3", meaning="two", explanation="Two."),
+        _point(source_id="c", jlpt="N3", meaning="three", explanation="Three."),
+    ]
+    row = build_term_entry(MergedEntry(expression="ない", contributions=senses), 1)
+
+    disclosures = _source_disclosures(row)
+    assert len(disclosures) == 1
+    assert _levels_in(disclosures[0]["content"][1:]) == ["N3"]
+
+
+def test_one_source_disagreeing_with_itself_shows_both_of_its_levels():
+    """A source that ships two levels for one form must not silently lose one.
+
+    `あまり` really does carry N2 AND N5 from edewakaru alone. Deduplicating per
+    source must collapse REPEATS, never distinct assertions, and the order is the
+    source's own contribution order rather than a sort.
+    """
+    senses = [
+        _point(source_id="a", jlpt="N5", meaning="not much", explanation="One."),
+        _point(source_id="b", jlpt="N2", meaning="excessively", explanation="Two."),
+    ]
+    row = build_term_entry(MergedEntry(expression="あまり", contributions=senses), 1)
+
+    disclosures = _source_disclosures(row)
+    assert len(disclosures) == 1
+    assert _levels_in(disclosures[0]["content"][1:]) == ["N5", "N2"]
+
+
+def test_a_source_asserting_only_a_level_still_gets_to_say_it():
+    """7 of the 158 conflicts hid behind a source that renders no prose.
+
+    On `たい`, `で`, `方`, `もう`, `てはいけない`, `たらどうですか` and
+    `を余儀なくされる` the DISAGREEING source ships a level (and at most a meaning
+    or structure the compact block already absorbed), so it produced no
+    disclosure at all and its level was unreachable. A level is a substantive
+    claim about the point, so it earns the source a disclosure of its own.
+    """
+    rich = _point(source="dojg", source_id="a", jlpt="N2", explanation="Rich.")
+    level_only = _point(
+        source="nihongo_net",
+        source_id="b",
+        jlpt="N5",
+        meaning=None,
+        structure=None,
+        explanation=None,
+        examples=(),
+        provenance={"sourceLabel": "日本語NET JLPT文法解説まとめ"},
+    )
+    row = build_term_entry(MergedEntry(expression="たい", contributions=[rich, level_only]), 1)
+
+    by_source = {
+        _summary_of(d)["content"][0]["content"]: _levels_in(d["content"][1:])
+        for d in _source_disclosures(row)
+    }
+    assert by_source == {
+        SOURCE_LABELS["dojg"]: ["N2"],
+        "日本語NET JLPT文法解説まとめ": ["N5"],
+    }
+
+
+def test_a_source_with_no_level_and_no_substance_earns_no_disclosure():
+    """The level is what makes a bare record worth a row — not the record itself.
+
+    Contract invariant 6 forbids a card whose only visible content is the Sources
+    disclosure, and invariant 4 forbids a row carrying BOTH a sourceBlock and a
+    compact fallback. Admitting substance-less records wholesale would break
+    both, so admission is gated on the level itself.
+    """
+    bare = _point(
+        source="edewakaru", source_id="b", jlpt=None, meaning=None, structure=None,
+        explanation=None, examples=(),
+        provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]},
+    )
+    rich = _point(source="dojg", source_id="a", explanation="Rich.")
+    row = build_term_entry(MergedEntry(expression="x", contributions=[rich, bare]), 1)
+
+    labels = [
+        _summary_of(d)["content"][0]["content"] for d in _source_disclosures(row)
+    ]
+    assert labels == [SOURCE_LABELS["dojg"]]
+
+
+def test_a_per_source_level_never_replaces_the_compact_badge():
+    """The compact block stays one line; the disclosures are the added surface."""
+    n2 = _point(source="edewakaru", source_id="a", jlpt="N2", explanation="Ede.",
+                provenance={"sourceLabel": SOURCE_LABELS["edewakaru"]})
+    n3 = _point(source="dojg", source_id="b", jlpt="N3", explanation="DoJG.")
+    row = build_term_entry(MergedEntry(expression="あまり", contributions=[n2, n3]), 1)
+
+    compact = row[5][0]["content"]["content"][0]
+    assert "compact" in compact["data"]
+    assert _levels_in(compact) == ["N2"]
+
+
+def test_a_per_source_level_is_labelled_so_a_bare_code_is_not_ambiguous():
+    """`N2` alone inside a body of prose does not say what it measures.
+
+    Above the fold the badge sits in a metadata row beside the construction chip
+    and reads as card metadata. Inside a source's disclosure it would be a bare
+    two-character code in running text, so it is introduced by the source's own
+    claim.
+    """
+    point = _point(jlpt="N3", explanation="Prose.")
+    row = build_term_entry(MergedEntry(expression="x", contributions=[point]), 1)
+
+    disclosure = _source_disclosures(row)[0]
+    blob = json.dumps(disclosure, ensure_ascii=False)
+    assert "sourceLevel" in blob
+    assert "JLPT" in blob
+
+
+def test_the_per_source_level_row_is_visually_subordinate_to_the_prose():
+    """It is provenance about the source's claim, not the claim itself.
+
+    A per-source level set at body size and weight would compete with the
+    explanation it annotates on 158 cards, so it is declared quieter and smaller
+    while still clearing the card's contrast floor via `--bugd-muted` (which the
+    de-emphasis-token test already gates at 4.5:1 on the card's own surfaces).
+    """
+    import re
+
+    from conftest import resolve_space_tokens
+
+    css = resolve_space_tokens(STYLES_CSS)
+    rule = re.search(r"\[data-sc-source-level\]\s*\{([^}]*)\}", css)
+    assert rule, "the per-source level row needs its own rule"
+    block = rule.group(1)
+
+    size = re.search(r"font-size:\s*([0-9.]+)em", block)
+    assert size and float(size.group(1)) < 1.0, (
+        f"a provenance row must not be body size (got {block!r})"
+    )
+    assert "var(--bugd-muted)" in block
+
+
 # ------------------------------------------------------ UGD-14 visual gate
 
 

@@ -394,6 +394,22 @@ STYLES_CSS = """\
    with labelled subsections, rather than several sibling disclosures repeating
    the same source name. */
 
+/* This source's own JLPT level, stated where that source speaks. 158 entries
+   carry a cross-source disagreement (`あまり` is N2 to 絵でわかる日本語 and N3 to
+   毎日のんびり日本語教師) and the compact block is deliberately one line, so the
+   disagreement is disclosed per source rather than reconciled.
+
+   It is PROVENANCE about the claim below it, not the claim itself: subordinate in
+   size and colour so it does not compete with the explanation it heads on 158
+   cards, and bound tightly to that explanation rather than floating between
+   sections. Contrast comes from `--bugd-muted`, which is gated at 4.5:1 against
+   the card's own composited surfaces. */
+[data-sc-source-level] {
+  margin-bottom: var(--bugd-space-tight);
+  font-size: 0.86em;
+  color: var(--bugd-muted);
+}
+
 [data-sc-sense-label] {
   /* A sense label opens a SECTION: it is the parent of every prose heading,
      inline label and example inside that sense. It was set at 600/0.92em while

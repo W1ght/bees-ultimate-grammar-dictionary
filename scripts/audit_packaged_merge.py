@@ -103,11 +103,13 @@ check("every redirect card links its target", missing_link, [])
 empty = [u["expression"] for u in redirects if "crossref" not in json.dumps(by_head[u["expression"]], ensure_ascii=False)]
 check("no redirect card lacks a crossref block", empty, [])
 
-# Conflicting JLPT levels must survive into the DATASET with attribution. The
-# compact card shows one badge by design (banks._compact_block takes the first
-# contribution that supplies a level), so a single rendered badge is a RENDERER
-# choice, not merge loss -- this stage's contract is that the conflict is
-# preserved and attributed, which is what is asserted here.
+# Conflicting JLPT levels must survive into the DATASET with attribution AND be
+# readable in the packaged card. The compact block stays one badge by design
+# (banks._compact_block takes the first contribution that supplies a level,
+# because that block is deliberately one line), so the disagreement is disclosed
+# where each source speaks: banks._source_level_block emits the source's own
+# level inside its own `sourceBlock`. UGD-08b landed that; `audit_packaged_jlpt.py`
+# proves it per entry over all 158.
 conf = [u for u in unified if len(u.get("jlptLevels") or []) > 1]
 check("conflicting-level entries packaged", len(conf), 158)
 bad = []
@@ -127,11 +129,33 @@ print(
     f"per source "
     + str(sorted({(c['source'], c['jlpt']) for s in probe['senses'] for c in s['contributions'] if c.get('jlpt')}))
 )
-# The compact badge is single-valued on purpose; assert exactly that so the
-# renderer's behaviour is pinned rather than mistaken for a merge defect.
+# The compact badge is single-valued on purpose; every level the dataset carries
+# must nevertheless be present in the packaged card, below the fold.
 card = json.dumps(by_head[probe["expression"]], ensure_ascii=False)
 rendered = [lv for lv in probe["jlptLevels"] if f'"{lv}"' in card]
-check("the compact card shows exactly one JLPT badge", len(rendered), 1)
+check("the packaged card carries every level the dataset attributes", rendered, probe["jlptLevels"])
+
+
+def _compact_of(entry):
+    return entry[5][0]["content"]["content"][0]
+
+
+def _levels(node, out):
+    if isinstance(node, dict):
+        if "jlpt" in (node.get("data") or {}) and isinstance(node.get("content"), str):
+            out.append(node["content"])
+        _levels(node.get("content"), out)
+    elif isinstance(node, list):
+        for item in node:
+            _levels(item, out)
+    return out
+
+
+check(
+    "the compact block still shows exactly one JLPT badge",
+    Counter(len(_levels(_compact_of(by_head[u["expression"]]), [])) for u in conf),
+    Counter({1: 158}),
+)
 
 # tag bank still names every source
 check("tag bank covers every source", len(tag_bank), len(stats["corpus"]["sources"]))
