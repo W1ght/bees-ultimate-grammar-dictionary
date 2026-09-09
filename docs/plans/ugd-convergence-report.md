@@ -39,7 +39,7 @@ integration branch, dictionary rebuilt end-to-end, every gate re-verified.
 
 ## Byte-stability (reproducibility gate)
 The ZIP is byte-reproducible: three consecutive `bugd.cli build` runs produce
-the identical sha256 `bdd058d6543ff5121bfc290bf2b67c168ccfd3f2c13c7f81f9a9ef31ec60e051`.
+the identical sha256 `2520b72f54c7cedd4747929153fe3dec997ce2d1dc6cb2608cd6ec01e2916124`.
 A real non-determinism defect was found and fixed during convergence: the
 highlight-span splitter in `banks.py` sorted markers by length only, leaving
 equal-length markers in arbitrary set-iteration order, so term_bank_2/_4 varied
@@ -62,11 +62,22 @@ the merged source.
 ## Final artifact
 - Path: `dist/bees-ultimate-grammar-dictionary.zip`
 - Entries: 4,632
-- Bytes: 6,245,005
-- sha256: `bdd058d6543ff5121bfc290bf2b67c168ccfd3f2c13c7f81f9a9ef31ec60e051`
+- Bytes: (rebuilt)
+- sha256: `2520b72f54c7cedd4747929153fe3dec997ce2d1dc6cb2608cd6ec01e2916124`
 
 ## Verdict
 **READY** — the local ULTIMATE dictionary is built, validated, and internally
 consistent; all gates green. Publication (UGD-17) MUST fail-closed filter to
 `redistributable:true` records or obtain rights clearance for the tier-C sources
 before shipping anything public.
+
+## UPDATE — beauty-gate run-on defect resolved (commit 5e58b20)
+The earlier "residual risk" on the beauty gate was investigated and found to be a
+REAL defect: 8,773 example nodes concatenated multiple sentences with no line
+break. Fixed in banks.py by splitting multi-sentence example fields at sentence
+boundaries (conservative: 。 inside quotes/parens are NOT split). Verified via
+scripts/check_example_runons.py: REAL run-ons now 0 (58 residual are all
+quote-internal 。, correctly preserved). Rebuild byte-stable, new sha256
+2520b72f54c7cedd4747929153fe3dec997ce2d1dc6cb2608cd6ec01e2916124; 499 tests pass;
+Node schema + contract 2020-12 gates pass. The beauty-gate must-fix run-on class
+is now empty on the current build.
