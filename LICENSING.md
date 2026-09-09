@@ -33,23 +33,30 @@ byte-exact to their recorded digests (0 mismatched, 0 missing):
 
 ## Two different populations — do not conflate them
 
-**Acquired and locked (10 sources)** is not the same set as **shipped in the
-current build (5 sources)**.
+**Acquired and locked (10 sources)** is now the same set as **shipped in the
+current build (10 sources)**, which changes the redistribution posture materially
+compared with the 5-source artifact this document originally described.
 
 The current artifact `dist/bees-ultimate-grammar-dictionary.zip`
-(sha256 `33546769dd33…`, 1,706,586 B, 2,419 entries, 3 term banks) declares
-exactly five sources in `tag_bank_1.json`:
+(sha256 `76b811acecdf…`, 6,242,936 B, 4,623 entries, 5 term banks) declares all
+ten sources in `tag_bank_1.json`:
 
-`dojg`, `donna_toki`, `edewakaru`, `nihongo_net`, `nihongo_no_sensei`
+`bunpou`, `bunpro`, `dojg`, `donna_toki`, `edewakaru`, `imabi`, `nihongo_net`,
+`nihongo_no_sensei`, `ninjal_bunkei`, `yokubi`
 
-A substring scan of all three term banks finds **zero** occurrences of
-`Yokubi` / `yoku.bi`, `IMABI` / `imabi`, `Bunpro` / `bunpro`,
-`日本語文型データベース` / `NINJAL` / `ninjal`, or `bunpou`. Those five sources are
-acquired and locked but do not reach the packaged bytes today; only
-`dojg`, `donna_toki`, `edewakaru`, `nihongo_net`, `nihongo_no_sensei` are
-registered extractors (`bugd.sources.registry.source_names()`), and
-`data/extracted/` additionally holds `ninjal_bunkei.json` (800 points) which the
-current bank generator does not package.
+UGD-16 convergence landed the five remaining extractors, so
+`bugd.sources.registry.source_names()` now returns all ten and a substring scan of
+the five term banks finds each of the previously-absent producers present
+(`Yokubi` 234, `IMABI` 1,020, `Bunpro` 1,972, `日本語文型データベース` / `NINJAL`
+1,947). The earlier statement that these five "do not reach the packaged bytes
+today" described the 5-source artifact and is superseded.
+
+**This makes the publish gate stricter, not looser.** The two tier-A CC BY 4.0
+sources (Yokubi, NINJAL) are now packaged and would need their attribution
+honoured, but so are `bunpou` (tier D, the user's own private deck), `bunpro`
+(proprietary paid, no lock licence block) and `imabi` (no lock licence block).
+The artifact therefore still must not be published without clearance, and the set
+of sources requiring clearance has grown from five to eight.
 
 ## Summary table
 
@@ -89,11 +96,12 @@ licence block at all.
 
 ### Blocking finding for any future publish step
 
-**Every source in the current build is `redistributable:false`.** All five
-sources packaged in `dist/bees-ultimate-grammar-dictionary.zip` are tier B/C
-with `redistributable:false`; both tier-A sources (Yokubi, NINJAL) are absent
-from the ZIP. Publishing the current artifact as-is would redistribute *only*
-non-redistributable content.
+**Every source in the current build is packaged, and only two of the ten are
+redistributable.** `dist/bees-ultimate-grammar-dictionary.zip` now packages all
+ten sources. Yokubi and NINJAL are tier A / `redistributable:true` (CC BY 4.0,
+verified in locked bytes); the other eight are tier B/C/D or carry no lock licence
+block at all. Publishing the current artifact as-is would redistribute
+non-redistributable content from eight sources.
 
 **There is no publish-time filter.** `redistributable` is recorded in
 provenance and carried through extraction, but no code in the build path

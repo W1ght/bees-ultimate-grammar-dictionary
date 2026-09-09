@@ -24,19 +24,27 @@ zf = zipfile.ZipFile(p)
 banks = [m for m in zf.namelist() if m.startswith("term_bank_")]
 entries = sum(len(json.loads(zf.read(m))) for m in banks)
 
-chk(digest.startswith("33546769dd33"), f"zip digest 33546769dd33... (actual {digest[:12]})")
-chk(len(raw) == 1706586, f"zip bytes 1706586 (actual {len(raw)})")
-chk(entries == 2419, f"zip entries 2419 (actual {entries})")
-chk(len(banks) == 3, f"3 term banks (actual {len(banks)})")
+chk(digest.startswith("76b811acecdf"), f"zip digest 76b811acecdf... (actual {digest[:12]})")
+chk(len(raw) == 6242936, f"zip bytes 6242936 (actual {len(raw)})")
+chk(entries == 4623, f"zip entries 4623 (actual {entries})")
+chk(len(banks) == 5, f"5 term banks (actual {len(banks)})")
 
 tags = sorted(t[0] for t in json.loads(zf.read("tag_bank_1.json")))
-expect_tags = ["dojg", "donna_toki", "edewakaru", "nihongo_net", "nihongo_no_sensei"]
+# UGD-16 convergence landed the five remaining extractors, so all ten acquired
+# sources now reach the packaged bytes. The document previously described a
+# 5-source artifact; both it and these pins were corrected together.
+expect_tags = ["bunpou", "bunpro", "dojg", "donna_toki", "edewakaru", "imabi",
+               "nihongo_net", "nihongo_no_sensei", "ninjal_bunkei", "yokubi"]
 chk(tags == expect_tags, f"tag_bank sources {tags}")
 
 blob = "".join(zf.read(m).decode("utf8") for m in banks)
-for lab in ["Yokubi", "yoku.bi", "IMABI", "imabi", "Bunpro", "bunpro",
-            "\u65e5\u672c\u8a9e\u6587\u578b\u30c7\u30fc\u30bf\u30d9\u30fc\u30b9", "NINJAL", "ninjal", "bunpou"]:
-    chk(blob.count(lab) == 0, f'zero "{lab}" in packaged banks (actual {blob.count(lab)})')
+# The claim is now the OPPOSITE of the original document's: each producer that was
+# absent from the 5-source artifact must now be PRESENT, since its extractor ships.
+# Asserting presence (not an exact count) keeps the claim about reachability rather
+# than pinning corpus size, which legitimately moves.
+for lab in ["Yokubi", "yoku.bi", "IMABI", "Bunpro",
+            "\u65e5\u672c\u8a9e\u6587\u578b\u30c7\u30fc\u30bf\u30d9\u30fc\u30b9", "NINJAL"]:
+    chk(blob.count(lab) > 0, f'"{lab}" reaches the packaged banks (actual {blob.count(lab)})')
 
 want = {
     "bunpou": ("D", False), "dojg": ("C", False), "donna_toki": ("C", False),
