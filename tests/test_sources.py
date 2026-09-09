@@ -601,3 +601,53 @@ def test_ninjal_extracts_every_locked_headword_from_the_real_archive():
         assert point.jlpt is None
         assert "〓" not in (point.meaning or "")
         assert "｛" not in "".join(example.japanese for example in point.examples)
+
+
+def test_ninjal_member_name_recovers_cp932_names_the_utf8_flag_missed():
+    """21 of the archive's 800 members lack the UTF-8 name flag.
+
+    `zipfile` decodes those Shift-JIS names as cp437, so without recovery the
+    record identity for e.g. 召し上がります ships as the mojibake
+    ``Åóé╡Åπé¬éΦé▄é╖``. `member_name` must round-trip the cp437 string back to
+    bytes and decode CP932, and the extractor must use it for `source_id` and
+    `provenance.sourceFile`.
+    """
+    import unicodedata
+    import zipfile
+
+    from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor, member_name
+
+    input_dir = REPO / "data/sources/ninjal_bunkei"
+    if not (input_dir / "SOURCE.lock.json").is_file():  # pragma: no cover
+        pytest.skip("ninjal_bunkei source data is not present in this checkout")
+
+    with zipfile.ZipFile(input_dir / "nihongo_bunkei_database20260126.zip") as archive:
+        infos = [
+            info
+            for info in archive.infolist()
+            if not info.is_dir() and info.filename.endswith(".xml")
+        ]
+    unflagged = [info for info in infos if not info.flag_bits & 0x800]
+    assert unflagged, "the distribution is known to ship unflagged CP932 names"
+    for info in unflagged:
+        assert member_name(info) != info.filename
+
+    names = [member_name(info) for info in infos]
+    assert len(set(names)) == len(names)
+
+    def is_mojibake(text: str) -> bool:
+        # cp437 mis-decoding yields Latin-1 supplement letters and box-drawing
+        # characters; a real headword never contains either.
+        return any(
+            0x80 <= ord(ch) <= 0x2FFF and unicodedata.category(ch).startswith(("L", "S"))
+            and not ("\u3000" <= ch)
+            for ch in text
+        ) or any("\u2500" <= ch <= "\u259F" for ch in text)
+
+    result = NinjalBunkeiExtractor(input_dir).extract()
+    bad = [
+        point.source_id
+        for point in result.points
+        if is_mojibake(point.source_id) or is_mojibake(str(point.provenance["sourceFile"]))
+    ]
+    assert bad == [], f"mojibake identities leaked: {bad[:5]}"

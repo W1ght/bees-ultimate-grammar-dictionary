@@ -61,6 +61,21 @@ _FURIGANA = re.compile(r"〓([^〔〓]*)〔[^〕]*〕")
 _HIGHLIGHT = re.compile(r"｛([^｝]*)｝")
 
 
+def member_name(info: zipfile.ZipInfo) -> str:
+    """Recover a member's real (CP932) filename.
+
+    779 of the distribution's 800 members carry the UTF-8 name flag and decode
+    correctly; the other 21 do not, so `zipfile` decodes their Shift-JIS bytes
+    as cp437 and produces mojibake like ``Åóé╡Åπé¬éΦé▄é╖`` for 召し上がります.
+    Re-encoding that cp437 string recovers the original bytes, which then
+    decode as CP932 — verified to roundtrip for every member and to keep all
+    800 stems unique.
+    """
+    if info.flag_bits & 0x800:
+        return info.filename
+    return info.filename.encode("cp437").decode("cp932")
+
+
 def strip_furigana(text: str) -> str:
     """Drop inline ``〓base〔reading〕`` annotations, keeping the base form.
 
@@ -102,11 +117,17 @@ class NinjalBunkeiExtractor(Extractor):
         members = 0
         skipped = 0
         with zipfile.ZipFile(io.BytesIO(raw)) as archive:
-            for info in sorted(archive.infolist(), key=lambda i: i.filename):
-                if info.is_dir() or not info.filename.endswith(".xml"):
-                    continue
+            entries = sorted(
+                (
+                    info
+                    for info in archive.infolist()
+                    if not info.is_dir() and info.filename.endswith(".xml")
+                ),
+                key=member_name,
+            )
+            for info in entries:
                 members += 1
-                point = self._parse_entry(archive.read(info.filename), info.filename)
+                point = self._parse_entry(archive.read(info.filename), member_name(info))
                 if point is None:
                     skipped += 1
                     continue
@@ -221,4 +242,4 @@ class NinjalBunkeiExtractor(Extractor):
         )
 
 
-__all__ = ["NinjalBunkeiExtractor", "strip_furigana", "example_from_text"]
+__all__ = ["NinjalBunkeiExtractor", "member_name", "strip_furigana", "example_from_text"]
