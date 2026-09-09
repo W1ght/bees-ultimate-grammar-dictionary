@@ -18,6 +18,7 @@ from __future__ import annotations
 import ast
 import json
 import pathlib
+import re
 import subprocess
 import warnings
 
@@ -139,6 +140,55 @@ def test_every_tracked_lock_declares_a_redistribution_posture() -> None:
         for name, meta in payload["files"].items():
             assert isinstance(meta, dict), f"{lock}:{name} has no metadata"
             assert len(str(meta.get("sha256", ""))) == 64, f"{lock}:{name} has no sha256"
+
+
+def test_every_third_party_import_in_src_is_a_declared_dependency(
+    tracked_files: set[str],
+) -> None:
+    """A build dependency that only exists in someone's venv is not reproducible.
+
+    `zstandard` shipped undeclared: `bugd.anki` imports it lazily inside
+    `_zstd_decompress` and reports a missing module as an `AnkiPackageError` naming
+    the member, which reads like a corrupt source rather than a missing dependency.
+    Because it was installed in the main worktree's venv, `make extract` worked
+    there and failed on a fresh `pip install -e .` with
+    "collection.anki21b is zstd-compressed but the zstandard module is unavailable".
+    Modern Anki exports zstd-compress the collection, so it is required by every
+    `.apkg` source, not optional.
+
+    Asserts the direction that matters: nothing imported may be undeclared. An
+    unused declaration is waste, not a reproducibility defect.
+    """
+    import sys
+    import tomllib
+
+    declared = {
+        re.split(r"[=<>!~\[]", spec, maxsplit=1)[0].strip().lower().replace("-", "_")
+        for spec in tomllib.loads(
+            (REPO / "pyproject.toml").read_text(encoding="utf-8")
+        )["project"]["dependencies"]
+    }
+    imported: set[str] = set()
+    for name in sorted(f for f in tracked_files if f.startswith("src/") and f.endswith(".py")):
+        path = REPO / name
+        if not path.is_file():
+            continue
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and not node.level and node.module:
+                imported.add(node.module.split(".")[0])
+    third_party = {
+        module
+        for module in imported
+        if module not in sys.stdlib_module_names and module != "bugd"
+    }
+    undeclared = sorted(m for m in third_party if m.lower().replace("-", "_") not in declared)
+    assert not undeclared, (
+        f"src/ imports undeclared dependencies: {undeclared}. "
+        f"A fresh `pip install -e .` will not install them, so the build is not "
+        f"reproducible from a clean checkout."
+    )
 
 
 def test_no_tracked_module_carries_an_invalid_escape_sequence(tracked_files: set[str]) -> None:
