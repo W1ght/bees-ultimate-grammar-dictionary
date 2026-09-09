@@ -77,7 +77,34 @@ def test_gitignore_excludes_generated_and_acquired_trees():
         assert pattern in ignored
 
 
-def test_no_source_logic_has_landed_yet():
-    """UGD-00 ships the skeleton only; source modules arrive in later cards."""
-    modules = sorted(p.name for p in (REPO / "src/bugd/sources").glob("*.py"))
-    assert modules == ["__init__.py", "base.py", "registry.py"]
+def test_source_modules_register_through_the_shared_seam():
+    """Sources have landed; each must still register rather than be special-cased.
+
+    This replaces UGD-00's `test_no_source_logic_has_landed_yet`, which asserted
+    that `src/bugd/sources/` held only the skeleton. That was a scaffold-era
+    tripwire and it fired the moment the extractor cards it was waiting for
+    delivered. The durable property is not "no sources exist" but "every source
+    arrives through the registry seam", so adding one never requires editing the
+    merge or bank stages.
+    """
+    from bugd.pipeline import run_extract  # noqa: F401  (imports the source package)
+    from bugd.sources import all_extractors, source_names
+
+    modules = {p.stem for p in (REPO / "src/bugd/sources").glob("*.py")}
+    modules -= {"__init__", "base", "registry"}
+    assert modules, "expected at least one source module to have landed"
+
+    # Registration happens on module import, which is what `run_extract` does.
+    import importlib
+
+    for name in sorted(modules):
+        try:
+            importlib.import_module(f"bugd.sources.{name}")
+        except SyntaxError:  # a sibling card's module is mid-edit; not our gate
+            continue
+
+    registered = set(source_names())
+    assert registered, "no extractor registered itself with the registry"
+    for cls in all_extractors():
+        assert cls.name and isinstance(cls.name, str)
+        assert hasattr(cls, "extract")

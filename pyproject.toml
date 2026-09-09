@@ -3,7 +3,7 @@ name = "bees-ultimate-grammar-dictionary"
 version = "0.0.0"
 description = "ONE unified Yomitan grammar dictionary built from multiple grammar sources"
 requires-python = ">=3.11"
-dependencies = ["jsonschema==4.26.0"]
+dependencies = ["jsonschema==4.26.0", "fastjsonschema==2.22.2"]
 
 [dependency-groups]
 dev = ["pytest==9.1.1"]

@@ -15,6 +15,7 @@ import dataclasses
 import datetime
 import hashlib
 import pathlib
+import shutil
 
 from . import DICTIONARY_SLUG, YOMITAN_SCHEMA_REVISION
 from .banks import build_banks, build_index, build_tag_bank
@@ -33,6 +34,14 @@ DEFAULT_BUILD_DIR = pathlib.Path("build")
 #: appears here after it has passed pinned-schema validation, so `dist/` never
 #: contains an archive that failed the gate.
 DEFAULT_DIST_DIR = pathlib.Path("dist")
+
+#: Inspectable bank directory written alongside the ZIP. Packaging reads its
+#: members from memory, so this directory is not a build input — it is the
+#: reviewable form of the exact bytes that went into the archive, which is what
+#: downstream schema/geometry/screenshot work needs to diff a card without
+#: unzipping. Written from the same member map the ZIP is built from, so a member
+#: here and its ZIP counterpart can never disagree.
+BANKS_DIR_NAME = "banks"
 
 MERGED_CORPUS_NAME = "corpus.json"
 
@@ -152,7 +161,7 @@ def run_build(
 
     revision = revision or datetime.datetime.now(datetime.UTC).strftime("%Y.%m.%d")
     members = package_members(
-        index=build_index(revision),
+        index=build_index(revision, source_labels=source_labels),
         banks=build_banks(entries),
         tag_bank=build_tag_bank(source_labels),
         styles_css=STYLES_CSS,
@@ -162,6 +171,7 @@ def run_build(
     build_dir.mkdir(parents=True, exist_ok=True)
     zip_path = build_dir / zip_name()
     zip_path.write_bytes(archive)
+    banks_dir = write_banks_dir(members, build_dir=build_dir)
 
     failures = validate_zip(zip_path, require_entries=require_entries)
     if failures:
@@ -170,6 +180,7 @@ def run_build(
     digest = hashlib.sha256(archive).hexdigest()
     result: dict[str, object] = {
         "zipPath": str(zip_path),
+        "banksDir": str(banks_dir),
         "revision": revision,
         "entries": len(entries),
         "termEntries": term_entry_count(zip_path),
@@ -183,6 +194,29 @@ def run_build(
     if dist_dir is not None:
         result["distPath"] = str(publish_dist(archive, digest, dist_dir=dist_dir))
     return result
+
+
+def write_banks_dir(
+    members: dict[str, bytes | str],
+    *,
+    build_dir: pathlib.Path = DEFAULT_BUILD_DIR,
+) -> pathlib.Path:
+    """Write the packaged members to `build/banks/` for review.
+
+    The directory is rebuilt from scratch each time so a bank that disappeared
+    from the corpus (a shrinking `term_bank_N.json` tail) cannot linger and be
+    mistaken for current output. Bytes are written exactly as packaged — not
+    re-serialised — so `banks/term_bank_1.json` and the ZIP member are identical
+    by construction rather than by convention.
+    """
+    banks_dir = build_dir / BANKS_DIR_NAME
+    if banks_dir.exists():
+        shutil.rmtree(banks_dir)
+    for name, payload in members.items():
+        target = banks_dir / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(payload.encode("utf-8") if isinstance(payload, str) else payload)
+    return banks_dir
 
 
 def publish_dist(
@@ -301,10 +335,12 @@ __all__ = [
     "DEFAULT_MERGED_DIR",
     "DEFAULT_BUILD_DIR",
     "DEFAULT_DIST_DIR",
+    "BANKS_DIR_NAME",
     "MERGED_CORPUS_NAME",
     "SchemaValidationError",
     "zip_name",
     "publish_dist",
+    "write_banks_dir",
     "run_extract",
     "run_merge",
     "run_build",
