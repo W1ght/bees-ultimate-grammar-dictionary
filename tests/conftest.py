@@ -85,6 +85,11 @@ def sample_point() -> GrammarPoint:
     return GrammarPoint(
         source="fixture",
         source_id="1",
+        # Row identity, as `ExtractResult` would stamp it. Set explicitly because
+        # the merge stage fails closed on a row without one: `source_id` is not
+        # unique, so a contribution built from an unstamped row would not be
+        # traceable to a single source record.
+        row_uid="fixture:1",
         expression="そうです",
         variants=("そうだ",),
         meaning="hearsay; I hear that",

@@ -10,9 +10,10 @@ import sys
 
 import pytest
 
-from bugd.jsonio import dump_json
+from bugd.jsonio import MalformedPayload, dump_json
+from bugd.model import GrammarPoint
 from bugd.sources import Extractor, ExtractResult, SourceLockError, load_source_lock
-from bugd.sources.base import SOURCE_LOCK_NAME
+from bugd.sources.base import SOURCE_LOCK_NAME, DuplicateRowIdentity
 from bugd.sources.registry import register_extractor, source_names
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -461,3 +462,96 @@ def test_edewakaru_strips_chrome_from_every_prose_field():
         assert chrome not in value, f"{field} still carries site chrome: {value!r}"
     # The real content around the chrome must survive.
     assert "ほんとうの解説です。" in (point.explanation or "")
+
+
+# --------------------------------------------------------------------------
+# row identity: source_id is NOT unique, so every row gets its own machine id
+# --------------------------------------------------------------------------
+
+
+def test_every_extracted_row_is_stamped_with_its_own_identity():
+    """`ExtractResult` assigns `<source>:<ordinal>` in emission order."""
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="dup", expression="あ"),
+        GrammarPoint(source="unit-fixture", source_id="dup", expression="い"),
+        GrammarPoint(source="unit-fixture", source_id="other", expression="う"),
+    ]
+    result = ExtractResult(source="unit-fixture", points=points)
+    assert [p.row_uid for p in result.points] == [
+        "unit-fixture:1",
+        "unit-fixture:2",
+        "unit-fixture:3",
+    ]
+    # The producer's own handle is untouched, and is still not unique.
+    assert [p.source_id for p in result.points] == ["dup", "dup", "other"]
+
+
+def test_two_rows_sharing_a_source_id_get_two_distinct_identities():
+    """The defect this exists for: one edewakaru source_id names 22 rows.
+
+    Asserted as a property of the whole batch rather than of two rows, so the
+    test still bites if a future change makes identity depend on `source_id`.
+    """
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="あまり", expression="あまり", jlpt="N5"),
+        GrammarPoint(source="unit-fixture", source_id="あまり", expression="あまり", jlpt="N2"),
+    ]
+    result = ExtractResult(source="unit-fixture", points=points)
+    assert len({p.row_uid for p in result.points}) == len(result.points)
+
+
+def test_a_duplicate_row_identity_fails_the_extraction_closed():
+    """Renumbering silently would repoint claims that already cite the id."""
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="a", expression="あ", row_uid="unit-fixture:1"),
+        GrammarPoint(source="unit-fixture", source_id="b", expression="い", row_uid="unit-fixture:1"),
+    ]
+    with pytest.raises(DuplicateRowIdentity, match="unit-fixture:1"):
+        ExtractResult(source="unit-fixture", points=points)
+
+
+def test_a_preassigned_identity_survives_a_round_trip():
+    """Re-wrapping already-stamped rows must not renumber them."""
+    points = [
+        GrammarPoint(source="unit-fixture", source_id="a", expression="あ", row_uid="unit-fixture:7"),
+        GrammarPoint(source="unit-fixture", source_id="b", expression="い", row_uid="unit-fixture:9"),
+    ]
+    result = ExtractResult(source="unit-fixture", points=points)
+    assert [p.row_uid for p in result.points] == ["unit-fixture:7", "unit-fixture:9"]
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "unit-fixture:１",  # a fullwidth digit; int() would accept it
+        "unit-fixture:1_0",  # an underscore; int() would accept it too
+        "unit-fixture:0",  # ordinals are 1-based
+        "unit-fixture:+1",  # a sign
+        "unit-fixture:",  # no ordinal at all
+        "other-source:1",  # a foreign source's identity
+        "unit-fixture:1:2",
+    ],
+)
+def test_a_malformed_row_identity_is_refused(bad):
+    """Numeric syntax is checked before conversion, not after.
+
+    Every rejected spelling here is one `int()` or a naive `split(':')` would
+    wave through, which would let two spellings of one ordinal coexist and make
+    the identity ambiguous again.
+    """
+    with pytest.raises(MalformedPayload, match="row_uid"):
+        GrammarPoint(source="unit-fixture", source_id="a", expression="あ", row_uid=bad)
+
+
+def test_row_identity_is_stable_across_repeated_extraction():
+    """Same rows in, same identities out — a build input, not a nonce."""
+    def build():
+        return ExtractResult(
+            source="unit-fixture",
+            points=[
+                GrammarPoint(source="unit-fixture", source_id="x", expression="あ"),
+                GrammarPoint(source="unit-fixture", source_id="x", expression="い"),
+            ],
+        )
+
+    assert [p.row_uid for p in build().points] == [p.row_uid for p in build().points]

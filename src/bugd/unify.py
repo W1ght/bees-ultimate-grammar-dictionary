@@ -72,7 +72,7 @@ from collections import Counter, defaultdict
 
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .keymap import alias_targets, is_declared_alias, substance_hash
-from .model import JLPT_LEVELS, Example, GrammarPoint
+from .model import JLPT_LEVELS, Example, GrammarPoint, row_uid_matches
 
 if typing.TYPE_CHECKING:  # pragma: no cover - import cycle broken at runtime
     from .merge import MergedEntry
@@ -143,6 +143,13 @@ class Contribution:
     card renders under a labelled per-source disclosure, so `source`,
     `source_id`, `source_label` and `provenance` stay attached to the exact prose
     they came from.
+
+    `row_uid` is the machine identity of the one extracted source row this
+    contribution restates; `source_id` remains the producer's human-facing
+    headword and is deliberately NOT unique (one `edewakaru` `source_id` names 22
+    rows). Attribution must be keyed on `row_uid`: keying on
+    `(source, source_id)` addressed 2+ genuinely different records on 289 handles
+    and put two different JLPT levels under one handle on 54 entries.
     """
 
     source: str
@@ -157,6 +164,7 @@ class Contribution:
     explanation: str | None
     notes: str | None
     jlpt: str | None
+    row_uid: str = ""
     examples: tuple[Example, ...] = ()
     tags: tuple[str, ...] = ()
     ai_generated: dict[str, object] = dataclasses.field(default_factory=dict)
@@ -416,9 +424,17 @@ def build_contribution(
     tags = record.get("tags") or ()
     if not isinstance(tags, (list, tuple)):
         raise MalformedPayload("a record's `tags` must be an array")
+    uid = record.get("row_uid")
+    if not isinstance(uid, str) or not row_uid_matches(uid, source):
+        raise MalformedPayload(
+            f"{source}:{record.get('source_id')!r} has no valid row_uid ({uid!r}). Re-run "
+            f"`make extract`: attribution is keyed on row identity because source_id is "
+            f"not unique, so merging a row without one would reintroduce ambiguous claims."
+        )
     return Contribution(
         source=source,
         source_id=str(record.get("source_id") or ""),
+        row_uid=uid,
         source_label=source_label,
         canonical_key=canonical_key,
         expression=str(record["expression"]),
@@ -859,6 +875,9 @@ def contribution_to_json(contribution: Contribution) -> dict[str, object]:
     payload: dict[str, object] = {
         "source": contribution.source,
         "sourceId": contribution.source_id,
+        # The unique machine identity of the source row. Written next to the
+        # non-unique human handle so a reader can tell them apart at a glance.
+        "rowUid": contribution.row_uid,
         "sourceLabel": contribution.source_label,
         "canonicalKey": contribution.canonical_key,
         "expression": contribution.expression,
@@ -957,6 +976,7 @@ def contribution_from_json(payload: dict[str, object]) -> Contribution:
     return Contribution(
         source=str(payload["source"]),
         source_id=str(payload.get("sourceId") or ""),
+        row_uid=str(payload.get("rowUid") or ""),
         source_label=str(payload.get("sourceLabel") or payload["source"]),
         canonical_key=str(payload.get("canonicalKey") or ""),
         expression=str(payload["expression"]),
@@ -1225,6 +1245,7 @@ def to_grammar_point(
     return GrammarPoint(
         source=contribution.source,
         source_id=contribution.source_id or contribution.expression,
+        row_uid=contribution.row_uid,
         expression=expression,
         variants=variants,
         reading=contribution.reading,

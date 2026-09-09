@@ -18,6 +18,7 @@ Field policy notes carried from SOURCES.md:
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 from .jsonio import MalformedPayload
@@ -25,6 +26,31 @@ from .jsonio import MalformedPayload
 # JLPT levels accepted verbatim from sources; anything else is normalized away
 # rather than guessed at.
 JLPT_LEVELS = ("N5", "N4", "N3", "N2", "N1")
+
+#: Canonical grammar for a row identity: the source name, a colon, and a
+#: positive decimal ordinal with no sign, underscore, or non-ASCII digit. Written
+#: as an explicit ASCII grammar because `int()` accepts `1_0`, `+1` and Unicode
+#: digits, any of which would let two spellings of one ordinal exist.
+ROW_UID_ORDINAL = re.compile(r"[1-9][0-9]*\Z", re.ASCII)
+
+
+def row_uid(source: str, ordinal: int) -> str:
+    """Build the stable unique identity of one extracted source row."""
+    if not isinstance(source, str) or not source.strip() or ":" in source:
+        raise MalformedPayload(f"a row uid needs a colon-free source name, got {source!r}")
+    if isinstance(ordinal, bool) or not isinstance(ordinal, int) or ordinal < 1:
+        raise MalformedPayload(f"a row uid ordinal must be a positive integer, got {ordinal!r}")
+    return f"{source}:{ordinal}"
+
+
+def row_uid_matches(value: str, source: str) -> bool:
+    """True when `value` is exactly `<source>:<positive-decimal-ordinal>`."""
+    if not isinstance(value, str):
+        return False
+    prefix = f"{source}:"
+    if not value.startswith(prefix):
+        return False
+    return bool(ROW_UID_ORDINAL.fullmatch(value[len(prefix) :]))
 
 
 @dataclass(frozen=True)
@@ -55,6 +81,17 @@ class GrammarPoint:
     # Headword(s) the user looks up. `expression` is canonical; `variants` are
     # additional lookup forms that must resolve to the same entry.
     expression: str
+    #: Unique identity of the extracted row this record came from, `<source>:<n>`.
+    #:
+    #: `source_id` is the producer's own handle and is **not unique**: one
+    #: `source_id` names up to 22 different rows in `edewakaru`, so
+    #: `(source, source_id)` addressed 2+ genuinely different records on 289
+    #: handles and asserted two JLPT levels under one handle on 54 entries.
+    #: `row_uid` is assigned once per extracted row by `ExtractResult`, which
+    #: fails closed on a repeat, so a claim can always be traced back to exactly
+    #: one source record. Empty only on records that are not extracted source
+    #: rows (a synthesised redirect pointer), never on a source row.
+    row_uid: str = ""
     variants: tuple[str, ...] = ()
     reading: str | None = None
 
@@ -83,6 +120,10 @@ class GrammarPoint:
                 raise MalformedPayload(f"GrammarPoint.{name} must be a non-empty string")
         if self.jlpt is not None and self.jlpt not in JLPT_LEVELS:
             raise MalformedPayload(f"GrammarPoint.jlpt is not a known level: {self.jlpt!r}")
+        if self.row_uid and not row_uid_matches(self.row_uid, self.source):
+            raise MalformedPayload(
+                f"GrammarPoint.row_uid {self.row_uid!r} is not {self.source!r}:<ordinal>"
+            )
 
     @property
     def merge_key(self) -> str:
@@ -95,4 +136,11 @@ class GrammarPoint:
         return self.expression
 
 
-__all__ = ["Example", "GrammarPoint", "JLPT_LEVELS"]
+__all__ = [
+    "Example",
+    "GrammarPoint",
+    "JLPT_LEVELS",
+    "ROW_UID_ORDINAL",
+    "row_uid",
+    "row_uid_matches",
+]
