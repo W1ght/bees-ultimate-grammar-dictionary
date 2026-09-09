@@ -2,7 +2,7 @@
 
 Cross-checks every one of the 187 confirmed findings (clusters D + F) against the
 shipped corrections and records, per item, the disposition applied. Writes
-data/corrections/ugd-11c-d.resolution.json.
+data/corrections/content/reports/ugd-11c-d.resolution.json.
 """
 
 from __future__ import annotations
@@ -11,9 +11,9 @@ import json
 import pathlib
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
-CLUSTERS = REPO / "data" / "corrections" / "evidence"
-MANIFEST = REPO / "data" / "corrections" / "ugd-11c-d.json"
-OUT = REPO / "data" / "corrections" / "reports" / "ugd-11c-d.resolution.json"
+CLUSTERS = REPO / "data" / "corrections" / "content" / "evidence"
+MANIFEST = REPO / "data" / "corrections" / "content" / "ugd-11c-d.json"
+OUT = REPO / "data" / "corrections" / "content" / "reports" / "ugd-11c-d.resolution.json"
 
 
 def main() -> int:

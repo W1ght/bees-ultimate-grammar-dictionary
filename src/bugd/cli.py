@@ -33,7 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=pathlib.Path,
         default=None,
         help="directory of confirmed post-extraction content corrections "
-        "(default: data/corrections; a missing directory means no corrections)",
+        "(default: data/corrections/content; a missing directory means no corrections)",
     )
     parser.add_argument("--merged-dir", type=pathlib.Path, default=DEFAULT_MERGED_DIR)
     parser.add_argument(

@@ -26,7 +26,7 @@ from bugd.corrections import Correction, apply_corrections, load_corrections
 from bugd.model import Example, GrammarPoint
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
-CORRECTIONS_DIR = REPO / "data" / "corrections"
+CORRECTIONS_DIR = REPO / "data" / "corrections" / "content"
 UNIFIED = REPO / "data" / "merge" / "unified.jsonl"
 
 

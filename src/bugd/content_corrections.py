@@ -37,7 +37,13 @@ from .model import Example, GrammarPoint
 
 #: Corrections shipped in the repo. One file per fix card keeps provenance
 #: legible; all files in this directory are applied.
-DEFAULT_CORRECTIONS_DIR = pathlib.Path("data/corrections")
+#: The content overlay's own directory. It must NOT be `data/corrections/`: that
+#: directory is shared with UGD-11c-C's `structure_corrections.json` and
+#: UGD-11c-B's `readings.json`, and this loader globs `*.json` and fails closed on
+#: any file carrying a `corrections` list it cannot parse. Pointed at the shared
+#: directory it read the other two overlays as malformed content manifests and
+#: aborted `make extract` with `Correction.field must be a non-empty string`.
+DEFAULT_CORRECTIONS_DIR = pathlib.Path("data/corrections/content")
 
 _TEXT_FIELDS = ("meaning", "structure", "nuance", "explanation", "notes", "jlpt")
 
