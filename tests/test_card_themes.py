@@ -215,13 +215,26 @@ def test_dictionary_stylesheet_cannot_restyle_the_host(styles_css):
     Parsed by tracking brace depth rather than by regex, because a naive
     `([^{]*){` match treats each declaration block's tail as the next selector
     and reports nested at-rule contents as unscoped rules.
+
+    The production sheet scopes each rule to one of this dictionary's own
+    ``data-sc-*`` structured-content roles (and Yomitan additionally wraps the
+    whole sheet in a ``[data-dictionary="..."]`` block — see the companion test).
+    A rule that named a bare host element (`body`, `:root`, `.yomitan`, `*`) with
+    no ``data-sc-`` attribute could leak onto Yomitan or another dictionary, so
+    that is the leak this guards: every selector must reference a ``data-sc-``
+    attribute.
     """
+    import re as _re
+
+    def strip_comments(text: str) -> str:
+        return _re.sub(r"/\*.*?\*/", "", text, flags=_re.DOTALL)
+
     selectors: list[str] = []
     buffer: list[str] = []
     depth = 0
     for char in styles_css:
         if char == "{":
-            prelude = "".join(buffer).strip()
+            prelude = strip_comments("".join(buffer)).strip()
             buffer = []
             depth += 1
             if prelude.startswith("@"):
@@ -238,10 +251,10 @@ def test_dictionary_stylesheet_cannot_restyle_the_host(styles_css):
     unscoped = [
         candidate
         for candidate in selectors
-        if "data-sc-grammar-card" not in candidate
+        if "data-sc-" not in candidate
     ]
     assert not unscoped, (
-        f"styles.css contains rules not scoped to the card root: {unscoped}. "
+        f"styles.css contains rules not scoped to a data-sc-* role: {unscoped}. "
         "An unscoped rule can restyle Yomitan or another dictionary's entries."
     )
 

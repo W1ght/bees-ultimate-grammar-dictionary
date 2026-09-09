@@ -45,7 +45,7 @@ def test_above_fold_holds_only_contract_rows(renderer, card, styles_css, name):
         }""",
         sel.ABOVE_FOLD,
     )
-    allowed = {"scCardHeadword", "scCardGloss", "scCardStructure"}
+    allowed = set(sel.ABOVE_FOLD_CHILD_ROLES)
     unexpected = [role for role in roles if role not in allowed]
     assert not unexpected, (
         f"{name}: unexpected above-fold rows {unexpected}; "
@@ -85,11 +85,16 @@ def test_expression_is_marked_japanese(renderer, card, styles_css):
 def test_jlpt_badges_are_visually_separated(renderer, card, styles_css):
     """Adjacent JLPT badges must not run together into one unreadable token.
 
-    `ほど` carries all five levels. With no inline separation they render as the
-    single string `N5N4N3N2N1`, which is measured here rather than eyeballed.
+    `ほど` carries several levels across its sources. The compact row shows a
+    single headline level, but where a source disagrees the per-source disclosure
+    states every level as adjacent chips (`JLPT N2 · N3 · N4`). With no inline
+    separation those would render as the single string `N2N3N4`, which is
+    measured here rather than eyeballed — so the disclosures are opened and the
+    gaps between adjacent chips are checked on the real rendered surface.
     """
     rendered = renderer.render(card("english_gloss"), styles_css=styles_css)
-    badges = rendered.boxes(sel.JLPT)
+    rendered.open_all_details()
+    badges = [box for box in rendered.boxes(sel.JLPT) if box.width > 0]
     assert len(badges) >= 2, (
         "fixture no longer exercises multiple JLPT badges; "
         f"found {len(badges)} for a multi-level entry"
@@ -97,21 +102,31 @@ def test_jlpt_badges_are_visually_separated(renderer, card, styles_css):
     gaps = [
         (index, round(right.x - left.right, 2))
         for index, (left, right) in enumerate(itertools.pairwise(badges))
+        # Only adjacent chips ON THE SAME ROW can "run together"; chips that wrap
+        # to a new row are separated by the whole line and are not the defect.
+        if abs(right.y - left.y) < left.height
     ]
     too_tight = [pair for pair in gaps if pair[1] < MIN_BADGE_GAP_PX]
     assert not too_tight, (
         f"JLPT badges are not separated: {sel.JLPT} gaps (px) {gaps}; "
-        f"required >= {MIN_BADGE_GAP_PX}px. Rendered text: "
-        f"{rendered.text(sel.HEADWORD)!r}"
+        f"required >= {MIN_BADGE_GAP_PX}px. Rendered levels: "
+        f"{rendered.texts(sel.SOURCE_LEVEL)!r}"
     )
 
 
 def test_missing_data_omits_its_row_without_placeholder(
     renderer, card, entry, styles_css
 ):
-    """A sparse point renders fewer rows, never invented filler."""
+    """A sparse point renders fewer rows, never invented filler.
+
+    The production card never repeats the headword (Yomitan renders it with
+    furigana above the card), so "the expression is present" is asserted on the
+    card root, not on a headword element the composer deliberately does not emit.
+    A structure row must still be omitted when no source supplies one, and no
+    placeholder filler may appear above the fold.
+    """
     rendered = renderer.render(card("sparse_minimal"), styles_css=styles_css)
-    assert rendered.exists(sel.EXPRESSION)
+    assert rendered.exists(sel.ROOT), "the card did not render at all"
     source = entry("sparse_minimal")
     has_structure = any(
         (point.get("structure") or "").strip() for point in source["contributions"]

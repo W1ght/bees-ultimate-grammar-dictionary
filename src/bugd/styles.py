@@ -850,6 +850,19 @@ STYLES_CSS = """\
   [data-sc-metarow] {
     gap: 0.25em 0.4em;
   }
+  /* Containment wins in a phone-width popup. `white-space: nowrap` keeps a short
+     grammar-point highlight whole in a wide popup so the reader's target never
+     splits mid-word, but in a ~320px popup a medium-length Japanese run (which
+     has no spaces to break on) can be wider than the whole card and then extends
+     it, forcing horizontal scroll. Round: `させてやっていただけませんか` measured 196px
+     inside a 320px popup and overhung by 1.5px. So at narrow width the highlight
+     is allowed to wrap — the same trade the composer already makes for a
+     sentence-length `[data-sc-hl-long]` — because a wrapped grammar point is
+     legible and an overflowing one is not. */
+  [data-sc-hl] {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
 
 /* --------------------------------------------------------- forced colors */

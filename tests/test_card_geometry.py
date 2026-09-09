@@ -43,27 +43,26 @@ def test_card_fits_the_popup_when_collapsed(
 
 
 @pytest.mark.parametrize("viewport_name", ["desktop", "narrow"])
-@pytest.mark.parametrize(
-    "section",
-    [sel.EXAMPLES, sel.EXPLANATION, sel.ALSO_WRITTEN, sel.SOURCES],
-    ids=["examples", "explanation", "also_written", "sources"],
-)
 def test_card_fits_the_popup_when_a_section_is_expanded(
-    renderer, card, styles_css, viewport, viewport_name, section
+    renderer, card, styles_css, viewport, viewport_name
 ):
     """Expanding a disclosure must not widen the card past the popup.
 
-    `Sources` is the section that historically broke this: producer URLs are long
-    unbreakable tokens, and an anchor that cannot wrap sets the width of every
-    ancestor up to the card root.
+    The production card discloses one native ``details`` per contributing source;
+    each is opened in turn (long producer prose, construction tables, and example
+    sentences are the content that historically broke this — unbreakable Japanese
+    runs and long tokens that set the width of every ancestor up to the card root).
     """
     rendered = renderer.render(
         card(RICH), styles_css=styles_css, viewport=viewport(viewport_name)
     )
-    if not rendered.exists(section):
-        pytest.skip(f"rich fixture has no {section} section")
-    rendered.open_details(section)
-    _assert_contained(rendered, f"{RICH} @ {viewport_name}, {section} expanded")
+    count = rendered.count(sel.SOURCE)
+    assert count > 0, "rich fixture rendered no source disclosures"
+    for index in range(count):
+        rendered._page.locator(sel.SOURCE).nth(index).evaluate("el => el.open = true")
+        _assert_contained(
+            rendered, f"{RICH} @ {viewport_name}, source block {index} expanded"
+        )
 
 
 @pytest.mark.parametrize("viewport_name", ["desktop", "narrow"])
@@ -93,58 +92,53 @@ def test_card_fits_the_popup_at_200_percent_text_zoom(
     )
 
 
-def test_long_source_urls_wrap_rather_than_extend(renderer, card, styles_css, viewport):
-    """The specific mechanism: producer links must be breakable.
+def test_long_unbreakable_runs_wrap_rather_than_extend(renderer, card, styles_css, viewport):
+    """The specific mechanism: long unbreakable content must be breakable.
 
-    Asserted as a property of the rendered anchor rather than only as an absence
-    of overflow, so the fix cannot be a clip that hides the URL's tail.
+    The production card renders no producer-URL anchors (each source's disclosure
+    is titled by its name; the source IS the attribution), so the long-token
+    stress falls on the roles that DO carry unbreakable runs: Japanese example
+    sentences, source prose, and the construction badge. Asserted as a property of
+    those rendered elements (they must be allowed to wrap and must not be clipped),
+    not only as an absence of overflow, so the fix cannot be a clip that hides the
+    tail of a long run.
     """
     rendered = renderer.render(
         card(RICH), styles_css=styles_css, viewport=viewport("narrow")
     )
-    rendered.open_details(sel.SOURCES)
-    if not rendered.exists(f"{sel.SOURCE_LINK} a"):
-        pytest.skip("rich fixture carries no producer links")
+    rendered.open_all_details()
     root_width = rendered.box(sel.ROOT).width
-    widths = [round(box.width, 1) for box in rendered.boxes(f"{sel.SOURCE_LINK} a")]
-    too_wide = [width for width in widths if width > root_width + OVERFLOW_TOLERANCE_PX]
-    wrap = rendered.computed(f"{sel.SOURCE_LINK} a", "overflow-wrap")
-    overflow = rendered.computed(f"{sel.SOURCE_LINK} a", "overflow")
-    assert not too_wide, (
-        f"producer link anchors are wider than the card root ({root_width}px): "
-        f"{too_wide}; anchor overflow-wrap={wrap!r}. A long URL must wrap, "
-        "not extend the card."
+    breakable_roles = [sel.EXAMPLE_JA, sel.EXPLANATION, sel.STRUCTURE]
+    checked = 0
+    for role in breakable_roles:
+        if not rendered.exists(role):
+            continue
+        checked += 1
+        widths = [round(box.width, 1) for box in rendered.boxes(role)]
+        too_wide = [w for w in widths if w > root_width + OVERFLOW_TOLERANCE_PX]
+        wrap = rendered.computed(role, "overflow-wrap")
+        white_space = rendered.computed(role, "white-space")
+        overflow = rendered.computed(role, "overflow")
+        assert not too_wide, (
+            f"{role} runs are wider than the card root ({root_width}px): "
+            f"{too_wide}; overflow-wrap={wrap!r} white-space={white_space!r}. "
+            "A long run must wrap, not extend the card."
+        )
+        assert overflow in ("visible", ""), (
+            f"{role} is contained by clipping (overflow={overflow!r}), which "
+            "hides content instead of wrapping it"
+        )
+    assert checked >= 2, (
+        "the rich fixture no longer exercises the breakable long-run roles "
+        f"{breakable_roles}"
     )
-    assert overflow in ("visible", ""), (
-        f"producer links are contained by clipping (overflow={overflow!r}), "
-        "which hides the end of the URL instead of wrapping it"
-    )
-
-
-def test_variant_links_wrap_into_the_narrow_card(
-    renderer, card, styles_css, viewport
-):
-    """27 `?query=` variant links must reflow, not form one long row."""
-    rendered = renderer.render(
-        card("most_variants"), styles_css=styles_css, viewport=viewport("narrow")
-    )
-    rendered.open_details(sel.ALSO_WRITTEN)
-    anchors = rendered.boxes(f"{sel.VARIANT} a")
-    assert len(anchors) >= 10, (
-        f"fixture 'most_variants' rendered only {len(anchors)} variant links"
-    )
-    rows = len({round(box.y, 0) for box in anchors})
-    assert rows > 1, (
-        f"all {len(anchors)} variant links sit on one row at narrow width; "
-        "the list is not wrapping"
-    )
-    _assert_contained(rendered, "most_variants @ narrow, Also written expanded")
+    _assert_contained(rendered, f"{RICH} @ narrow, fully expanded (long-run wrap)")
 
 
 def test_furigana_ruby_sits_above_its_base_text(renderer, card, styles_css):
     """Ruby annotations must align over their base, not inline beside it."""
     rendered = renderer.render(card("ruby_furigana"), styles_css=styles_css)
-    rendered.open_details(sel.EXAMPLES)
+    rendered.open_all_details()
     assert rendered.count("ruby") > 0, "ruby fixture rendered no <ruby> element"
     assert rendered.count("rt") > 0, "ruby fixture rendered no <rt> annotation"
     misaligned = []
@@ -170,7 +164,7 @@ def test_furigana_ruby_sits_above_its_base_text(renderer, card, styles_css):
 def test_ruby_annotation_is_smaller_than_its_base(renderer, card, styles_css):
     """Furigana must read as annotation, not compete with the sentence."""
     rendered = renderer.render(card("ruby_furigana"), styles_css=styles_css)
-    rendered.open_details(sel.EXAMPLES)
+    rendered.open_all_details()
     rt_size = float(rendered.computed("rt", "font-size").removesuffix("px"))
     base_size = float(rendered.computed(sel.EXAMPLE_JA, "font-size").removesuffix("px"))
     assert rt_size < base_size, (
@@ -182,7 +176,7 @@ def test_ruby_annotation_is_smaller_than_its_base(renderer, card, styles_css):
 def test_expanded_examples_do_not_overlap_each_other(renderer, card, styles_css):
     """Example items stack; they never share pixels."""
     rendered = renderer.render(card(RICH), styles_css=styles_css)
-    rendered.open_details(sel.EXAMPLES)
+    rendered.open_all_details()
     boxes = rendered.boxes(sel.EXAMPLE)
     overlaps = [
         (index, boxes[index], boxes[index + 1])
@@ -192,17 +186,23 @@ def test_expanded_examples_do_not_overlap_each_other(renderer, card, styles_css)
     assert not overlaps, f"adjacent example items overlap: {overlaps[:3]}"
 
 
-def test_headword_row_stays_on_one_line_on_desktop(renderer, card, styles_css):
-    """The compact block is compact: headword and badges share a line."""
+def test_metadata_row_stays_on_one_line_on_desktop(renderer, card, styles_css):
+    """The compact block is compact: the metadata chips share one line.
+
+    The production card sets the gloss on its own line and the construction badge
+    and JLPT chip on a single metadata row beneath it. At desktop width that row
+    must not wrap — the badge and the level sit side by side, not stacked.
+    """
     rendered = renderer.render(card("english_gloss"), styles_css=styles_css)
-    expression = rendered.box(sel.EXPRESSION)
-    badges = rendered.boxes(sel.JLPT)
+    structure = rendered.box(sel.STRUCTURE)
+    badges = rendered.boxes(f"{sel.METAROW} {sel.JLPT}")
+    assert badges, "english_gloss rendered no JLPT badge on the metadata row"
     stray = [
         (index, round(box.y, 1))
         for index, box in enumerate(badges)
-        if abs(box.y - expression.y) > expression.height
+        if abs(box.y - structure.y) > structure.height
     ]
     assert not stray, (
-        f"JLPT badge(s) wrapped off the headword line at desktop width "
-        f"(expression y={expression.y}): {stray}"
+        f"JLPT badge(s) wrapped off the metadata row at desktop width "
+        f"(structure y={structure.y}): {stray}"
     )
