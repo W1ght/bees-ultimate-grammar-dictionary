@@ -218,6 +218,35 @@ _PARALLEL_TAIL_MIN = 2
 _PATTERN_LINE = re.compile(
     r"^(?![０-９\d][）)])(?=[^。．！？!?]*$).*[＋].*$"
 )
+#: A wave-dash pattern-list line: one item of the producer's `〜`-notation list.
+#:
+#: edewakaru and nihongo_no_sensei publish cross-reference lists (the 「もの」シリーズ,
+#: the 「ばかり」まとめ, ...) with one grammar pattern per line, each opening with the
+#: corpus's WAVE DASH / FULLWIDTH TILDE placeholder:
+#:
+#:     〜たいものだ・〜てほしいものだ
+#:     〜たものだ
+#:     〜ないものだろうか
+#:     〜もの・〜んだもの
+#:
+#: The shared-tail rule above catches only the pairs whose tails happen to match
+#: (`ものだ` / `ものだ`); the rest have legitimately different tails and were glued
+#: into one run (`〜たものだ〜ないものだろうか〜ないものは〜ない〜もの・〜んだもの…`), which the
+#: UGD-08c beauty round filed twice on たい (findings 8, 11). This is the `〜`-list
+#: sibling of `_LIST_BREAK`'s numbered lists. Measured over the corpus: 750 runs of
+#: two or more such lines / 3,588 items across 665 fields (edewakaru 602 runs,
+#: nihongo_no_sensei 143, nihongo_net 5).
+#:
+#: The line must be NOTATION only -- open with the wave dash, carry no
+#: sentence-ending punctuation and no comma, and stay short -- so a prose sentence
+#: the producer soft-wrapped before an inline `〜X` reference is not mistaken for a
+#: list. The `・` intra-item variant separator (`〜もの・〜んだもの`) and `「」（）`
+#: readings are allowed inside the item; only `。！？、` disqualify it. Like
+#: `_PATTERN_LINE`, the break is kept only when BOTH adjacent lines are pattern
+#: lines, so a single reference following prose keeps wrapping as the prose it is.
+_PATTERN_LIST_LINE = re.compile(
+    r"^[\s\u3000]*[〜～](?=[^。．！？!?、，\n]*$).{0,40}$"
+)
 #: Sentinel standing in for a paragraph break while inline runs are collapsed.
 #: It must be a character `_WS` does not match and that cannot occur in source
 #: text: `\v` is in `_WS`, so using it silently ate every paragraph break.
@@ -292,6 +321,14 @@ def _join_soft_break(text: str) -> str:
             # Two adjacent construction patterns each own their line. Both sides
             # must be notation, so a pattern followed by an explanation sentence
             # still wraps as prose.
+            joiner = _PARA_SENTINEL
+        elif _PATTERN_LIST_LINE.match(before_line) and _PATTERN_LIST_LINE.match(
+            after_line
+        ):
+            # Two adjacent items of a `〜`-notation cross-reference list (the
+            # 「もの」シリーズ and its siblings). Both sides must be wave-dash pattern
+            # lines, so a single `〜X` reference the producer wrapped after a prose
+            # sentence still collapses as prose.
             joiner = _PARA_SENTINEL
         elif _LATIN_END.match(before) and _LATIN_OPEN.match(after):
             joiner = " "

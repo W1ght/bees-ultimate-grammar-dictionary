@@ -63,14 +63,27 @@ def run_extract(
     only: list[str] | None = None,
 ) -> dict[str, object]:
     """Run every registered extractor and write one artifact per source."""
-    from .sources import all_extractors, get_extractor
+    from .sources import all_extractors, discover_extractors, get_extractor
+
+    # Populate the registry by importing every source module. Without this the
+    # registry is empty (nothing imports the modules for the pipeline) and the
+    # stage writes zero artifacts while a stale data/extracted/*.json is silently
+    # reused by the build -- exactly the cached-pre-fix-text trap UGD-08c warns of.
+    discover_extractors()
 
     extracted_dir.mkdir(parents=True, exist_ok=True)
     classes = [get_extractor(name) for name in only] if only else all_extractors()
 
     written: dict[str, int] = {}
     for cls in classes:
-        result = cls(sources_dir / cls.name).extract()
+        source_dir = sources_dir / cls.name
+        if not only and not source_dir.is_dir():
+            # A registered source whose raw bytes have not been acquired into
+            # data/sources/<name>/ is simply not built yet -- skip it rather than
+            # failing the whole stage on a missing lock. An explicit `--source`
+            # request still runs so a typo or missing acquisition surfaces loudly.
+            continue
+        result = cls(source_dir).extract()
         payload = {
             "source": result.source,
             "label": cls.label or cls.name,

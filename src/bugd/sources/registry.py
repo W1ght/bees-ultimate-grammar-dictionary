@@ -40,4 +40,44 @@ def all_extractors() -> list[type[Extractor]]:
     return [_REGISTRY[name] for name in source_names()]
 
 
-__all__ = ["register_extractor", "get_extractor", "source_names", "all_extractors"]
+def discover_extractors() -> list[str]:
+    """Import every sibling source module so its `@register_extractor` runs.
+
+    The registry is populated as a side effect of importing each source module,
+    but nothing imports them for the pipeline -- `from .sources import
+    all_extractors` only executes `__init__`, which does not. So `run_extract`
+    saw an empty registry and wrote zero artifacts, and a build silently fell
+    back to whatever stale `data/extracted/*.json` was on disk. Walking the
+    package here makes the documented `extract` stage actually run every source,
+    which is what keeps a re-extract reproducible instead of packaging cached
+    pre-fix text.
+
+    A module that fails to import (an in-progress source that is not part of this
+    build) is skipped with its name recorded rather than aborting discovery, so
+    one broken scratch module cannot take the whole pipeline down.
+    """
+    import importlib
+    import pkgutil
+
+    from . import __path__ as _package_path
+
+    skipped: list[str] = []
+    for module in pkgutil.iter_modules(_package_path):
+        if module.name in {"base", "registry", "community", "yomitan_bank"}:
+            # base/registry are infrastructure; community and yomitan_bank are
+            # shared base classes that deliberately do not self-register.
+            continue
+        try:
+            importlib.import_module(f"{__name__.rsplit('.', 1)[0]}.{module.name}")
+        except Exception:  # pragma: no cover - a broken in-progress source module
+            skipped.append(module.name)
+    return skipped
+
+
+__all__ = [
+    "register_extractor",
+    "get_extractor",
+    "source_names",
+    "all_extractors",
+    "discover_extractors",
+]
