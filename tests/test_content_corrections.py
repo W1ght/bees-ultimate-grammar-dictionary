@@ -1,4 +1,4 @@
-"""Post-extraction content corrections (``bugd.corrections``).
+"""Post-extraction content corrections (``bugd.content_corrections``).
 
 Covers the disposition semantics and the fail-closed guards that keep a stale
 correction from silently doing nothing.

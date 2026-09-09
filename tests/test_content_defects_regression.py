@@ -22,7 +22,7 @@ import pathlib
 
 import pytest
 
-from bugd.corrections import Correction, apply_corrections, load_corrections
+from bugd.content_corrections import Correction, apply_corrections, load_corrections
 from bugd.model import Example, GrammarPoint
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
