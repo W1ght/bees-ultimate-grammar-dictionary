@@ -222,6 +222,46 @@ def test_stale_correction_fails_closed():
         apply_corrections(rows, corrections)
 
 
+def test_a_correction_for_a_source_outside_the_corpus_is_not_stale():
+    """Staleness is scoped to the sources the corpus actually carries.
+
+    Two real corpora are legitimately narrower than the overlay: a single-source
+    stage run (`--source dojg`), and the PUBLIC build, where the redistribution
+    filter removes eight of the ten sources. Raising there blocks the publish path
+    for a reason that says nothing about drift — the overlay simply describes rows
+    this corpus does not include.
+
+    Verified against the shipped overlay's actual shape: all eight corrections
+    target `dojg`, `edewakaru`, `nihongo_net`, `nihongo_no_sensei` — every one of
+    them excluded from the public artifact — so an unscoped gate makes
+    `make public` impossible.
+    """
+    rows = [_row("yokubi", "だ", "だ", None)]
+    corrections = [ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "t")]
+    out, applied = apply_corrections(rows, corrections)
+    assert applied == []
+    assert out == rows
+
+
+def test_the_gate_keeps_its_bite_on_every_source_in_the_corpus():
+    """Scoping must not become "ignore anything that does not match".
+
+    A correction whose source IS present but whose row is gone is exactly the
+    drift the gate exists for, and must still raise even when a second,
+    out-of-scope correction is present in the same overlay.
+    """
+    rows = [_row("dojg", "結構", "結構", "けっこう")]
+    corrections = [
+        ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "out of scope"),
+        ReadingCorrection("dojg", "無い点", "無い点", "x", "y", "drifted"),
+    ]
+    with pytest.raises(StaleCorrection, match="無い点") as caught:
+        apply_corrections(rows, corrections)
+    # Only the in-scope correction is reported, so the message names the real
+    # defect instead of burying it under out-of-scope noise.
+    assert [c.source for c in caught.value.unmatched] == ["dojg"]
+
+
 # --------------------------------------------------------------------------
 # end-to-end: corrections applied through the merge, keymap identity preserved
 # --------------------------------------------------------------------------
@@ -317,6 +357,47 @@ def test_unify_fails_closed_on_stale_correction():
 
     with pytest.raises(StaleCorrection):
         unify([("edewakaru", row)], keymap, {"edewakaru": "絵でわかる"}, corrections=corrections)
+
+
+def test_unify_scopes_staleness_to_the_sources_in_the_corpus():
+    """`unify` keeps its OWN copy of the staleness gate — scope both.
+
+    `bugd.unify` re-checks correction hits after contribution assembly, so
+    scoping `reading_corrections.apply_corrections` alone leaves the public build
+    failing at the merge stage instead. Both call sites are asserted, or the fix
+    is half-applied and only the second one is discovered at release time.
+    """
+    from bugd.unify import unify
+
+    row = _full_row("yokubi", "だ", "だ", None)
+    keymap = _unify_keymap([("yokubi", row, "だ")], [_point("だ", "だ", "だ")])
+    corrections = [ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "t")]
+
+    entries, _ = unify(
+        [("yokubi", row)], keymap, {"yokubi": "Yokubi"}, corrections=corrections
+    )
+    assert entries[0].contributions[0].reading is None
+
+
+def test_unify_still_fails_on_drift_within_a_present_source():
+    """Scoping must not disarm the gate for a source the corpus does carry."""
+    from bugd.unify import unify
+
+    row = _full_row("edewakaru", "込む", "込む", "こむ")  # already correct
+    keymap = _unify_keymap([("edewakaru", row, "込む")], [_point("込む", "込む", "込む")])
+    corrections = [
+        ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "out of scope"),
+        ReadingCorrection("edewakaru", "込む", "込む", "ごむ", "こむ", "drifted"),
+    ]
+
+    with pytest.raises(StaleCorrection) as caught:
+        unify(
+            [("edewakaru", row)],
+            keymap,
+            {"edewakaru": "絵でわかる"},
+            corrections=corrections,
+        )
+    assert [c.source for c in caught.value.unmatched] == ["edewakaru"]
 
 
 def test_unify_without_corrections_is_verbatim():

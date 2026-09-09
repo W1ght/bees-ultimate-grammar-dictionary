@@ -7,12 +7,17 @@ import pathlib
 import sys
 
 from . import unify
-from .jsonio import dump_json
+from .jsonio import MalformedPayload, dump_json
+from .publish_filter import filter_extracted
+from .reading_corrections import (
+    DEFAULT_CORRECTIONS_PATH as DEFAULT_READING_CORRECTIONS_PATH,
+)
 from .pipeline import (
     DEFAULT_BUILD_DIR,
     DEFAULT_DIST_DIR,
     DEFAULT_EXTRACTED_DIR,
     DEFAULT_MERGED_DIR,
+    DEFAULT_PUBLIC_EXTRACTED_DIR,
     DEFAULT_SOURCES_DIR,
     SchemaValidationError,
     run_build,
@@ -64,9 +69,36 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--revision", default=None, help="explicit YYYY.MM.DD[.N] revision")
     parser.add_argument("--source", action="append", dest="only", help="limit extract to a source")
+    parser.add_argument(
+        "--public-dir",
+        type=pathlib.Path,
+        default=DEFAULT_PUBLIC_EXTRACTED_DIR,
+        help="where `publish-filter` writes the redistributable-only corpus "
+        f"(default: {DEFAULT_PUBLIC_EXTRACTED_DIR})",
+    )
+    corrections = parser.add_mutually_exclusive_group()
+    corrections.add_argument(
+        "--reading-corrections",
+        type=pathlib.Path,
+        default=None,
+        dest="reading_corrections",
+        help="reading-correction overlay the merge applies "
+        f"(default: {DEFAULT_READING_CORRECTIONS_PATH})",
+    )
+    corrections.add_argument(
+        "--no-reading-corrections",
+        action="store_const",
+        const=False,
+        dest="reading_corrections",
+        help="merge with NO reading corrections. For a caller that builds a "
+        "deliberately isolated corpus the canonical overlay does not describe: "
+        "the overlay is keyed to a specific extraction and fails closed when a "
+        "correction matches nothing, so such a caller must DECLARE its narrower "
+        "corpus rather than the gate being weakened for everyone.",
+    )
 
     subparsers = parser.add_subparsers(dest="stage", required=True)
-    for stage in ("extract", "merge", "build", "validate", "all"):
+    for stage in ("extract", "merge", "build", "validate", "all", "publish-filter"):
         subparsers.add_parser(stage)
     return parser
 
@@ -74,6 +106,21 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     stage = args.stage
+
+    if stage == "publish-filter":
+        # The publish gate UGD-15 required: keep only records whose own
+        # provenance grants public redistribution, fail closed if that leaves
+        # nothing, and report every excluded source so the exclusion list can be
+        # checked against LICENSING.md rather than trusted.
+        try:
+            manifest = filter_extracted(
+                extracted_dir=args.extracted_dir, public_dir=args.public_dir
+            )
+        except MalformedPayload as error:
+            print(f"[publish-filter] {error}", file=sys.stderr)
+            return 1
+        print(f"[publish-filter] {dump_json(manifest)}")
+        return 0
 
     if stage in ("extract", "all"):
         result = run_extract(
@@ -108,6 +155,16 @@ def main(argv: list[str] | None = None) -> int:
                         merged_dir=args.merged_dir,
                         keymap_path=args.keymap,
                         unified_path=args.unified,
+                        # `None` disables the overlay; the default (flag absent)
+                        # keeps the canonical one.
+                        corrections_path=(
+                            None
+                            if args.reading_corrections is False
+                            else (
+                                args.reading_corrections
+                                or DEFAULT_READING_CORRECTIONS_PATH
+                            )
+                        ),
                     )
                 )
             )

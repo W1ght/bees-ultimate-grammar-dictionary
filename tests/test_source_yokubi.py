@@ -222,6 +222,25 @@ def test_extractor_attributes_every_point_to_yokubi(extracted):
         assert point.provenance["lessonUrl"].startswith("https://yoku.bi/")
 
 
+def test_extractor_emits_the_redistribution_flag_it_documents(extracted):
+    """CC BY 4.0 permits redistribution, so every record must SAY so.
+
+    The module docstring always claimed `redistributable: True`, but the key was
+    never written: every Yokubi record shipped `provenance.redistributable` absent
+    (reading `None`), while its sibling CC BY 4.0 source NINJAL emitted it. That
+    is invisible until something reads the flag — and the publish-time filter
+    (`bugd.publish_filter`, which requires the value to be exactly `True`) would
+    have excluded the one source whose licence is verified in its own locked
+    bytes, from the public artifact, silently.
+
+    Asserted per record rather than on `stats`, because the filter reads the
+    record.
+    """
+    for point in extracted.points:
+        assert point.provenance["redistributable"] is True
+    assert extracted.stats["redistributable"] is True
+
+
 def test_extractor_records_the_pinned_revision_on_every_point(extracted):
     for point in extracted.points:
         assert point.provenance["revision"] == "0" * 40

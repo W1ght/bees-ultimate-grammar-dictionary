@@ -51,6 +51,12 @@ YOKUBI_ATTRIBUTION = "Yokubi — The Common Grammar Guide (https://yoku.bi), CC 
 
 LICENCE = "CC-BY-4.0"
 LICENSE_TIER = "A"
+#: CC BY 4.0 permits redistribution with attribution. The module docstring has
+#: always claimed this flag; it was never actually emitted, so every Yokubi
+#: record read `redistributable: None` and a publish-time filter reading the
+#: documented key would have excluded the one source whose licence is verified
+#: in its own locked bytes.
+REDISTRIBUTABLE = True
 SITE = "https://yoku.bi/"
 
 #: Reason recorded for a lesson Yokubi teaches without declaring a Japanese
@@ -385,6 +391,7 @@ class YokubiExtractor(Extractor):
                             "attribution": YOKUBI_ATTRIBUTION,
                             "licence": LICENCE,
                             "licenseTier": LICENSE_TIER,
+                            "redistributable": REDISTRIBUTABLE,
                             "revision": revision,
                         },
                     )
@@ -413,6 +420,7 @@ class YokubiExtractor(Extractor):
             "attribution": YOKUBI_ATTRIBUTION,
             "licence": LICENCE,
             "licenseTier": LICENSE_TIER,
+            "redistributable": REDISTRIBUTABLE,
             "revision": revision,
         }
         result = ExtractResult(

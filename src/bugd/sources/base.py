@@ -28,9 +28,26 @@ def write_points_jsonl(
     Deterministic by construction: records are written in the order the extractor
     emitted them, one canonical JSON object per line, so two runs over identical
     locked bytes produce identical files.
+
+    The records are put through the SAME normalization `ExtractResult.__post_init__`
+    applies — recorded per-source corrections, then row identity — because callers
+    write this sidecar *before* constructing the result. Without that, the sidecar
+    disagrees with the corpus the pipeline actually carries: `row_uid` shipped
+    empty for 2,924 of 7,896 rows (UGD-16 D1), and a corrected field shipped its
+    pre-correction value while every count, digest and determinism check still
+    looked right, because the divergence was uniform. Only a round-trip equality
+    assertion catches this class, so `tests/test_source_*.py` assert exactly that.
+
+    Idempotent: `correct_point` is identity for a record with no correction entry,
+    and `assign_row_uids` preserves an already-assigned uid, so the result
+    constructor re-running both on these same points changes nothing.
     """
     from ..jsonio import dump_json
     from ..pipeline import point_to_json
+
+    if points:
+        source = points[0].source
+        points = assign_row_uids(source, [correct_point(point) for point in points])
 
     path = pathlib.Path(input_dir) / JSONL_NAME
     path.write_text(

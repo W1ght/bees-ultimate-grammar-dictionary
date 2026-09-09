@@ -395,8 +395,8 @@ STYLES_CSS = """\
    the same source name. */
 
 /* This source's own JLPT level, stated where that source speaks. 158 entries
-   carry a cross-source disagreement (`あまり` is N2 to 絵でわかる日本語 and N3 to
-   毎日のんびり日本語教師) and the compact block is deliberately one line, so the
+   carry a cross-source disagreement (one source says N2 where another says N3
+   for the same point) and the compact block is deliberately one line, so the
    disagreement is disclosed per source rather than reconciled.
 
    It is PROVENANCE about the claim below it, not the claim itself: subordinate in

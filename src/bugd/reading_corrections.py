@@ -124,13 +124,26 @@ def apply_corrections(
     """Return ``(rows, applied)`` with each correction's ``from`` swapped to ``to``.
 
     Rows are matched byte-exact on ``(source, source_id, expression, reading)``.
-    Every correction must match at least one row or ``StaleCorrection`` is
-    raised. ``applied`` is a per-row audit trail (one entry per row rewritten).
-    Rows are shallow-copied before mutation so the caller's input is untouched.
+    ``applied`` is a per-row audit trail (one entry per row rewritten). Rows are
+    shallow-copied before mutation so the caller's input is untouched.
+
+    **Staleness is scoped to the sources the corpus actually carries.** A
+    correction for a source that contributes NO rows here is not stale -- the
+    corpus simply does not include that source, which happens legitimately in two
+    real cases: a single-source stage run (`--source dojg`), and the public build,
+    where the redistribution filter removes eight of the ten sources. Raising
+    there would make a narrower corpus fail for the wrong reason.
+
+    A correction whose source IS present but whose row is not remains
+    ``StaleCorrection``, which is the case the gate exists for: the extraction it
+    was written against drifted, or the correction is obsolete. So the gate keeps
+    its full bite on every source in scope, and only stops speaking about sources
+    that are out of scope.
     """
     by_key: dict[tuple[str, str, str, str], ReadingCorrection] = {
         c.match_key: c for c in corrections
     }
+    present_sources = {source for source, _ in rows}
     matched: set[tuple[str, str, str, str]] = set()
     applied: list[dict[str, object]] = []
     out: list[tuple[str, dict[str, object]]] = []
@@ -158,7 +171,11 @@ def apply_corrections(
                 "to": correction.to_reading,
             }
         )
-    unmatched = [c for c in corrections if c.match_key not in matched]
+    unmatched = [
+        c
+        for c in corrections
+        if c.match_key not in matched and c.source in present_sources
+    ]
     if unmatched:
         raise StaleCorrection(unmatched)
     return out, applied

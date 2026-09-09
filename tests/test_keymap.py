@@ -691,11 +691,22 @@ def corpus() -> dict[str, object]:
 @pytestmark_corpus
 def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     report = corpus["report"]
-    # 5936 = 4972 + UGD-03's 964 Bunpro rows. Attributed by building the keymap
-    # with and without data/extracted/bunpro.json: the row delta is exactly 964
-    # and no other corpus counter moves.
-    assert report["corpus"]["rows"] == 5936
+    # 7896 = the 5936 six-source basis plus the four extractors UGD-16 convergence
+    # landed: bunpou 534 + imabi 494 + ninjal_bunkei 800 + yokubi 132 = 1960.
+    #
+    # Attributed by rebuilding the keymap through the real production builder over
+    # the same artifacts with those four `data/extracted/*.json` REMOVED: that
+    # basis reports rows=5936 / substantiveRows=4696 exactly, reproducing this
+    # pin's previous values, and the row-identity SETS
+    # `{(source, sourceId, substanceHash)}` differ by exactly +1960 with **0 lost**
+    # (gained per source: bunpou 534, imabi 494, ninjal_bunkei 800, yokubi 132).
+    # So the growth is additive and nothing that was assigned stopped being
+    # assigned.
+    assert report["corpus"]["rows"] == 7896
     assert report["corpus"]["declaredAliasRows"] == 1167
+    # Unmoved by convergence: the four new sources contribute no declared alias
+    # and no duplicate of an existing row.
+    #
     # 73, from 71 and originally 63: UGD-14 stopped shipping the edewakaru
     # blog-ring footer (`にほんブログ村` / `――以上――` / `語学(日本語)ランキング`) as
     # content. Those lines were the ONLY difference between otherwise
@@ -706,25 +717,30 @@ def test_corpus_counts_are_pinned(corpus: dict[str, object]) -> None:
     # previously dropped a marker only when it was the WHOLE line and therefore
     # missed 29 occurrences the producer had concatenated onto the end of real
     # text (`…イラストリスト】語学(日本語)ランキングにほんブログ村にほんブログ村――以上――`).
-    # Four of those were still visible in the packaged banks (`だって`, `なんで`,
-    # `みたいな`, `みたいに`).
-    #
-    # Verified, not rubber-stamped: distinct (expression, meaning, structure,
-    # explanation, examples) signatures for edewakaru went 1179 -> 1177 -- exactly
-    # the two extra collapses -- while contributor identities stayed at 3259 with
-    # ZERO lost, so no record was dropped. The two affected canonical points
-    # (`にくい#sense6`, `やすい#sense6`) were ordinal renumbering: their nihongo_net
-    # contributor now sits in `#sense5`.
     assert report["corpus"]["duplicateRowsCollapsed"] == 73
-    # 4696 = 3732 + UGD-03's 964 Bunpro rows: none of Bunpro's records is a
-    # declared alias or a duplicate of an existing row, so every one arrives as a
-    # substantive row. The Tier A/B numbers below move with it because Bunpro
-    # populates buckets that were previously single-source.
-    assert report["corpus"]["substantiveRows"] == 4696
-    assert report["tierA"]["bijectiveBuckets"] == 697
-    assert report["tierA"]["refusedCollisionBuckets"] == 188
-    assert report["tierB"]["accepted"] == 54
-    assert len(corpus["points"]) == 3179
+    # 6656 = 4696 + the same 1960. Every one of the four new sources' rows arrives
+    # substantive, matching the per-source set diff above.
+    assert report["corpus"]["substantiveRows"] == 6656
+    # Tier A grows with the corpus: 676 -> 821 bijective, 201 -> 217 refused.
+    assert report["tierA"]["bijectiveBuckets"] == 821
+    assert report["tierA"]["refusedCollisionBuckets"] == 217
+    # Tier B DECREASED, 57 -> 49, which a totals-only repin would have hidden. Set
+    # diff of `acceptedLinks`: +1 gained (`に応じて`↔`に応じた`) and 8 LOST --
+    # `こととなると`↔`ことになると`, `ずに済む`↔`ないで済む`, `せいで`↔`せいか`,
+    # `ともなく`↔`ともなしに`, `につれて`↔`につれ`, `によって`↔`により`,
+    # `によると`↔`によれば`, `ようがない`↔`ようもない`.
+    #
+    # This is the known Tier-B fold-guard behaviour, not lost content: a newly
+    # landed source adds a row to one side's bucket, so the pairwise guards
+    # (`generic-hub`, `one-way-different-reading`) that keep an ambiguous fold from
+    # merging two distinct points now fire. Verified that nothing became
+    # unreachable: all 16 forms are still separate `point` entries in the emitted
+    # keymap, and 0 contributor identities disappeared. The pair is split across
+    # two cards rather than folded onto one -- a findability regression worth its
+    # own card, NOT a conservation failure, and it cannot touch the public
+    # artifact, whose corpus (ninjal_bunkei + yokubi) has 0 Tier-B links at all.
+    assert report["tierB"]["accepted"] == 49
+    assert len(corpus["points"]) == 4481
 
 
 @pytestmark_corpus

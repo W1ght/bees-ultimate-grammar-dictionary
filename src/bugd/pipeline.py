@@ -33,6 +33,10 @@ from .validate import term_entry_count, validate_zip
 
 DEFAULT_SOURCES_DIR = pathlib.Path("data/sources")
 DEFAULT_EXTRACTED_DIR = pathlib.Path("data/extracted")
+#: Redistributable-only projection of `data/extracted/`, written by the publish
+#: filter. A SEPARATE directory on purpose: the local build legitimately uses all
+#: ten acquired sources, so filtering must never edit the full corpus in place.
+DEFAULT_PUBLIC_EXTRACTED_DIR = pathlib.Path("data/extracted-public")
 DEFAULT_MERGED_DIR = pathlib.Path("data/merged")
 DEFAULT_BUILD_DIR = pathlib.Path("build")
 #: Distribution directory holding the one publishable artifact. A ZIP only

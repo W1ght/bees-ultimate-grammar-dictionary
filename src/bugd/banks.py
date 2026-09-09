@@ -659,6 +659,148 @@ def _split_dialogue_prose(content: object) -> object:
     return content
 
 
+#: The kana/kanji a new Japanese sentence starts with. Hiragana, katakana, the
+#: CJK ideograph block and its compatibility ideographs. A `。`/`！`/`？` followed
+#: by one of these opens a fresh sentence; followed by anything else (a space, an
+#: ASCII/fullwidth paren opening an English or Chinese gloss, a digit, `→`, the
+#: end of the field) it does not, and no break is inserted.
+_SENTENCE_START = (
+    "\u3040-\u309f"  # hiragana
+    "\u30a0-\u30ff"  # katakana
+    "\u3400-\u9fff"  # CJK unified ideographs
+    "\uf900-\ufaff"  # CJK compatibility ideographs
+)
+
+#: A sentence boundary WITHIN a single example: a sentence-final mark immediately
+#: followed by the start of a new Japanese sentence. The lookbehind keeps the mark
+#: attached to the sentence it closes; the lookahead requires a Japanese
+#: sentence-start so a `。` before an English/Chinese translation, before `→`, or
+#: at the very end of the field is never a boundary.
+_EXAMPLE_SENTENCE_BOUNDARY = re.compile(
+    rf"(?<=[。！？])(?=[{_SENTENCE_START}])"
+)
+
+#: A Japanese sentence-start on its own, for testing the leading character of the
+#: NEXT fragment when a boundary fell at a fragment edge.
+_EXAMPLE_SENTENCE_HEAD = re.compile(rf"[{_SENTENCE_START}]")
+
+#: Quote / gloss delimiters. A `。` INSIDE an open quotation (`「…。…」`, `『…。…』`)
+#: is part of the quoted speech, not a boundary between two example sentences, so
+#: a split is suppressed while any quote is open. The same suppression applies
+#: inside a parenthetical (`（…）`, `(...)`) because sources append a translation
+#: or aside there -- a Chinese gloss `（内容有误。非常抱歉。）` uses CJK punctuation
+#: that would otherwise be mis-split into the surrounding Japanese. Depth is
+#: tracked across highlight/ruby fragments because a quote can span a highlighted
+#: span.
+_QUOTE_OPEN = "「『（("
+_QUOTE_CLOSE = "」』）)"
+
+
+def _first_text_char(node: object) -> str:
+    """The first leaf character under a node (or the string itself), or ``""``."""
+    if isinstance(node, str):
+        return node[:1]
+    if isinstance(node, dict):
+        return _first_text_char(node.get("content"))
+    if isinstance(node, list):
+        for item in node:
+            char = _first_text_char(item)
+            if char:
+                return char
+    return ""
+
+
+def _split_example_sentences(content: object) -> object:
+    """Break a multi-sentence example field onto separate lines.
+
+    Mirrors `_split_dialogue_turns`, but for the declarative case: a single
+    example string that packs several sentences (`…だよ。とっても辛いんだ。いつも…`)
+    renders as one run-on line under the example's `white-space: pre-line` CSS.
+    Each internal sentence boundary becomes a `br`, exactly as a dialogue turn
+    boundary does, so the sentences stack as separate lines.
+
+    Applied AFTER dialogue splitting and only to STRING fragments, so highlight
+    and ruby nodes pass through untouched -- a boundary that would fall inside a
+    highlighted span is therefore never emitted. A boundary that falls at a
+    fragment EDGE (`…じゃん。` followed by a highlight span opening the next
+    sentence) still breaks, because the `br` goes BETWEEN the fragments, not
+    inside the node. Quote depth is carried across fragments so a `。` inside
+    `「…」` or a `（…）` gloss is left intact. Deterministic.
+    """
+    parts: list[object] = content if isinstance(content, list) else [content]
+    out: list[object] = []
+    depth = 0
+    #: Whether the last emitted character was a sentence-final mark sitting
+    #: outside any quote -- i.e. a break is owed if the next fragment opens a new
+    #: Japanese sentence.
+    pending_boundary = False
+    for part in parts:
+        if not isinstance(part, str):
+            # A highlight/ruby node passes through, but if the previous fragment
+            # ended a sentence and this node opens a new one, break before it.
+            if pending_boundary and _EXAMPLE_SENTENCE_HEAD.match(
+                _first_text_char(part) or ""
+            ):
+                out.append({"tag": "br"})
+            out.append(part)
+            pending_boundary = False
+            # A node can change quote depth (a highlight may carry `「`/`）`).
+            for char in _node_text(part):
+                if char in _QUOTE_OPEN:
+                    depth += 1
+                elif char in _QUOTE_CLOSE and depth:
+                    depth -= 1
+            continue
+        pieces: list[str] = []
+        buffer: list[str] = []
+        index = 0
+        length = len(part)
+        # A boundary owed from the previous fragment: break before this string if
+        # it opens a new Japanese sentence.
+        if pending_boundary and _EXAMPLE_SENTENCE_HEAD.match(part):
+            out.append({"tag": "br"})
+        pending_boundary = False
+        while index < length:
+            char = part[index]
+            buffer.append(char)
+            if char in _QUOTE_OPEN:
+                depth += 1
+            elif char in _QUOTE_CLOSE and depth:
+                depth -= 1
+            if depth == 0 and char in "。！？":
+                if index + 1 < length:
+                    # A new Japanese sentence follows in THIS fragment: break here.
+                    if _EXAMPLE_SENTENCE_BOUNDARY.match(part, index + 1):
+                        pieces.append("".join(buffer))
+                        buffer = []
+                else:
+                    # The mark ends the fragment: a break may be owed to whatever
+                    # fragment comes next (a highlight span, the next string).
+                    pending_boundary = True
+            index += 1
+        if buffer:
+            pieces.append("".join(buffer))
+        for position, piece in enumerate(pieces):
+            if position:
+                out.append({"tag": "br"})
+            if piece:
+                out.append(piece)
+    if not out:
+        return content
+    return out[0] if len(out) == 1 else out
+
+
+def _node_text(node: object) -> str:
+    """All leaf characters under a node, for quote-depth tracking."""
+    if isinstance(node, str):
+        return node
+    if isinstance(node, dict):
+        return _node_text(node.get("content"))
+    if isinstance(node, list):
+        return "".join(_node_text(item) for item in node)
+    return ""
+
+
 def _examples_section(point: GrammarPoint) -> dict | None:
     """A closed `details` block of this source's example sentences."""
     items: list[dict] = []
@@ -671,8 +813,10 @@ def _examples_section(point: GrammarPoint) -> dict | None:
                 "tag": "span",
                 "data": {"ja": ""},
                 "lang": "ja",
-                "content": _split_dialogue_turns(
-                    _highlight_sentence(japanese, example.highlight)
+                "content": _split_example_sentences(
+                    _split_dialogue_turns(
+                        _highlight_sentence(japanese, example.highlight)
+                    )
                 ),
             }
         ]

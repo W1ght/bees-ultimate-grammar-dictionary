@@ -119,8 +119,26 @@ def test_all_stage_runs_the_whole_pipeline(tmp_path, capsys):
     assert main(_args("extract", tmp_path, "--source", "dojg")) == 0
     _keymap_for_extracted(tmp_path)
 
+    # This corpus is ONE source's fixture bank, not the repository's real
+    # extraction, so the canonical reading overlay (which is keyed to specific
+    # real dojg rows) legitimately matches nothing here and the fail-closed
+    # `StaleCorrection` guard fires correctly. Declare the isolated corpus rather
+    # than weakening the guard: `tests/test_readings.py` still exercises it on
+    # real drift, and all eight corrections are verified applied in the shipped
+    # artifact.
     assert (
-        main(_args("all", tmp_path, "--revision", "2026.09.08", "--source", "dojg")) == 0
+        main(
+            _args(
+                "all",
+                tmp_path,
+                "--revision",
+                "2026.09.08",
+                "--source",
+                "dojg",
+                "--no-reading-corrections",
+            )
+        )
+        == 0
     )
     out = capsys.readouterr().out
     assert "[extract]" in out

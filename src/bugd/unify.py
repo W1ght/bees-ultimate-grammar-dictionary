@@ -761,11 +761,25 @@ def unify(
             )
         )
 
-    # Fail closed on a stale overlay: every declared correction must have matched
-    # at least one assembled contribution. A correction that matched nothing means
-    # the extraction drifted or the correction is obsolete; ignoring it would let
-    # the overlay claim to fix a defect it no longer touches.
-    unmatched = [c for c in corrections if c.match_key not in correction_hits]
+    # Fail closed on a stale overlay: every declared correction whose SOURCE is in
+    # this corpus must have matched at least one assembled contribution. A
+    # correction that matched nothing while its source is present means the
+    # extraction drifted or the correction is obsolete; ignoring it would let the
+    # overlay claim to fix a defect it no longer touches.
+    #
+    # A correction for a source that contributes NO rows here is out of scope, not
+    # stale. Two real corpora are legitimately narrower than the overlay: a
+    # single-source stage run, and the PUBLIC build, where the redistribution
+    # filter (`bugd.publish_filter`) removes eight of the ten sources. Failing
+    # there would block the publish path for the wrong reason while telling us
+    # nothing about drift. Scoping keeps the gate's full bite on every source
+    # actually in the corpus.
+    present_sources = {source for source, _ in rows}
+    unmatched = [
+        c
+        for c in corrections
+        if c.match_key not in correction_hits and c.source in present_sources
+    ]
     if unmatched:
         raise StaleCorrection(unmatched)
 
