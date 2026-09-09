@@ -1,113 +1,76 @@
 # Bee's Ultimate Grammar Dictionary
 
-**ONE** unified Yomitan Japanese grammar dictionary. Every grammar source is
-merged into a single installable ZIP with unified lookup and per-source
-attribution — not a shelf of separate dictionaries to switch between.
+**ONE** unified Yomitan Japanese grammar dictionary. Ten grammar sources are
+merged into a single dictionary with unified lookup and per-source attribution —
+not a shelf of separate dictionaries to switch between.
 
-Local-only unless explicitly asked to publish. The authoritative source
-inventory, deck field lists, and model policy live in [`SOURCES.md`](SOURCES.md).
+This repository ships the **full, reproducible build pipeline** (extractors,
+cross-source keymap, merge policy, Yomitan bank generation, fail-closed schema +
+contract gates, and tests). You build the installable dictionary locally from
+your own copies of the sources.
 
-> **Status: pipeline skeleton.** The stage seams, packaging, reproducibility, and
-> schema validation are complete and exercised end to end. No source logic exists
-> yet — `make build` currently emits a valid, empty-corpus ZIP. Later cards fill
-> in extractors, merge policy, and card composition.
+## What it is
+
+A `make all` run extracts every source, folds cross-source orthographic/reading
+variants into one canonical lookup key, merges contributions with per-source
+attribution (conflicting JLPT levels and differing formation rules are preserved,
+not silently reconciled), and emits a Yomitan structured-content term-bank ZIP.
+Byte-reproducible: two builds over identical inputs produce an identical ZIP.
+
+## Sources (per-source extracted points)
+
+| Source | Points | Redistributable |
+|---|--:|---|
+| 文法 (bunpou, personal Anki deck) | 534 | No — personal deck |
+| Bunpro Grammar Reference | 964 | No — proprietary/paid |
+| DoJG (日本語文法辞典 / community) | 535 | No — Japan Times, no license |
+| どんなときどう使う (donna_toki) | 1,082 | No — license unclear |
+| 絵でわかる (edewakaru) | 1,248 | No — license unclear |
+| 日本語net (nihongo_net) | 628 | No — license unclear |
+| 日本語の先生 (nihongo_no_sensei) | 1,479 | No — license unclear |
+| IMABI (imabi.net) | 494 | Yes — author-approved, with attribution |
+| NINJAL 日本語文型データベース (ninjal_bunkei) | 800 | Yes — CC BY 4.0 |
+| Yokubi — The Common Grammar Guide | 132 | Yes — CC BY 4.0 |
+| **Total** | **7,896** | merges to **4,632** unified entries |
+
+## Licensing / redistribution
+
+See [`LICENSING.md`](LICENSING.md) for the full audit. Only IMABI, Yokubi, and
+NINJAL ninjal_bunkei are publicly redistributable (CC BY 4.0 / author-approved,
+with attribution). The other sources are the user's personal deck, a proprietary
+service, or published content without a redistribution license.
+
+**Therefore this public repository ships build automation and source code only —
+no extracted source content and no pre-built dictionary ZIP.** Each record's
+`redistributable` flag is authoritative and fail-closed; a publish step must
+filter to `redistributable: true` records (or obtain rights clearance) before
+distributing any built artifact. Build the dictionary yourself from sources you
+are licensed to use.
 
 ## Quick start
 
 ```sh
 uv venv --python 3.11 .venv && source .venv/bin/activate
-uv pip install jsonschema==4.26.0 pytest==9.1.1
+uv pip install -e . jsonschema==4.26.0 pytest==9.1.1
 npm install                 # adm-zip + ajv, for the independent Node validator
 
-make build                  # -> build/bees-ultimate-grammar-dictionary.zip
-make validate               # pinned official Yomitan schema validation (Python)
-make validate-node          # the same artifact, independently (Node + ajv)
-make test
+# place your own acquired sources under data/sources/<name>/ per SOURCES.md, then:
+make all                    # extract -> keymap -> merge -> build -> validate
+make test                   # full test suite
+make validate-node          # independent Node/ajv schema check of the built ZIP
 ```
 
-`npm run build` / `validate` / `test` are thin wrappers over the same make
-targets, so `PYTHONPATH` and the reproducibility environment are defined once.
-
-## Pipeline
-
-Four stages, each reading only the previous stage's on-disk artifact, so any
-stage is re-runnable alone and every intermediate is inspectable:
-
-| Stage | Target | Reads | Writes |
-| --- | --- | --- | --- |
-| extract | `make extract` | `data/sources/<source>/` | `data/extracted/<source>.json` |
-| merge | `make merge` | `data/extracted/*.json` | `data/merged/corpus.json` |
-| build | `make build` | `data/merged/corpus.json` | `build/bees-ultimate-grammar-dictionary.zip` |
-| validate | `make validate` | the built ZIP | pass/fail |
-
-`make all` runs the chain; `make clean` removes generated trees.
+The built dictionary lands at `dist/bees-ultimate-grammar-dictionary.zip`
+(import into Yomitan). The pipeline stages, the frozen entry-shape contract
+(`docs/contract/`), and the convergence report (`docs/plans/`) document how the
+artifact is produced and verified.
 
 ## Layout
 
-```
-src/bugd/
-  model.py       GrammarPoint / Example — the one interchange record
-  sources/       per-source extractors + normalizers (one module per source)
-    base.py      Extractor contract + digest-locked source reading
-    registry.py  the only place the pipeline learns which sources exist
-  merge.py       cross-source unification into MergedEntry
-  banks.py       the ONLY stage that knows Yomitan structured content
-  styles.py      the dictionary's scoped styles.css
-  package.py     reproducible ZIP packaging
-  validate.py    pinned-schema validation (Python)
-  pipeline.py    stage orchestration
-  cli.py         python3 -m bugd.cli <stage>
-scripts/validate_yomitan.mjs   independent Node/ajv validation of the same ZIP
-schemas/         pinned official Yomitan schemas
-data/            acquired + generated trees (see data/README.md)
-tests/
-```
-
-Adding a source touches `src/bugd/sources/` only. The merge stage never learns
-source-specific rules and the bank generator never learns about sources at all.
-
-## Design constraints the skeleton enforces
-
-- **One canonical surface.** A single structured term entry per grammar point.
-  No native `kanji_bank` — validation rejects it, because Yomitan routes kanji
-  clicks to a fixed unstyleable renderer that would supersede the card.
-- **Progressive disclosure.** Compact above the fold; the tail (complete
-  examples, per-source explanations, nuance, provenance) goes in native closed
-  `details` sections. Extractors preserve the whole tail — truncation is a
-  rendering decision in `banks.py`, never in an extractor.
-- **Per-source attribution.** `source` is mandatory on every record and survives
-  merging; `tag_bank_1.json` is generated from the per-source labels.
-- **No invented content.** No LLM-generated meanings, mnemonics, etymology, or
-  machine translation as dictionary fact. Source fields that *are* AI-generated
-  (the `AI…` fields of the 文法 deck) are carried in a segregated
-  `ai_generated` mapping and may only surface behind an explicitly labelled
-  disclosure.
-- **Fail closed.** A digest or byte-count mismatch on a locked source input
-  aborts the build rather than shipping a quietly degraded corpus. Malformed
-  payloads raise `MalformedPayload`; nothing is silently coerced.
-- **Byte-reproducible artifacts.** Fixed member timestamps, permissions, sorted
-  member order, canonical JSON, `PYTHONHASHSEED=0`, UTC, `LC_ALL=C.UTF-8`. Two
-  builds of the same corpus produce identical bytes (verified in the suite).
-- **Bounded bank shards.** At most 1,000 ordered entries per `term_bank_N.json`
-  so constrained (Android) imports advance bank by bank.
-
-## Pinned Yomitan schemas
-
-`schemas/` holds the official schemas from
-[yomidevs/yomitan](https://github.com/yomidevs/yomitan) tag **26.8.24.0**,
-verified byte-identical to that tagged checkout. Their sha256 digests are
-asserted in `tests/test_schemas_pinned.py`, so a silent schema swap fails the
-suite. Validation runs twice against the same pinned bytes — once in Python
-(`bugd.validate`) and once in Node/ajv (`scripts/validate_yomitan.mjs`) — so a
-bug in one implementation is caught by the other.
-
-Note the schema pins `isUpdatable` to `const: true` *and* makes it depend on both
-`indexUrl` and `downloadUrl`. A local-only index therefore omits all three;
-`build_index` only emits them together.
-
-## Host note
-
-`/usr/bin/node` on this machine is an empty directory shadowing the real
-interpreter. GNU make execs single-word recipes directly (bypassing shell
-resolution) and hits it, so the Makefile resolves `NODE` via
-`command -v node`. Do not replace `$(NODE)` with a bare `node`.
+- `src/bugd/` — extractors (`sources/`), keymap, merge (`unify.py`), bank
+  generation (`banks.py`), corrections overlays.
+- `scripts/` — keymap build/audit, acquisition, validators, run-on/beauty checks.
+- `docs/contract/` — the frozen Yomitan term-bank entry-shape contract + JSON
+  Schema (2020-12) + golden entries + `validate.py` gate.
+- `tests/` — unit + corpus + pipeline tests.
+- `SOURCES.md` — source inventory, deck field lists, model policy.
