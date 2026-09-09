@@ -31,10 +31,10 @@ export SOURCE_DATE_EPOCH := 0
 
 ZIP := build/bees-ultimate-grammar-dictionary.zip
 
-.PHONY: all extract keymap merge build validate validate-node test clean help
+.PHONY: all extract keymap merge build validate validate-node test scan-polarity clean help
 
 help:
-	@printf 'targets: extract keymap merge build validate validate-node test all clean\n'
+	@printf 'targets: extract keymap merge build validate validate-node test scan-polarity all clean\n'
 
 extract:
 	$(PY) -m bugd.cli extract
@@ -66,6 +66,12 @@ validate-node:
 
 test:
 	$(PY) -m pytest -q
+
+# Corpus scan for the UGD-11c-A polarity-flipped-headword property: after
+# extraction, no 〜ある headword may contradict its own (negative) reading.
+# Reads data/extracted, so run `make extract` first.
+scan-polarity:
+	$(PY) scripts/scan_polarity_flips.py
 
 all: extract keymap merge build validate
 

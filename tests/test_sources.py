@@ -160,12 +160,14 @@ def test_the_registry_discovers_every_source_in_a_fresh_interpreter():
     assert discovered, "importing the pipeline must leave the registry populated"
 
     # Every concrete extractor module on disk must be represented. `community`
-    # (the shared bank base class) and `yomitan_bank` (the bank reader) are
-    # infrastructure: they are imported but register nothing, which is correct.
+    # (the shared bank base class), `yomitan_bank` (the bank reader) and
+    # `polarity_repair` (the shared headword-polarity fix-up) are infrastructure:
+    # they are imported but register nothing, which is correct.
     expected = {
         path.stem
         for path in (REPO / "src/bugd/sources").glob("*.py")
-        if path.stem not in {"__init__", "base", "registry", "community", "yomitan_bank"}
+        if path.stem
+        not in {"__init__", "base", "registry", "community", "yomitan_bank", "polarity_repair"}
     }
     assert expected, "expected concrete source modules to be present"
     assert set(discovered) == expected, f"expected {sorted(expected)}, discovered {discovered}"
