@@ -24,6 +24,7 @@ import re
 
 from ..jsonio import MalformedPayload, dump_json
 from ..model import Example, GrammarPoint
+from ..source_corrections import correct_point
 from .base import Extractor, ExtractResult, load_source_lock
 from .yomitan_bank import TermRow, read_term_bank
 
@@ -183,6 +184,11 @@ class CommunityBankExtractor(Extractor):
             if point is None:
                 skipped += 1
                 continue
+            # Apply any recorded per-source data correction (UGD-11d-A). Identity
+            # for every record with no correction entry, so unaffected points
+            # stay byte-identical; corrections are keyed by (source, source_id)
+            # and fail closed if their target string has drifted.
+            point = correct_point(point)
             points.append(point)
 
         points = self.finalize(points)
