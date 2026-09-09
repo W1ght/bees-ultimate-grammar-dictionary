@@ -371,6 +371,74 @@ def test_prose_keeps_the_break_before_a_list_enumerator():
     assert html_to_content("about\n2 volumes") == "about 2 volumes"
 
 
+def test_prose_keeps_the_break_between_wave_dash_pattern_list_items():
+    """A `〜`-notation cross-reference list is one item per line, not a run-on.
+
+    UGD-08c filed the 「もの」シリーズ list twice on たい (findings 8, 11): the source
+    ships one pattern per line, each opening with the corpus's WAVE DASH, and
+    `_paragraphize` soft-joined them into `〜たものだ〜ないものだろうか〜ないものは〜ない…`.
+    This is the `〜`-list sibling of `_LIST_BREAK`'s numbered lists. Measured over
+    the corpus: 750 runs of two or more such lines / 3,588 items / 665 fields.
+
+    The rule fires only when BOTH adjacent lines are wave-dash pattern notation, so
+    a single `〜X` reference the producer wrapped after a prose sentence is spared.
+    """
+    from bugd.richtext import html_to_content
+
+    # The reported もの-series list: every adjacent pattern-line pair keeps its break.
+    assert html_to_content(
+        "〜たものだ\n〜ないものだろうか\n〜もの・〜んだもの\n〜ものか"
+    ) == "〜たものだ\n〜ないものだろうか\n〜もの・〜んだもの\n〜ものか"
+    # The fullwidth tilde spelling of the placeholder is the same list shape.
+    assert html_to_content("～ものなら\n～ものの") == "～ものなら\n～ものの"
+
+    # A single reference the producer wrapped AFTER a prose sentence still
+    # collapses: the first line is not a pattern-list line, so the both-sides guard
+    # spares it and Japanese joins with nothing.
+    assert html_to_content("この文型は\n〜くらいと似ています") == "この文型は〜くらいと似ています"
+    # Inline references inside one sentence are one line and untouched.
+    assert (
+        html_to_content("ほとんどの文型は「〜ものなら」「〜もので」のように決まっています。")
+        == "ほとんどの文型は「〜ものなら」「〜もので」のように決まっています。"
+    )
+    # A wave-opening line that ends in sentence punctuation is NOT a pattern-list
+    # item (the `！` disqualifies it), so the pattern-list rule does not fire; the
+    # break is decided by the ordinary sentence-end rule, which keeps it.
+    assert html_to_content("〜だこと！\nと言います") == "〜だこと！\nと言います"
+    # Two wave-opening prose sentences (both end in 。) are not pattern-list items,
+    # so the pattern-list rule does not glue-or-split them; the sentence-end rule
+    # keeps each on its own line.
+    assert html_to_content("〜ごとし。\n〜ごとく。") == "〜ごとし。\n〜ごとく。"
+
+
+def test_prose_keeps_the_break_between_stem_sharing_parallel_examples():
+    """Consecutive example sentences that restart a shared stem stay separate.
+
+    edewakaru writes some ［例］ runs as parallel example sentences varying one slot
+    of a shared opening, each split further into node-lines so the next example's
+    first node is exactly the stem the previous one opened with. Neither sentence
+    ends in punctuation, so `_paragraphize` Japanese-joined them into one run
+    (`…計画を実行した彼は法律に反する計画を実行した`) -- the sole residual run-on the UGD-08c
+    gate still flagged on に反して after the first three fixes.
+
+    A soft wrap whose NEXT line is a >=3-char Japanese leading prefix of the
+    CURRENT (fully-joined) line is a fresh parallel example, so the break survives.
+    """
+    from bugd.richtext import html_to_content
+
+    # The reported に反して parallel set: each variant restarts `彼は法律`.
+    assert html_to_content(
+        "彼は法律\nに反して、計画を実行した\n彼は法律\nに反する計画を実行した"
+    ) == "彼は法律に反して、計画を実行した\n彼は法律に反する計画を実行した"
+
+    # An ordinary single sentence wrapped mid-way still joins: the continuation is
+    # NOT a leading prefix of the sentence so far.
+    assert html_to_content("友達を待っている\n間、音楽を聞いた") == "友達を待っている間、音楽を聞いた"
+    # A two-character shared opening (a bare particle `私は`) is below the stem
+    # floor, so two unrelated sentences are not split apart.
+    assert html_to_content("私は学生\nですが働いています") == "私は学生ですが働いています"
+
+
 def test_prose_paragraph_sentinel_cannot_be_smuggled_in_by_a_source():
     """The break sentinel must not be forgeable from source bytes."""
     from bugd.richtext import html_to_content
@@ -957,6 +1025,78 @@ def test_the_in_prose_example_run_ends_at_the_producers_closing_remark():
     assert _ends_example_run("「くらい」がつく文型はたくさんありますので、復習をしておきましょう😀")
     assert _ends_example_run("N１を受ける人はしっかりと覚えておきましょう😊")
     assert _ends_example_run("一緒に覚えておきましょう")
+
+
+def test_the_example_run_stays_boxed_across_its_whole_set():
+    """Every specimen of one ［例］ run gets the box, not just the first.
+
+    UGD-08c filed inconsistent boxing three times (findings 3, 6, 7): on あまり and
+    くらい some example runs sat in the tinted well and others rendered as plain
+    prose. Three producer shapes closed the run early:
+
+    * the FIRST content line ends like a sentence (`差し支えなければ…ですか？`), so the
+      run closed on its own opening line -- 69 runs / 62 edewakaru fields;
+    * a `【「X」は動詞】` per-example annotation between two circled examples read as a
+      section heading and closed the run -- 89 occurrences / 27 fields;
+    * enumerator-less parallel example sentences (`学校まで、どのくらいかかるの？`) each end
+      in `？`, so `_EXAMPLE_RUN_CLOSER` dropped the whole set.
+
+    The property: within one run, every specimen, its `→` derivation and its
+    per-example `【…】` annotation carry `inlineExample`, and only the producer's
+    genuine closing remark / section heading falls outside.
+    """
+    from bugd.banks import _ends_example_run, _paragraphs
+
+    # 3c: the first content line is a specimen even when it ends like a sentence.
+    assert _ends_example_run("差し支えなければ、お名前を教えていただけますか？", is_first=True) is False
+    # But the same line as a NON-first boundary followed by a heading still closes.
+    assert _ends_example_run(
+        "「くらい」の用法はたくさんあります。", next_line="【関連記事】"
+    ) is True
+
+    # 3b: a bracketed annotation followed by another example item keeps the run open;
+    # a real section heading followed by prose closes it.
+    assert _ends_example_run("【「持つ」は動詞】", next_line="②この本はあまりおもしろくない") is False
+    assert _ends_example_run("【関連文型】", next_line="「あまり」はN５の文型です") is True
+
+    # 3c: a parallel example variant sharing a leading stem with its neighbour is
+    # not the closing remark; the LAST variant is kept via the previous-line stem.
+    assert _ends_example_run(
+        "学校まで、どのくらいかかるの？", next_line="学校まで、どれくらいかかるの？"
+    ) is False
+    assert _ends_example_run(
+        "学校まで、何時間くらいかかるの？",
+        prev_line="学校まで、どれくらいかかるの？",
+        next_line="「〜くらい」には、いくつかの用法があります😉",
+    ) is False
+    # A closing remark that merely ends like a sentence and shares no stem closes.
+    assert _ends_example_run(
+        "「〜くらい」には、いくつかの用法があります😉",
+        prev_line="学校まで、何時間くらいかかるの？",
+        next_line="【関連記事】",
+    ) is True
+
+    # End to end through _paragraphs: the enumerator-less parallel set is fully boxed
+    # and the closing remark plus headings fall outside.
+    nodes = _paragraphs(
+        "「〜くらい」は「だいたい〜」という意味です。\n"
+        "［例］\n"
+        "学校まで、どのくらいかかるの？\n"
+        "学校まで、どれくらいかかるの？\n"
+        "学校まで、何時間くらいかかるの？\n"
+        "「〜くらい」には、いくつかの用法がありますので復習しておきましょう😉\n"
+        "【関連記事】"
+    )
+    roles = [tuple(n.get("data") or {}) for n in nodes]
+    assert roles == [
+        (),                  # the lead-in prose
+        ("exampleLabel",),   # ［例］
+        ("inlineExample",),  # 学校まで … どの
+        ("inlineExample",),  # 学校まで … どれ
+        ("inlineExample",),  # 学校まで … 何時間  <- previously fell out of the box
+        (),                  # the producer's closing remark
+        ("proseHeading",),   # 【関連記事】
+    ]
 
 
 def test_a_producer_section_marker_before_the_first_speaker_is_not_a_turn():

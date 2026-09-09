@@ -651,3 +651,50 @@ def test_ninjal_member_name_recovers_cp932_names_the_utf8_flag_missed():
         if is_mojibake(point.source_id) or is_mojibake(str(point.provenance["sourceFile"]))
     ]
     assert bad == [], f"mojibake identities leaked: {bad[:5]}"
+
+
+def test_edewakaru_keeps_a_paraphrase_that_opens_with_a_bold_span():
+    """A `→` rephrasing whose first word is bold lands the arrow alone on its line.
+
+    `read_term_bank` puts every glossary node on its own line, so when edewakaru's
+    `→` paraphrase opens with a bold grammar-point span the arrow is left on its own
+    line (`…泣いてしまった` / `→` / `とても` / …). The old parser only opened a
+    rephrasing when text sat on the arrow's own line, so a bare `→` was dropped and
+    the paraphrase words fused onto the specimen:
+    `嬉しさのあまり泣いてしまったとても嬉しいので泣いてしまった` -- the run-on UGD-08c filed on
+    あまり and に反して (findings 1, 2, 4, 5, 13) and the clipped `→たばこは高いし 体に悪いし、`
+    (findings 9, 12). Measured over edewakaru: 158 arrow-alone lines / 61 fields.
+
+    The property: the specimen and its paraphrase are separated by `\\n→`, the
+    paraphrase carries its full text, and no source characters are lost.
+    """
+    from bugd.sources.edewakaru import _numbered_examples
+
+    # The arrow sits alone on its line; the paraphrase words follow it. Emulates the
+    # node-per-line flattening of `のあまり`/`とても`/`ので` bold spans.
+    body = "\n".join([
+        "①嬉しさ", "のあまり", "泣いてしまった",
+        "→", "とても", "嬉しい", "ので", "泣いてしまった",
+    ])
+    examples = _numbered_examples(body, highlights=("のあまり",))
+    assert len(examples) == 1
+    # The specimen keeps its own text; the paraphrase is a separate `→` line with
+    # its COMPLETE text -- not truncated at the first bold span, not fused on.
+    assert examples[0].japanese == "嬉しさのあまり泣いてしまった\n→とても嬉しいので泣いてしまった"
+
+    # A `→` that DOES carry its own text still works exactly as before.
+    same_line = "\n".join(["①予想に反して難しくなかった", "→予想とは違って難しくなかった"])
+    assert _numbered_examples(same_line, ())[0].japanese == (
+        "予想に反して難しくなかった\n→予想とは違って難しくなかった"
+    )
+
+    # Two circled examples, the second's paraphrase also arrow-alone: both split.
+    two = "\n".join([
+        "①急いだ", "あまり", "スマホを忘れた", "→", "とても", "急いだので", "スマホを忘れた",
+        "②きれいな", "あまり", "感動した", "→", "とても", "きれいだったので", "感動した",
+    ])
+    got = _numbered_examples(two, ())
+    assert [e.japanese for e in got] == [
+        "急いだあまりスマホを忘れた\n→とても急いだのでスマホを忘れた",
+        "きれいなあまり感動した\n→とてもきれいだったので感動した",
+    ]

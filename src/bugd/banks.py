@@ -707,6 +707,12 @@ _EXAMPLE_RUN_HEADING = re.compile(r"^[\s\u3000]*[【〈][^】〉]{1,24}[】〉][
 #: (`「だって」は理由を…`) must stay body text.
 _PROSE_HEADING = re.compile(r"^[\s\u3000]*[【〈［\[]([^】〉］\]]{1,24})[】〉］\]][\s\u3000]*$")
 _EXAMPLE_ITEM = re.compile(r"^[\s\u3000]*(?:[①-⑳❶-❿]|[１-９][）)]|[→⇒➡＝=])")
+#: A Japanese-script character, for the parallel-example-lead test below.
+_JA_CHAR = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]")
+#: Minimum shared leading Japanese run marking two enumerator-less example lines
+#: as parallel variants of one sentence. At two characters a shared opening
+#: particle (`私は…` / `私も…`) would pair unrelated sentences.
+_EXAMPLE_LEAD_MIN = 3
 #: The producer's closing remark is a full sentence, and it is not an example line.
 #: `。`/`！`/`？` covers most, but edewakaru habitually signs off with a polite verb
 #: ending and an emoji instead of any punctuation at all
@@ -753,24 +759,80 @@ def _recurring_bracketed_labels(lines: list[str]) -> frozenset[str]:
     return frozenset(text for text, n in counts.items() if n > 1)
 
 
-def _ends_example_run(line: str, recurring: frozenset[str] = frozenset()) -> bool:
+def _shares_example_lead(before: str, after: str) -> bool:
+    """Do two adjacent enumerator-less example sentences share a leading stem?
+
+    edewakaru writes some ［例］ runs as parallel variants of one sentence with no
+    circled digit and no `→`, differing only in the slot around the grammar point:
+
+        学校まで、どのくらいかかるの？
+        学校まで、どれくらいかかるの？
+        学校まで、何時間くらいかかるの？
+
+    Every one ends in `？`, so `_EXAMPLE_RUN_CLOSER` reads the first as the
+    producer's closing remark and drops the whole set out of the tinted box — the
+    inconsistent-boxing defect the UGD-08c round filed on くらい (findings 6, 7). A
+    real closing remark does not share a leading run with the next line, so a
+    shared Japanese stem is the discriminator. Measured over edewakaru: 65 adjacent
+    line pairs share a stem of three or more Japanese characters and none is a pair
+    of prose remarks.
+
+    The shared run must be Japanese script (not shared trailing punctuation) and at
+    least three characters, so two unrelated sentences that merely open with the
+    same particle do not pair.
+    """
+    shared = 0
+    limit = min(len(before), len(after))
+    while shared < limit and before[shared] == after[shared] and _JA_CHAR.match(before[shared]):
+        shared += 1
+    return shared >= _EXAMPLE_LEAD_MIN
+
+
+def _ends_example_run(
+    line: str,
+    recurring: frozenset[str] = frozenset(),
+    *,
+    next_line: str = "",
+    prev_line: str = "",
+    is_first: bool = False,
+) -> bool:
     """Does this prose line end the producer's ［例］ run?
 
     `recurring` carries the bracketed labels that repeat within the same field
     (see `_recurring_bracketed_labels`); those are per-example classifiers and
     must keep the run OPEN, or every specimen after the first loses its box.
+
+    `is_first` marks the first content line after the ［例］ marker. The producer
+    never opens a run with its closing remark, so that line is always a specimen
+    even when it ends like a sentence (`差し支えなければ、お名前を教えていただけますか？`).
+    Without this the enumerator-less runs closed on their own first line and the
+    whole set fell out of the box (UGD-08c findings 6, 7; 69 runs / 62 fields).
+
+    `next_line` lets a boundary look one line ahead so the run survives two shapes
+    that continue it:
+
+    * a `【…】` / `［…］` label immediately followed by another example item is a
+      per-example annotation, not a section heading — it classifies the specimen
+      above it and the run goes on (89 occurrences / 27 fields);
+    * an enumerator-less example sentence followed by a parallel variant that
+      shares its leading stem is one of a set, not a closing remark.
     """
+    if is_first:
+        return False
     if line.strip() in recurring:
         return False
-    if _EXAMPLE_RUN_HEADING.match(line):
-        return True
-    # ANY bracketed section heading ends the run, not only a 【…】 one. The
-    # narrower check let `［説明］` and `［「〜ようだ」の形］` stay inside the tinted
-    # block, where they came out carrying an example role AND a heading role at
-    # once -- caught by verify_round10_fixes.py against the packaged bytes on 3
-    # entries (ないものだ, ものだ, ようだ). The producer's own ［例］ marker is
-    # excluded: it OPENS a run and is handled before this call.
-    if _PROSE_HEADING.match(line) and not _INLINE_EXAMPLE_MARKER.match(line):
+    # A bracketed line that is immediately followed by another example item is a
+    # per-example annotation (`【「持つ」は動詞】` before `②…`), not a section heading:
+    # it classifies the specimen above it and the run continues. A real section
+    # heading (`【関連文型】`) is followed by prose or by the field's end. This covers
+    # both the 【…】/〈…〉 shape and any other bracketed heading.
+    is_bracket_heading = bool(
+        _EXAMPLE_RUN_HEADING.match(line)
+        or (_PROSE_HEADING.match(line) and not _INLINE_EXAMPLE_MARKER.match(line))
+    )
+    if is_bracket_heading:
+        if next_line and _EXAMPLE_ITEM.match(next_line):
+            return False
         return True
     if _EXAMPLE_ITEM.match(line):
         return False
@@ -779,7 +841,18 @@ def _ends_example_run(line: str, recurring: frozenset[str] = frozenset()) -> boo
     # a two-speaker exchange and orphan the `夫：` reply outside the block.
     if _OPENS_WITH_SPEAKER.match(line):
         return False
-    return bool(_EXAMPLE_RUN_CLOSER.search(line))
+    if _EXAMPLE_RUN_CLOSER.search(line):
+        # A sentence-ending line that shares a leading stem with the previous or the
+        # next line is one of a set of parallel example variants, not the closing
+        # remark. The previous-line test keeps the LAST variant of a set boxed even
+        # though the line after it is the real closing remark.
+        stripped = line.strip()
+        if next_line and _shares_example_lead(stripped, next_line.strip()):
+            return False
+        if prev_line and _shares_example_lead(stripped, prev_line.strip()):
+            return False
+        return True
+    return False
 
 
 #: A bracketed label at the START of a prose line, with content following it on
@@ -929,6 +1002,7 @@ def _paragraphs(content: object) -> object:
             return _split_dialogue_prose(content)
         out: list[object] = []
         in_example = False
+        example_first = False
         recurring = _recurring_bracketed_labels(raw_parts)
 
         def following(index: int) -> str:
@@ -942,6 +1016,17 @@ def _paragraphs(content: object) -> object:
                     return later
             return ""
 
+        def preceding(index: int) -> str:
+            """The previous non-blank line, or '' at the start of the field.
+
+            `_ends_example_run` uses it to keep the LAST variant of a parallel
+            example set boxed even though the line after it is the closing remark.
+            """
+            for earlier in reversed(raw_parts[:index]):
+                if earlier.strip():
+                    return earlier
+            return ""
+
         for position, part in enumerate(raw_parts):
             if not part.strip():
                 in_example = False
@@ -949,16 +1034,25 @@ def _paragraphs(content: object) -> object:
             if _INLINE_EXAMPLE_MARKER.match(part):
                 # The marker is a heading for the run, not an example itself.
                 in_example = True
+                example_first = True
                 out.append({"tag": "div", "data": {"exampleLabel": ""}, "content": part.strip()})
                 continue
-            if in_example and _ends_example_run(part, recurring):
+            if in_example and _ends_example_run(
+                part,
+                recurring,
+                next_line=following(position),
+                prev_line=preceding(position),
+                is_first=example_first,
+            ):
                 # The producer's closing remark or the next section heading. It is
                 # prose, so it must fall OUTSIDE the tinted block.
                 in_example = False
+                example_first = False
                 out.append(_prose_paragraph(part, following(position)))
                 continue
             node = _prose_paragraph(part, following(position))
             if in_example:
+                example_first = False
                 if part.strip() in recurring:
                     # A repeated bracketed label inside a run classifies the
                     # specimen ABOVE it, so it is an annotation, not a section
