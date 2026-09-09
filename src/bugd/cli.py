@@ -6,6 +6,7 @@ import argparse
 import pathlib
 import sys
 
+from . import unify
 from .jsonio import dump_json
 from .pipeline import (
     DEFAULT_BUILD_DIR,
@@ -28,6 +29,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--sources-dir", type=pathlib.Path, default=DEFAULT_SOURCES_DIR)
     parser.add_argument("--extracted-dir", type=pathlib.Path, default=DEFAULT_EXTRACTED_DIR)
     parser.add_argument("--merged-dir", type=pathlib.Path, default=DEFAULT_MERGED_DIR)
+    parser.add_argument(
+        "--keymap",
+        type=pathlib.Path,
+        default=None,
+        help="cross-source keymap the merge resolves rows through "
+        f"(default: {unify.DEFAULT_KEYMAP_PATH})",
+    )
+    parser.add_argument(
+        "--unified",
+        type=pathlib.Path,
+        default=None,
+        help="where to write the unified dataset "
+        f"(default: {unify.DEFAULT_UNIFIED_PATH})",
+    )
     parser.add_argument("--build-dir", type=pathlib.Path, default=DEFAULT_BUILD_DIR)
     parser.add_argument("--dist-dir", type=pathlib.Path, default=DEFAULT_DIST_DIR)
     parser.add_argument(
@@ -60,13 +75,32 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[extract] {dump_json(result)}")
 
     if stage in ("merge", "all"):
-        if not args.extracted_dir.is_dir():
+        extracted = (
+            sorted(args.extracted_dir.glob("*.json"))
+            if args.extracted_dir.is_dir()
+            else []
+        )
+        if not extracted:
+            # Nothing to merge is not an error while sources are still landing:
+            # the build stage emits a valid empty-corpus ZIP so packaging and
+            # schema validation stay exercisable. Requiring a keymap here would
+            # make `all` fail on an empty corpus for the wrong reason.
             print(
                 f"[merge] no extracted artifacts at {args.extracted_dir}; nothing to merge",
                 file=sys.stderr,
             )
         else:
-            print(f"[merge] {dump_json(run_merge(extracted_dir=args.extracted_dir, merged_dir=args.merged_dir))}")
+            print(
+                "[merge] "
+                + dump_json(
+                    run_merge(
+                        extracted_dir=args.extracted_dir,
+                        merged_dir=args.merged_dir,
+                        keymap_path=args.keymap,
+                        unified_path=args.unified,
+                    )
+                )
+            )
 
     if stage in ("build", "all"):
         try:

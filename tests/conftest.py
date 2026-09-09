@@ -2,11 +2,57 @@
 
 from __future__ import annotations
 
+import hashlib
+import pathlib
 import re
 
 import pytest
 
 from bugd.model import Example, GrammarPoint
+
+#: Committed/derived artifacts a test must never write. A stage test that lets a
+#: default output path through does not fail -- it silently overwrites the real
+#: artifact, and the next audit reports a corpus of zero. This happened: the
+#: `all` CLI stage ran with an empty extracted dir but the DEFAULT unified path
+#: and truncated `data/merge/unified.jsonl` to 0 bytes, which then presented as
+#: "the packaged bank has 2,441 entries but the dataset has 0".
+_GUARDED_ARTIFACTS = (
+    "data/merge/unified.jsonl",
+    "data/merge/unified.stats.json",
+    "data/merge/keymap.json",
+    "data/merged/corpus.json",
+)
+
+_REPO = pathlib.Path(__file__).resolve().parents[1]
+
+
+def _fingerprint() -> dict[str, str | None]:
+    prints: dict[str, str | None] = {}
+    for name in _GUARDED_ARTIFACTS:
+        path = _REPO / name
+        prints[name] = (
+            hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+        )
+    return prints
+
+
+@pytest.fixture(autouse=True, scope="session")
+def _repository_artifacts_are_read_only():
+    """Fail the run if the suite mutated a repository artifact.
+
+    Session-scoped so it costs four hashes per run, and asserted at teardown so
+    the failure names the artifact rather than surfacing as a mystified audit.
+    """
+    before = _fingerprint()
+    yield
+    after = _fingerprint()
+    changed = sorted(name for name in before if before[name] != after[name])
+    assert not changed, (
+        "the test suite wrote repository artifacts: "
+        + ", ".join(changed)
+        + ". Redirect every stage output under tmp_path (--unified/--keymap/"
+        "--merged-dir or the run_* keyword arguments)."
+    )
 
 
 def resolve_space_tokens(css: str) -> str:
