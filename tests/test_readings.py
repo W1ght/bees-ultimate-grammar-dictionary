@@ -101,6 +101,61 @@ def test_gate_is_structural_not_semantic():
     assert not is_plausible_reading("結構", "けっか")
 
 
+def test_alternative_spellings_are_judged_separately():
+    """`A・B` in one headword lists alternative spellings of ONE pattern.
+
+    NINJAL, bunpou, bunpro and IMABI write alternatives this way (43 kanji-bearing
+    rows), so the reading renders EACH alternative rather than the concatenation.
+    Judged as one string the gate sees two kanji runs (即, 則) and only one そく in
+    the reading, and rejected four correct NINJAL readings.
+
+    Asserted as the property, and paired with the refusal below so the relaxation
+    cannot become "ignore everything after a separator".
+    """
+    assert is_plausible_reading("～に即して・～に則して", "～にそくして")
+    assert is_plausible_reading("～反面・～半面", "～はんめん")
+    assert is_plausible_reading("～に即し・～に則し", "～にそくし")
+
+
+def test_one_bad_alternative_still_fails_the_gate():
+    """EVERY alternative must be renderable, not merely one of them.
+
+    The counterpart to the test above: a relaxation that accepted a headword as
+    soon as any single alternative matched would let a genuine defect through on
+    the back of its correct sibling.
+    """
+    assert not is_plausible_reading("～に即して・～結構して", "～にそくして")
+
+
+def test_a_descriptive_label_headword_is_out_of_the_gates_scope():
+    """One NINJAL row is a LABEL, not a headword, and the gate cannot judge it.
+
+    `可能の形 （～れる・～られる）` with reading `～れる（かのう）` is prose describing the
+    potential form, with the two suffixes parenthesised; the reading inverts that
+    and parenthesises the sense tag instead. The label 可能の形 reads かのうのかたち,
+    so no kana-coverage rule can relate the two sides -- stripping parentheses
+    leaves the bare label and makes it worse, not better.
+
+    Pinned as a KNOWN LIMIT rather than papered over: the gate still reports it, and
+    `scripts/audit_readings.py` carries it as a documented allowance. Inventing a
+    rule that passed this row would have to accept an arbitrary label/reading pair
+    and would stop catching real defects. Measured scope: exactly 1 of 1,513
+    kanji-bearing rows.
+    """
+    assert not is_plausible_reading("可能の形 （～れる・～られる）", "～れる（かのう）")
+
+
+def test_annotation_handling_does_not_disarm_the_structural_gate():
+    """Stripping annotation must not turn the gate into a rubber stamp.
+
+    A structurally impossible reading is still rejected when it carries a
+    parenthetical tag or an alternative separator, so the notation handling cannot
+    be used to launder a defect past the gate.
+    """
+    assert not is_plausible_reading("結構（かんじ）", "けっか")
+    assert not is_plausible_reading("結構・結構", "けっか")
+
+
 def test_has_kanji():
     assert has_kanji("結構")
     assert has_kanji("の下で")
@@ -176,6 +231,11 @@ def _full_row(source, source_id, expression, reading):
     return {
         "source": source,
         "source_id": source_id,
+        # UGD-11d-C made row identity mandatory at the merge boundary: `source_id`
+        # is not unique, so a contribution built from an unstamped row would not be
+        # traceable to a single source record. `ExtractResult` stamps it for real
+        # rows; a fixture must supply it or `unify` fails closed.
+        "row_uid": f"{source}:1",
         "expression": expression,
         "variants": [],
         "reading": reading,
