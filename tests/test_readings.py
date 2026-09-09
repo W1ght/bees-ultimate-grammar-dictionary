@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pytest
 
-from bugd.corrections import (
+from bugd.reading_corrections import (
     ReadingCorrection,
     StaleCorrection,
     apply_corrections,

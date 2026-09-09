@@ -20,7 +20,10 @@ import shutil
 from . import DICTIONARY_SLUG, YOMITAN_SCHEMA_REVISION
 from . import unify
 from .banks import build_banks, build_index, build_tag_bank
-from .corrections import DEFAULT_CORRECTIONS_PATH, load_corrections
+from .reading_corrections import (
+    DEFAULT_CORRECTIONS_PATH as DEFAULT_READING_CORRECTIONS_PATH,
+)
+from .reading_corrections import load_corrections as load_reading_corrections
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
 from .merge import MergedEntry, merge_points
 from .model import Example, GrammarPoint
@@ -141,7 +144,7 @@ def run_merge(
     merged_dir: pathlib.Path = DEFAULT_MERGED_DIR,
     keymap_path: pathlib.Path | None = None,
     unified_path: pathlib.Path | None = None,
-    corrections_path: pathlib.Path | None = DEFAULT_CORRECTIONS_PATH,
+    corrections_path: pathlib.Path | None = DEFAULT_READING_CORRECTIONS_PATH,
 ) -> dict[str, object]:
     """Merge every extracted artifact into the one unified corpus.
 
@@ -168,7 +171,9 @@ def run_merge(
     rows, labels = unify.load_extracted(extracted_dir)
     keymap = unify.load_keymap(keymap_path)
     corrections = (
-        load_corrections(corrections_path) if corrections_path is not None else []
+        load_reading_corrections(corrections_path)
+        if corrections_path is not None
+        else []
     )
     unified, stats = unify.unify(rows, keymap, labels, corrections=corrections)
 

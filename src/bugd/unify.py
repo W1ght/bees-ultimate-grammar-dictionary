@@ -71,7 +71,7 @@ import typing
 from collections import Counter, defaultdict
 
 from .jsonio import MalformedPayload, content_hash, dump_json, load_json
-from .corrections import ReadingCorrection, StaleCorrection
+from .reading_corrections import ReadingCorrection, StaleCorrection
 from .keymap import alias_targets, is_declared_alias, substance_hash
 from .model import JLPT_LEVELS, Example, GrammarPoint, row_uid_matches
 
