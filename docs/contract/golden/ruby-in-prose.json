@@ -978,27 +978,6 @@
               "sourceBlock": ""
             },
             "tag": "details"
-          },
-          {
-            "content": [
-              {
-                "content": "Sources",
-                "tag": "summary"
-              },
-              {
-                "content": [
-                  {
-                    "content": "Contributed by どんなときどう使う 日本語表現文型辞典, 絵でわかる日本語, 日本語NET JLPT文法解説まとめ.",
-                    "data": {
-                      "attribution": ""
-                    },
-                    "tag": "div"
-                  }
-                ],
-                "tag": "div"
-              }
-            ],
-            "tag": "details"
           }
         ],
         "data": {

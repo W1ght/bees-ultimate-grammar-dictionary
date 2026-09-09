@@ -29,27 +29,6 @@
               "crossref": ""
             },
             "tag": "div"
-          },
-          {
-            "content": [
-              {
-                "content": "Sources",
-                "tag": "summary"
-              },
-              {
-                "content": [
-                  {
-                    "content": "Contributed by どんなときどう使う 日本語表現文型辞典.",
-                    "data": {
-                      "attribution": ""
-                    },
-                    "tag": "div"
-                  }
-                ],
-                "tag": "div"
-              }
-            ],
-            "tag": "details"
           }
         ],
         "data": {

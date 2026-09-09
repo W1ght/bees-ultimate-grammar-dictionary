@@ -73,6 +73,32 @@ EXAMPLES_PER_SOURCE = 6
 #: summaries with repeated identical labels is not a readable card.
 SENSES_PER_SOURCE = 4
 
+#: Per-source explanation language, used to order the per-source disclosures on a
+#: card: English-explaining dictionaries first, then monolingual Japanese ones.
+#: A learner reading in English wants the English sources up top; the Japanese
+#: monolingual sources follow for depth. Keyed on `Extractor.name` (stable), and
+#: DECLARED rather than re-derived per entry so the ordering is deterministic and
+#: the build stays byte-reproducible. Verified against the extracted corpus:
+#: bunpro/dojg/donna_toki/imabi/yokubi explain in English; the rest are Japanese.
+_SOURCE_EXPLANATION_LANG: dict[str, str] = {
+    "bunpro": "en",
+    "dojg": "en",
+    "donna_toki": "en",
+    "imabi": "en",
+    "yokubi": "en",
+    "bunpou": "ja",
+    "edewakaru": "ja",
+    "nihongo_net": "ja",
+    "nihongo_no_sensei": "ja",
+    "ninjal_bunkei": "ja",
+}
+
+#: Sort rank for a source's disclosure: English (0) before Japanese (1); an
+#: unknown/new source sorts after both (2) rather than silently jumping the
+#: English block, so adding a source without classifying it is visible, not
+#: wrong. Ties are broken by the source's own contribution order (stable sort).
+_SOURCE_LANG_RANK = {"en": 0, "ja": 1}
+
 
 #: Code-point ranges that make a string Japanese for language-tagging purposes:
 #: Hiragana, Katakana, CJK punctuation/iteration marks, halfwidth kana, and the
@@ -1380,11 +1406,27 @@ def _source_blocks(entry: MergedEntry, headline: str = "") -> list[dict]:
     (invariant 4).
     """
     grouped: dict[str, list[GrammarPoint]] = {}
+    source_key: dict[str, str] = {}
     for point in entry.contributions:
-        grouped.setdefault(_source_label(point), []).append(point)
+        label = _source_label(point)
+        grouped.setdefault(label, []).append(point)
+        # Remember the source NAME behind each rendered label so the blocks can be
+        # ordered by the source's explanation language. First writer wins; a label
+        # only ever maps to one source.
+        source_key.setdefault(label, point.source)
+
+    # English-explaining dictionaries first, then monolingual Japanese ones. A
+    # stable sort keeps the original contribution order within each language
+    # group, so the ordering is deterministic and the build stays reproducible.
+    def _lang_rank(label: str) -> int:
+        lang = _SOURCE_EXPLANATION_LANG.get(source_key.get(label, ""), "")
+        return _SOURCE_LANG_RANK.get(lang, 2)
+
+    ordered_labels = sorted(grouped, key=_lang_rank)
 
     blocks: list[dict] = []
-    for label, points in grouped.items():
+    for label in ordered_labels:
+        points = grouped[label]
         rendered: list[tuple[GrammarPoint, list[object]]] = []
         for point in points:
             body = _source_block(point)
@@ -1599,31 +1641,6 @@ def _compact_block(entry: MergedEntry) -> tuple[dict, str]:
     return {"tag": "div", "data": {"compact": ""}, "content": body}, meaning
 
 
-def _attribution_block(entry: MergedEntry) -> dict:
-    """Closed disclosure naming every source that contributed to this entry."""
-    names: list[str] = []
-    for point in entry.contributions:
-        label = _source_label(point)
-        if label not in names:
-            names.append(label)
-    return {
-        "tag": "details",
-        "content": [
-            {"tag": "summary", "content": "Sources"},
-            {
-                "tag": "div",
-                "content": [
-                    {
-                        "tag": "div",
-                        "data": {"attribution": ""},
-                        "content": f"Contributed by {', '.join(names)}.",
-                    }
-                ],
-            },
-        ],
-    }
-
-
 def build_term_entry(entry: MergedEntry, sequence: int) -> list:
     """Build one Yomitan v3 term-bank entry for a merged grammar point.
 
@@ -1633,8 +1650,9 @@ def build_term_entry(entry: MergedEntry, sequence: int) -> list:
 
     The glossary carries exactly one structured-content object so the whole card
     is one canonical surface: compact meaning/construction/JLPT above the fold,
-    then native closed `details` disclosures per contributing source, then a
-    closed attribution disclosure.
+    then native closed `details` disclosures per contributing source. Each
+    per-source disclosure is titled with its own source name, so the source IS
+    the attribution — there is no trailing data-less "Sources" details block.
     """
     if not isinstance(entry, MergedEntry):
         raise MalformedPayload("build_term_entry accepts MergedEntry records only")
@@ -1645,7 +1663,7 @@ def build_term_entry(entry: MergedEntry, sequence: int) -> list:
     content: list[object] = [compact]
     source_blocks = _source_blocks(entry, headline)
     if not source_blocks:
-        # Nothing but attribution would render. Two honest fallbacks, in order:
+        # No per-source disclosure will render. Two honest fallbacks, in order:
         # an alias-only spelling variant points at the form carrying the
         # substance; a listed-but-undescribed headword says so and links the
         # source's own page. Neither invents dictionary content.
@@ -1653,7 +1671,8 @@ def build_term_entry(entry: MergedEntry, sequence: int) -> list:
         if fallback is not None:
             content.append(fallback)
     content.extend(source_blocks)
-    content.append(_attribution_block(entry))
+    # No separate "Sources" attribution disclosure: each per-source block is
+    # already titled with its source, so the source IS the section title.
 
     reading = ""
     for point in entry.contributions:

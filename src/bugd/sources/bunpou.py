@@ -149,7 +149,7 @@ def _read_notes(apkg_bytes: bytes) -> list[list[str]]:
 @register_extractor
 class BunpouExtractor(Extractor):
     name = "bunpou"
-    label = "文法 (personal deck)"
+    label = "文法"
     license_tier = "C"
     redistributable = False
 

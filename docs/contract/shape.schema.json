@@ -45,7 +45,7 @@
             "enum": ["grammarCard", "compact", "meaning", "metarow", "jlpt", "structure",
                      "sourceBlock", "sourceName", "sense", "senseLabel", "prose",
                      "patterns", "pattern", "examples", "example", "ja", "en", "hl",
-                     "crossref", "listedOnly", "attribution"]
+                     "crossref", "listedOnly"]
           }
         },
         "lang": { "enum": ["ja", "en"] },
@@ -54,7 +54,7 @@
       "additionalProperties": false
     },
     "grammarCard": {
-      "description": "Root node: div role=grammarCard, lang=ja. Children in order: compact, sourceBlock(s), optional crossref/listedOnly, and a trailing data-less details (attribution).",
+      "description": "Root node: div role=grammarCard, lang=ja. Children in order: compact, sourceBlock(s), optional crossref/listedOnly. No trailing attribution block.",
       "allOf": [{ "$ref": "#/$defs/role" }],
       "properties": {
         "tag": { "const": "div" },
