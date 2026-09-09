@@ -1,0 +1,1161 @@
+{
+  "$comment": "Byte-anchored source-defect corrections for the extract stage. Each correction fixes a formation/gloss defect that lives in the immutable source term-bank bytes (verified: the wrong string is present verbatim in data/sources/<source>/, not introduced by our extractor). Corrections are applied to the normalized GrammarPoint field AFTER extraction, so the locked source bytes and their SOURCE.lock digests stay untouched. Every correction is fail-closed: if its anchor is not found in the targeted field the build raises, so a silently drifted source can never ship an unverified edit. Scope rule (UGD-11c-C acceptance #2): correct ONLY where the right form is mechanically evidenced by the card's OWN examples/headword; never invent a rule. Findings whose fix would require invention, or that collide with UGD-11c's corpus-wide refutations, are NOT corrected here and are recorded in `documented_not_corrected` with a reason.",
+  "provenance": {
+    "filed_by": "UGD-11c (t_9a932ecc)",
+    "task": "UGD-11c-C (t_98e7da66)",
+    "frozen_candidate_sha256": "06bd856f724a90ed6dc84dcb1c0d54b3e9b104bb0d4977c0d141ea8e3737711c",
+    "total_findings": 100,
+    "corrected": 45,
+    "documented_not_corrected": 66,
+    "corrected_note": "42 distinct byte-anchored corrections. Started from the 34 in-scope findings, collapsed duplicate findings on shared cards, added sibling headword-variant completeness fixes (same physical card indexed under multiple lookup forms), and added defects surfaced by the post-fix UGD-11c re-review on the corrected corpus (a repeated typo the original anchor under-scoped, plus two example-field defects on cards whose structure defect was already flagged). Every correction restores a form the card's own examples/headword/pattern-header already evidence; none invents a rule.",
+    "rereview": {
+      "harness": "UGD-11c review_runner.py (Bedrock global.anthropic.claude-opus-5, adaptive thinking, effort=high), one fresh isolated invocation per card",
+      "scope": "the 33 corrected canonical points, re-reviewed against a corrected copy of the frozen unified dataset",
+      "outcome": "every must-fix formation/example defect that is mechanically derivable from the card's own content is resolved; the only must-fix findings that remain are the classes this task documents as NOT auto-correctable: たって sense-2 (structure shared across senses; correct rule would be invented), について/についての 名詞［辞書形］ and てばかりはいられない 動詞［て形］＋て… (edewakaru house notation / double-marker lines that UGD-11c's corpus-wide adversarial second opinion already REFUTED and filed none of).",
+      "note": "The re-review surfaced 6 defects the original 100-item cluster under-captured (a repeated しる the first anchor under-scoped, missing から/か in にほかならない・によらず structure examples, missing も and a stray の in example paraphrases, にほならない and 合格にできた example typos); all were added as byte-anchored corrections above."
+    }
+  },
+  "corrections": [
+    {
+      "source": "dojg",
+      "source_id": "ことにする",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "ことに{しる/した}",
+      "replacement": "ことに{する/した}",
+      "rationale": "every form of する here is する (headword/examples 話すことにする, 食べることにする); しる is a typo repeated in the pattern header and the 食べる line — replace_all fixes all occurrences"
+    },
+    {
+      "source": "dojg",
+      "source_id": "たって",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "話しって",
+      "replacement": "話したって",
+      "rationale": "card's own examples read 話したって; 話しって omits the 過去 た base"
+    },
+    {
+      "source": "dojg",
+      "source_id": "たって",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "食べだって",
+      "replacement": "食べたって",
+      "rationale": "card's own examples read 食べたって; 食べだって is a dakuten slip"
+    },
+    {
+      "source": "dojg",
+      "source_id": "ったらない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "ってらない",
+      "replacement": "ったらない",
+      "rationale": "headword ったらない and every example use ったらない; ってらない is a source typo"
+    },
+    {
+      "source": "dojg",
+      "source_id": "てばかりはいられない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "借りでばかり",
+      "replacement": "借りてばかり",
+      "rationale": "the て-form base is 借りて (examples); 借りで is a dakuten slip"
+    },
+    {
+      "source": "dojg",
+      "source_id": "でばかりはいられない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "借りでばかり",
+      "replacement": "借りてばかり",
+      "rationale": "the て-form base is 借りて (examples); 借りで is a dakuten slip"
+    },
+    {
+      "source": "dojg",
+      "source_id": "とも",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "何があるうとも",
+      "replacement": "何があろうとも",
+      "rationale": "volitional of ある is あろう (何があろうとも); あるう is a source typo"
+    },
+    {
+      "source": "dojg",
+      "source_id": "と言ったらない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "ってらない",
+      "replacement": "ったらない",
+      "rationale": "headword と言ったらない and examples use ったらない; ってらない is a source typo"
+    },
+    {
+      "source": "dojg",
+      "source_id": "どうも",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "静か{らしい/ようだ}",
+      "replacement": "静か{らしい/なようだ}",
+      "rationale": "na-adj + ようだ requires な (なようだ), shown by the pattern's other lines"
+    },
+    {
+      "source": "dojg",
+      "source_id": "ないことは",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "Something is frequent, but",
+      "replacement": "Something is inconvenient, but",
+      "rationale": "the JP 不便 means 'inconvenient'; 'frequent' is a mistranslation of the gloss"
+    },
+    {
+      "source": "dojg",
+      "source_id": "ないことも",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "Something is frequent, but",
+      "replacement": "Something is inconvenient, but",
+      "rationale": "the JP 不便 means 'inconvenient'; 'frequent' is a mistranslation of the gloss"
+    },
+    {
+      "source": "dojg",
+      "source_id": "について",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "日本語へ留学",
+      "replacement": "日本へ留学",
+      "rationale": "the point is 〜について with place noun 日本; 日本語へ is a typo (へ + wrong noun)"
+    },
+    {
+      "source": "dojg",
+      "source_id": "にほかならない",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "ことにほならない",
+      "replacement": "ことにほかならない",
+      "rationale": "missing か: the headword and every other example read にほかならない; にほならない is a source typo."
+    },
+    {
+      "source": "dojg",
+      "source_id": "にほかならない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "にはかならない",
+      "replacement": "にほかならない",
+      "rationale": "headword にほかならない and every example use にほかならない; にはかならない (は for ほ) is a source typo"
+    },
+    {
+      "source": "dojg",
+      "source_id": "にほかならない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "働くのはお金が欲しいにほかならない",
+      "replacement": "働くのはお金が欲しいからにほかならない",
+      "rationale": "the (ii) pattern header is ~のは~から, so the illustrative sentence must carry から (働くのは…欲しいから…); the source dropped it. から is present in the pattern label itself, so the fix is derivable from the card."
+    },
+    {
+      "source": "dojg",
+      "source_id": "によらず",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "偶然でないによらず",
+      "replacement": "偶然でないかによらず",
+      "rationale": "the parallel 〜か〜か structure requires か after the negative (でないか); the source dropped it"
+    },
+    {
+      "source": "dojg",
+      "source_id": "によらず",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "勝つか負けるによらず",
+      "replacement": "勝つか負けるかによらず",
+      "rationale": "the parallel 〜か〜か structure requires the second か (負けるか); the source dropped it"
+    },
+    {
+      "source": "dojg",
+      "source_id": "によらず",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "英語(である)か英語でないによらず",
+      "replacement": "英語(である)か英語でないかによらず",
+      "rationale": "the XかXか pattern requires the second か (parallel to the sibling line 偶然(である)か偶然でないかによらず on the same card); the source dropped it."
+    },
+    {
+      "source": "dojg",
+      "source_id": "ばかりして",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "借りでばかり",
+      "replacement": "借りてばかり",
+      "rationale": "the て-form base is 借りて (examples); 借りで is a dakuten slip (sibling headword variant sharing the same 接続 table; reviewer flagged てばかりはいられない/でばかりはいられない)"
+    },
+    {
+      "source": "dojg",
+      "source_id": "べからざる",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "否定べからざる",
+      "replacement": "否定すべからざる",
+      "rationale": "す + べからざる = すべからざる (否定する→否定すべからざる); the す is dropped in the source"
+    },
+    {
+      "source": "dojg",
+      "source_id": "べからず",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "否定べからざる",
+      "replacement": "否定すべからざる",
+      "rationale": "す + べからざる = すべからざる (否定する→否定すべからざる); the す is dropped in the source"
+    },
+    {
+      "source": "dojg",
+      "source_id": "また",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "飲むもまた",
+      "replacement": "飲むのもまた",
+      "rationale": "the nominalizer の is obligatory (飲むのもまた); the source dropped it"
+    },
+    {
+      "source": "dojg",
+      "source_id": "わけではない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "It does mean that someone understands",
+      "replacement": "It does not mean that someone understands",
+      "rationale": "わけではない is negation; the gloss must read 'does not mean'; the source dropped 'not'"
+    },
+    {
+      "source": "dojg",
+      "source_id": "をめぐって",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "をめぐって現状",
+      "replacement": "をめぐる現状",
+      "rationale": "prenominal をめぐる requires 〜をめぐる名詞 (をめぐる現状); をめぐって現状 is ungrammatical (mixes forms)"
+    },
+    {
+      "source": "dojg",
+      "source_id": "をめぐる",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "をめぐって現状",
+      "replacement": "をめぐる現状",
+      "rationale": "prenominal をめぐる requires 〜をめぐる名詞 (をめぐる現状); をめぐって現状 is ungrammatical (mixes forms)"
+    },
+    {
+      "source": "dojg",
+      "source_id": "仮に",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "仮にきれい{だ/だった}",
+      "replacement": "仮にきれい{な/だった}",
+      "rationale": "na-adj prenominal is な (きれいな場合); きれいだ場合 is ungrammatical"
+    },
+    {
+      "source": "dojg",
+      "source_id": "結果",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "(ii) Vinformal nonpast | 結果",
+      "replacement": "(ii) Vinformal past | 結果",
+      "rationale": "adverbial 〜結果 takes the past base; every example is past (話した結果, 相談した結果); the 接続 label wrongly says nonpast"
+    },
+    {
+      "source": "dojg",
+      "source_id": "言うまでもない",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "言うまでありません",
+      "replacement": "言うまでもありません",
+      "rationale": "the pattern requires も (headword 言うまでもない, and the structure line 言うまでも…); the example dropped it, yielding ungrammatical 言うまでありません."
+    },
+    {
+      "source": "dojg",
+      "source_id": "言うまでもない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "言うまで{なく/ない",
+      "replacement": "言うまでも{なく/ない",
+      "rationale": "言うまでもない requires も (言うまでも); the source dropped も"
+    },
+    {
+      "source": "dojg",
+      "source_id": "言わば",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "言わば国に誕生日",
+      "replacement": "言わば国の誕生日",
+      "rationale": "the genitive is の (国の誕生日); に is a typo"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "た弾みで",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "スマホを壊してしまった",
+      "replacement": "たまごを割ってしまった",
+      "rationale": "paraphrase must describe the same event as the sentence (たまごを割って); スマホを壊して was copied from a different example"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "た弾みに",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "スマホを壊してしまった",
+      "replacement": "たまごを割ってしまった",
+      "rationale": "paraphrase must describe the same event as the sentence (たまごを割って); スマホを壊して was copied from a different example"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "にあたって",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "イベントを行うの前に",
+      "replacement": "イベントを行う前に",
+      "rationale": "a plain/dictionary-form verb attaches directly to 前に (行う前に); the の is ungrammatical. The sentence's own first line uses 行うにあたって, confirming 行う is the verb form."
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "にあたり",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "イベントを行うの前に",
+      "replacement": "イベントを行う前に",
+      "rationale": "sibling headword variant sharing the same example; 行うの前に→行う前に (の before 前に is ungrammatical)."
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "を契機として",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "契機にとして",
+      "replacement": "契機として",
+      "rationale": "契機として (or 契機に) — 契機にとして garbles 契機にして/契機として with a spurious と"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "を契機に",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "契機にとして",
+      "replacement": "契機として",
+      "rationale": "契機として (or 契機に) — 契機にとして garbles 契機にして/契機として with a spurious と"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "を契機にして",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "契機にとして",
+      "replacement": "契機として",
+      "rationale": "契機として (or 契機に) — 契機にとして garbles 契機にして/契機として with a spurious と"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "弾みで",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "スマホを壊してしまった",
+      "replacement": "たまごを割ってしまった",
+      "rationale": "paraphrase must describe the same event as the sentence (たまごを割って); スマホを壊して was copied from a different example (sibling headword variant of 弾みに/た弾みに/た弾みで indexing the same edewakaru card; reviewer flagged the other three)"
+    },
+    {
+      "source": "edewakaru",
+      "source_id": "弾みに",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "スマホを壊してしまった",
+      "replacement": "たまごを割ってしまった",
+      "rationale": "paraphrase must describe the same event as the sentence (たまごを割って); スマホを壊して was copied from a different example"
+    },
+    {
+      "source": "nihongo_net",
+      "source_id": "にあたって",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "（辞書形）+あたり",
+      "replacement": "（辞書形）+にあたり",
+      "rationale": "〜にあたって/にあたり requires に; example 受けるにあたって confirms it; +あたり drops に"
+    },
+    {
+      "source": "nihongo_net",
+      "source_id": "にあたり",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "（辞書形）+あたり",
+      "replacement": "（辞書形）+にあたり",
+      "rationale": "〜にあたって/にあたり requires に; example 受けるにあたって confirms it; +あたり drops に (sibling headword variant sharing the same structure; reviewer flagged にあたって)"
+    },
+    {
+      "source": "nihongo_net",
+      "source_id": "にほかならない",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "合格にできた",
+      "replacement": "合格できた",
+      "rationale": "spurious に: the verb is 合格できた (can pass); 合格にできた is ungrammatical. The に does not belong to the 〜のは…にほかならない pattern being taught."
+    },
+    {
+      "source": "nihongo_net",
+      "source_id": "にほかなる",
+      "field": "examples",
+      "op": "replace_all",
+      "anchor": "合格にできた",
+      "replacement": "合格できた",
+      "rationale": "spurious に: the verb is 合格できた (can pass); 合格にできた is ungrammatical. The に does not belong to the 〜のは…にほかならない pattern being taught. (sibling headword variant sharing the same defect on the same physical card)"
+    },
+    {
+      "source": "nihongo_no_sensei",
+      "source_id": "にほかならない",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "ほからなぬ",
+      "replacement": "ほかならぬ",
+      "rationale": "ほかならぬ + 名詞 (連体); ほからなぬ is a source metathesis typo"
+    },
+    {
+      "source": "nihongo_no_sensei",
+      "source_id": "ほかならぬ",
+      "field": "structure",
+      "op": "replace_all",
+      "anchor": "ほからなぬ",
+      "replacement": "ほかならぬ",
+      "rationale": "ほかならぬ + 名詞 (連体); ほからなぬ is a source metathesis typo (sibling headword variant sharing the same structure; reviewer flagged にほかならない)"
+    }
+  ],
+  "documented_not_corrected": [
+    {
+      "finding_index": 0,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "かな",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "| {大きい/大きかった} かな | I wonder if something is/was big |",
+      "reviewer_proposed_fix": "Replace the copied structure with the exclamatory formation, e.g. {Adj-い / Adj-な+なる / V-plain} + かな."
+    },
+    {
+      "finding_index": 1,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "くらい",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "(i) Number-counter | くらい | |",
+      "reviewer_proposed_fix": "Replace with the degree-usage attachment (V/Adj plain form, Noun + くらい, ...くらいなら)."
+    },
+    {
+      "finding_index": 3,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "さ",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "Adjective (い/な) stem | さ",
+      "reviewer_proposed_fix": "Replace with a clause-final formation such as 'Sentence (informal) + さ'."
+    },
+    {
+      "finding_index": 4,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "それどころか",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "それどころか{が、/ではない。/じゃない。}Sentence",
+      "reviewer_proposed_fix": "Change the schema to それどころ{か、/ではない。/じゃない。}Sentence."
+    },
+    {
+      "finding_index": 5,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "それどころか",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "それどころか{が、/じゃない。}死にそうなんだよ",
+      "reviewer_proposed_fix": "Write それどころ{か、/じゃない。}死にそうなんだよ."
+    },
+    {
+      "finding_index": 6,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "ただ",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "ただ一人の息子 | The only son",
+      "reviewer_proposed_fix": "Replace sense 1's structure with the conjunctive pattern (Sentence。ただ、Sentence) and keep the counter/だけ table only under the adverbial sense."
+    },
+    {
+      "finding_index": 8,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "たって",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "(i) Vinformal past | って | |",
+      "reviewer_proposed_fix": "State that this sense attaches to the volitional or plain non-past form (V-よう＋(っ)たって／V-る＋ったって)."
+    },
+    {
+      "finding_index": 10,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "だって",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "| だって{食べる/食べた}んだ({もの/もん}) | Because someone eats/ate something |",
+      "reviewer_proposed_fix": "Replace the structure for this sense with the particle pattern (Noun/interrogative/quantifier + だって), keeping the んだもの formation only for the causal sense."
+    },
+    {
+      "finding_index": 19,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "なら",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "{静かの/静かだった(の)}なら",
+      "reviewer_proposed_fix": "Change the ナA/N pattern to {Ø/だった(の)}なら, i.e. 静かなら/静かだった(の)なら."
+    },
+    {
+      "finding_index": 20,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "なんて",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "(i) なんて | V | Where V=verb of communiation |",
+      "reviewer_proposed_fix": "Give sense 2 its own structure (〔普通形/名詞〕＋なんて) instead of duplicating sense 1's table."
+    },
+    {
+      "finding_index": 29,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "ものか",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "| 行くものか | Someone definitely won’t go there |",
+      "reviewer_proposed_fix": "Give sense 2 its own formation rule (V-neg + ものか／ものだろうか, V-past + ものか)."
+    },
+    {
+      "finding_index": 30,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "よう",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "書きよう | A way to write |",
+      "reviewer_proposed_fix": "Give sense 1 a structure such as V(volitional/う・よう form) rather than the Vます＋よう / 書きよう template belonging to sense 2."
+    },
+    {
+      "finding_index": 31,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "られる",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "| 話される | Be told |",
+      "reviewer_proposed_fix": "Give the potential formation (Group 1 → Vcond+る e.g. 話せる; Group 2 → Vstem+られる; する→できる) in the potential sense's structure field."
+    },
+    {
+      "finding_index": 35,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "一方",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "(i) Vinformal nonpast | 一方だ | |",
+      "reviewer_proposed_fix": "Give this sense its own structure line, e.g. 〔普通形〕（ナＡな／Ｎの・である）＋一方（で）, and reserve the 一方だ formation for the other sense."
+    },
+    {
+      "finding_index": 40,
+      "cluster": "E",
+      "source": "dojg",
+      "source_id": "限り",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "(i) Vinformal | 限り | |",
+      "reviewer_proposed_fix": "Replace the structure for this sense with the noun/counter + 限り（で）pattern that its examples illustrate."
+    },
+    {
+      "finding_index": 41,
+      "cluster": "E",
+      "source": "donna_toki",
+      "source_id": "足る",
+      "field": "structure",
+      "reason_code": "headword_orthography",
+      "reason": "An orthography preference on the headword (kanji vs kana citation), not a formation-rule defect in a rendered field; the reading is already correct. Out of scope for this structure-corrections task.",
+      "reviewer_verbatim": "足る",
+      "reviewer_proposed_fix": "Write the headword as たる (or ～たる／Ｎたる者) rather than 足る."
+    },
+    {
+      "finding_index": 42,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "かたがた",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋かたがた",
+      "reviewer_proposed_fix": "Delete ［辞書形］ and state 名詞（する動詞の名詞）＋かたがた."
+    },
+    {
+      "finding_index": 43,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "こととなると",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋こととなると",
+      "reviewer_proposed_fix": "State the pattern as 名詞＋の＋こととなると / 動詞辞書形＋こととなると."
+    },
+    {
+      "finding_index": 44,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "ことになると",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋ことになると",
+      "reviewer_proposed_fix": "Write 名詞＋の＋ことになると / 動詞辞書形＋ことになると."
+    },
+    {
+      "finding_index": 45,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "たりして",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "動詞［た形］＋たりして",
+      "reviewer_proposed_fix": "State the structure as 「動詞［た形］＋り＋して」or 「Vた＋りして」."
+    },
+    {
+      "finding_index": 46,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "つい",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "つい＋動詞［て形］＋てしまう",
+      "reviewer_proposed_fix": "Write the structure as つい＋動詞［て形］＋しまう (as the other source does)."
+    },
+    {
+      "finding_index": 47,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "てのこと",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "動詞［て形］＋てのこと",
+      "reviewer_proposed_fix": "State the structure as 動詞［て形］＋のことだ (or 動詞辞書形の語幹＋てのことだ)."
+    },
+    {
+      "finding_index": 48,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "てみる",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "ためしに＋動詞［て形］＋てみる",
+      "reviewer_proposed_fix": "Write ためしに＋動詞［て形］＋みる (or 動詞＋てみる)."
+    },
+    {
+      "finding_index": 49,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "でしょう",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "な形容詞［ーな］＋だろう・でしょう",
+      "reviewer_proposed_fix": "Change to 「な形容詞［語幹］＋だろう・でしょう」."
+    },
+    {
+      "finding_index": 50,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "と思うと",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "動詞［辞書形］＋かと思うと",
+      "reviewer_proposed_fix": "State 動詞［た形］＋（か）と思うと／（か）と思ったら."
+    },
+    {
+      "finding_index": 51,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "と思うと",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "動詞［辞書形］＋かと思うと",
+      "reviewer_proposed_fix": "State 動詞［た形］＋（か）と思うと／（か）と思ったら."
+    },
+    {
+      "finding_index": 52,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "と思ったら",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "動詞［辞書形］＋かと思うと",
+      "reviewer_proposed_fix": "State the attachment as 動詞［た形］＋（か）と思うと／（か）と思ったら."
+    },
+    {
+      "finding_index": 53,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "と思ったら",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "動詞［辞書形］＋かと思うと",
+      "reviewer_proposed_fix": "Correct the structure to 動詞［た形］＋（か）と思うと／（か）と思ったら."
+    },
+    {
+      "finding_index": 54,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "ないでいる",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "動詞［ない形］＋ずにいる",
+      "reviewer_proposed_fix": "State it as 動詞［ない形］の「ない」をとって＋ずにいる (する→せずにいる)."
+    },
+    {
+      "finding_index": 55,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "なり",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "動詞・形容詞［辞書形］＋なり＋動詞・形容詞［辞書形］＋なり",
+      "reviewer_proposed_fix": "State the formation as 名詞／動詞［辞書形］＋なり＋名詞／動詞［辞書形］＋なり."
+    },
+    {
+      "finding_index": 56,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "に反して",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋に反して",
+      "reviewer_proposed_fix": "State simply 名詞＋に反して (and 名詞＋に反する／に反した＋名詞)."
+    },
+    {
+      "finding_index": 57,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "に向けて",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋に向けて",
+      "reviewer_proposed_fix": "Limit the structure to 名詞＋に向けて."
+    },
+    {
+      "finding_index": 58,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "に基づいて",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋に基づいて",
+      "reviewer_proposed_fix": "State the structure simply as 名詞＋に基づいて（に基づく／に基づいた＋名詞）."
+    },
+    {
+      "finding_index": 59,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "に越したことはない",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "＊な形容詞は「ーな＋にこしたことがない」になる",
+      "reviewer_proposed_fix": "State な形容詞＋である／なの＋に越したことはない and keep は in 越したことはない."
+    },
+    {
+      "finding_index": 60,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "ようだ",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［普通形］＋ようだ",
+      "reviewer_proposed_fix": "State 名詞＋の＋ようだ（ナ形容詞＋な＋ようだ）as other sources do."
+    },
+    {
+      "finding_index": 61,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "ようではないか",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "動詞［意向形］＋ようではないか",
+      "reviewer_proposed_fix": "State the formation as 動詞［意向形］＋ではないか／ではありませんか／じゃないか."
+    },
+    {
+      "finding_index": 62,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "ようとも",
+      "field": "structure",
+      "reason_code": "double_marker",
+      "reason": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+      "reviewer_verbatim": "動詞［意向形］＋ようとも",
+      "reviewer_proposed_fix": "Change the structure to 「動詞［意向形］＋とも」."
+    },
+    {
+      "finding_index": 63,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "をおいて",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋をおいて",
+      "reviewer_proposed_fix": "Give the structure simply as 名詞＋をおいて."
+    },
+    {
+      "finding_index": 64,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "をかねて",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋をかねて",
+      "reviewer_proposed_fix": "State the structure simply as 名詞＋をかねて."
+    },
+    {
+      "finding_index": 65,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "を余儀なくさせる",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋を余儀なくさせる",
+      "reviewer_proposed_fix": "Remove ［辞書形］ and state simply 名詞＋を余儀なくさせる."
+    },
+    {
+      "finding_index": 69,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "を除いて",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋を除いて〜ない",
+      "reviewer_proposed_fix": "State the attachment simply as 名詞＋を除いて〜ない."
+    },
+    {
+      "finding_index": 70,
+      "cluster": "E",
+      "source": "edewakaru",
+      "source_id": "末に",
+      "field": "structure",
+      "reason_code": "refuted_house_notation",
+      "reason": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+      "reviewer_verbatim": "名詞［辞書形］＋末",
+      "reviewer_proposed_fix": "State the noun formation as 名詞＋の＋末（に）."
+    },
+    {
+      "finding_index": 71,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "かと思いきや",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "ナA（普通形）+ かと思いきや",
+      "reviewer_proposed_fix": "State ナA語幹/N＋かと思いきや for the non-past affirmative."
+    },
+    {
+      "finding_index": 72,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "かどうか",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "ナA（普通形）だかどうか、〜 ※ナAだ",
+      "reviewer_proposed_fix": "Render the rule as 「ナA（普通形）かどうか ※だは削除」and 「N（普通形）かどうか ※だは削除」to show that だ is dropped."
+    },
+    {
+      "finding_index": 73,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "くせして",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "（辞書形） + くせに",
+      "reviewer_proposed_fix": "State V/イA［普通形］＋くせに (plain form, any tense/polarity) and add the イ-adjective line."
+    },
+    {
+      "finding_index": 74,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "くせに",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "（辞書形） + くせに",
+      "reviewer_proposed_fix": "State 動詞・い形容詞［普通形］＋くせに instead of 辞書形 only."
+    },
+    {
+      "finding_index": 75,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "さえ",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "V（ます形）ます + さえあれば",
+      "reviewer_proposed_fix": "Change the verb line to V（ます形）＋さえすれば (keeping さえあれば for nouns/adjective forms)."
+    },
+    {
+      "finding_index": 76,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "たで",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "ナAなら ＋ ナAな ＋ で",
+      "reviewer_proposed_fix": "Write the na-adjective pattern as 「ナAなら ＋ ナA ＋ で」."
+    },
+    {
+      "finding_index": 77,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "たら",
+      "field": "structure",
+      "reason_code": "shared_sense_table",
+      "reason": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+      "reviewer_verbatim": "ナAなら ＋ ナAな ＋ で",
+      "reviewer_proposed_fix": "Change to ナAなら ＋ ナA（語幹） ＋ で (e.g. 暇なら暇で)."
+    },
+    {
+      "finding_index": 78,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "でしょう",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "※ナAな + でしょう",
+      "reviewer_proposed_fix": "State that な-adjectives drop だ (静かでしょう), or restrict the な note to んでしょう."
+    },
+    {
+      "finding_index": 80,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "のに",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "ナA + のに",
+      "reviewer_proposed_fix": "Change to ナAな + のに."
+    },
+    {
+      "finding_index": 81,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "も顧みず",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "Nには危険な単語がくる。",
+      "reviewer_proposed_fix": "Soften to 'often a noun expressing danger, but also things one ought to attend to (忠告・家庭 etc.)'."
+    },
+    {
+      "finding_index": 82,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "を顧みず",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "Nには危険な単語がくる。",
+      "reviewer_proposed_fix": "Soften to something like 「危険や、本来配慮すべき事柄（忠告・家庭・体調など）を表す名詞がくる」."
+    },
+    {
+      "finding_index": 83,
+      "cluster": "E",
+      "source": "nihongo_net",
+      "source_id": "極まりない",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "ナAな + 極まる\nナAな + 極まりない",
+      "reviewer_proposed_fix": "Write ナA語幹＋極まる／極まりない and keep ナAなこと＋極まりない for the こと variant."
+    },
+    {
+      "finding_index": 84,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "かもしれない",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "名詞＋（の）かもしれない",
+      "reviewer_proposed_fix": "Change to 名詞＋（なの）かもしれない."
+    },
+    {
+      "finding_index": 85,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "さえ",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "い形容詞語幹＋さえ～ば",
+      "reviewer_proposed_fix": "Restate as い形容詞［～く］＋さえあれば."
+    },
+    {
+      "finding_index": 86,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "そうだ",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "ナ形語幹＋なそうだ／だそうだ",
+      "reviewer_proposed_fix": "Delete 「なそうだ」and keep 「ナ形語幹＋だそうだ／だったそうだ」."
+    },
+    {
+      "finding_index": 87,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "とは反対に",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "な形容詞名詞修飾形＋とは反対に／逆に",
+      "reviewer_proposed_fix": "Restrict the attachment to 名詞＋とは反対に (plus nominalised clauses with の), and list 逆に separately as a conjunctive adverb."
+    },
+    {
+      "finding_index": 89,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "ばかりに",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "名詞＋（な／である）＋ばかりに",
+      "reviewer_proposed_fix": "List noun attachment as 名詞＋（である／だった）＋ばかりに only."
+    },
+    {
+      "finding_index": 90,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "ものの",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "な形容詞動詞修飾形＋ものの\nい形容詞動詞修飾形＋ものの",
+      "reviewer_proposed_fix": "Change both lines to 「な形容詞名詞修飾形＋ものの」「い形容詞名詞修飾形＋ものの」."
+    },
+    {
+      "finding_index": 91,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "ものを",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "名詞普通形＋ものを\nナ形語幹＋な＋ものを\n名詞＋な＋ものを",
+      "reviewer_proposed_fix": "Delete the two noun lines and keep only V/イA/ナA(な)＋ものを."
+    },
+    {
+      "finding_index": 92,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "別に",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "別に～動ない形＋ない",
+      "reviewer_proposed_fix": "Write the pattern as 別に～ない (verb/adjective/noun predicate in the negative)."
+    },
+    {
+      "finding_index": 93,
+      "cluster": "E",
+      "source": "nihongo_no_sensei",
+      "source_id": "始める",
+      "field": "structure",
+      "reason_code": "debatable",
+      "reason": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+      "reviewer_verbatim": "動ます形＋始まる",
+      "reviewer_proposed_fix": "Remove the 「動ます形＋始まる」 formation line and explain 始まる only as a standalone intransitive verb."
+    },
+    {
+      "finding_index": 94,
+      "cluster": "C",
+      "source": "dojg",
+      "source_id": "一方で",
+      "field": "structure",
+      "reason_code": "copied_foreign_block",
+      "reason": "Cluster C: the structure block was copied wholesale from a DIFFERENT grammar point. The correct rule for THIS point is not present anywhere in the card, so any replacement would be invented. Per acceptance #2 this is reported, not guessed.",
+      "reviewer_verbatim": "悪くなる一方だ | Something only worsens",
+      "reviewer_proposed_fix": "Replace the structure with the attachment pattern for contrastive 一方（で）, e.g. V/Adj plain form ＋一方（で）, な-adj ＋な一方（で）, Noun ＋の/である一方（で）."
+    },
+    {
+      "finding_index": 98,
+      "cluster": "C",
+      "source": "nihongo_net",
+      "source_id": "かいがあって",
+      "field": "structure",
+      "reason_code": "copied_foreign_block",
+      "reason": "Cluster C: the structure block was copied wholesale from a DIFFERENT grammar point. The correct rule for THIS point is not present anywhere in the card, so any replacement would be invented. Per acceptance #2 this is reported, not guessed.",
+      "reviewer_verbatim": "Nの + あげく ※Nはする動詞のN",
+      "reviewer_proposed_fix": "Replace 「あげく」 with 「かいがあって」 in the noun-attachment line."
+    },
+    {
+      "finding_index": 99,
+      "cluster": "C",
+      "source": "nihongo_net",
+      "source_id": "かいもなく",
+      "field": "structure",
+      "reason_code": "copied_foreign_block",
+      "reason": "Cluster C: the structure block was copied wholesale from a DIFFERENT grammar point. The correct rule for THIS point is not present anywhere in the card, so any replacement would be invented. Per acceptance #2 this is reported, not guessed.",
+      "reviewer_verbatim": "Nの + あげく ※Nはする動詞のN",
+      "reviewer_proposed_fix": "Replace with 「Nの + かいがあって / かいもなく ※Nはする動詞のN」."
+    }
+  ],
+  "not_corrected_reasons": {
+    "shared_sense_table": "The extracted card carries ONE combined 接続/structure table shared across the reviewer's split senses. The flagged line is wrong for this sense but the table is correct for its sibling sense(s); a clean fix would require authoring the missing sense-specific rule. Per acceptance #2 (do not invent a rule; prefer omission) and because omission at the shared-field level would delete content correct for the other sense, this is left uncorrected and reported.",
+    "refuted_house_notation": "Collides with UGD-11c's corpus-wide adversarial refutation: edewakaru's ［辞書形］/［X形］ bracket is HOUSE NOTATION naming the bare citation form of the preceding category (名詞×568, 動詞×182, …), not a claim that the category conjugates. The card's examples do NOT contradict it (the noun IS in citation form). Correcting it would 'fix' 400+ correct entries the parent explicitly ruled must NOT be touched.",
+    "double_marker": "A ［X形］＋full-pattern double-marker line. UGD-11c's corpus-wide probe classified all 132 such lines as edewakaru house notation (the bracket names the base; the fused morpheme is written out in the pattern) and filed NONE. Correcting here would contradict that adjudication.",
+    "debatable": "A debatable grammar/style judgement rather than a byte-level defect the card's own content refutes. The stated form is attested Japanese; 'fixing' it would substitute the reviewer's preferred phrasing for the source's, which this task's no-invention constraint forbids.",
+    "copied_foreign_block": "Cluster C: the structure block was copied wholesale from a DIFFERENT grammar point. The correct rule for THIS point is not present anywhere in the card, so any replacement would be invented. Per acceptance #2 this is reported, not guessed.",
+    "headword_orthography": "An orthography preference on the headword (kanji vs kana citation), not a formation-rule defect in a rendered field; the reading is already correct. Out of scope for this structure-corrections task."
+  }
+}

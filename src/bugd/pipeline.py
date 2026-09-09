@@ -61,29 +61,57 @@ def run_extract(
     sources_dir: pathlib.Path = DEFAULT_SOURCES_DIR,
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     only: list[str] | None = None,
+    corrections_path: pathlib.Path | None = None,
 ) -> dict[str, object]:
-    """Run every registered extractor and write one artifact per source."""
+    """Run every registered extractor and write one artifact per source.
+
+    After a source is extracted, the byte-anchored corrections overlay
+    (`bugd.corrections`) is applied to its normalized points. The overlay fixes
+    formation/gloss defects that live in the immutable source term-bank bytes —
+    the SOURCE.lock digests and the locked bytes are never touched, so the
+    integrity gate stays intact and every edit remains an auditable, reviewable
+    entry rather than a laundered rewrite. Application is fail-closed: a
+    correction whose anchor no longer matches its source raises, so a drifted
+    source can never silently ship an un-reviewed edit.
+    """
+    from . import corrections as corrections_module
     from .sources import all_extractors, get_extractor
 
     extracted_dir.mkdir(parents=True, exist_ok=True)
     classes = [get_extractor(name) for name in only] if only else all_extractors()
 
+    overlay = corrections_module.load_corrections(
+        corrections_path or corrections_module.DEFAULT_CORRECTIONS_PATH
+    )
+
     written: dict[str, int] = {}
+    corrected_total = 0
     for cls in classes:
         result = cls(sources_dir / cls.name).extract()
+        points, applied = corrections_module.apply_corrections(
+            result.points, overlay, source=cls.name
+        )
+        corrected_total += len(applied)
+        stats = dict(result.stats)
+        if applied:
+            stats["corrections"] = applied
         payload = {
             "source": result.source,
             "label": cls.label or cls.name,
             "aiGeneratedSource": cls.ai_generated_source,
             "consumed": result.consumed,
-            "stats": result.stats,
-            "points": [point_to_json(point) for point in result.points],
+            "stats": stats,
+            "points": [point_to_json(point) for point in points],
         }
         (extracted_dir / f"{cls.name}.json").write_text(
             dump_json(payload) + "\n", encoding="utf-8"
         )
-        written[cls.name] = len(result.points)
-    return {"sources": written, "total": sum(written.values())}
+        written[cls.name] = len(points)
+    return {
+        "sources": written,
+        "total": sum(written.values()),
+        "corrections": corrected_total,
+    }
 
 
 # --------------------------------------------------------------------------
