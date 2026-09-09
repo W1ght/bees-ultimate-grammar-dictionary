@@ -205,6 +205,12 @@ _LATIN_WORD_CHAR = re.compile(r"[A-Za-z0-9]")
 _JAPANESE_RUN = re.compile(r"^[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]+$")
 #: Minimum shared tail. At 1 character every line ending in `だ`/`る` would pair.
 _PARALLEL_TAIL_MIN = 2
+#: A Japanese-script character, for the shared-stem parallel-example test.
+_JA_CHAR = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]")
+#: Minimum shared leading Japanese run marking the next line as a fresh parallel
+#: example restarting the current one's construction. Three characters, so a
+#: shared opening particle (`私は…`) does not pair two unrelated sentences.
+_PARALLEL_STEM_MIN = 3
 #: A construction-pattern line: the producer's slot notation, joined by the
 #: corpus's FULLWIDTH PLUS. These are published one per line, and the shared-tail
 #: rule above misses them because their tails legitimately differ
@@ -281,6 +287,30 @@ def _is_parallel_list_item(before_line: str, after_line: str) -> bool:
     )
 
 
+def _restarts_with_shared_stem(before_line: str, after_line: str) -> bool:
+    """Does the next line RESTART the current line's construction from its stem?
+
+    edewakaru writes some ［例］ runs as parallel example sentences that vary one
+    slot of a shared opening, each on its own producer line but split further into
+    node-lines, so the second example's first node is exactly the stem the first
+    example opened with:
+
+        彼は法律に反して、計画を実行した      <- example 1 (fully joined)
+        彼は法律…                            <- example 2 restarts the stem
+
+    A soft wrap whose NEXT line is a leading Japanese prefix of the CURRENT line is
+    therefore a new parallel example, not a mid-sentence wrap, so the break must
+    survive. Requiring a >=3-character Japanese prefix keeps a shared opening
+    particle from pairing two unrelated sentences, and the after line must not
+    already sit inside the current one (an identical repeat is still a restart).
+    """
+    stem = after_line.strip(" \t\u3000")
+    if len(stem) < _PARALLEL_STEM_MIN or not before_line.startswith(stem):
+        return False
+    # The shared prefix must be Japanese script, not shared punctuation/Latin.
+    return all(_JA_CHAR.match(ch) for ch in stem[:_PARALLEL_STEM_MIN])
+
+
 def _join_soft_break(text: str) -> str:
     """Resolve each of the producer's soft wraps to a break, a space, or nothing.
 
@@ -305,8 +335,17 @@ def _join_soft_break(text: str) -> str:
         stripped = chunk.rstrip(" \t\u3000" + _PARA_SENTINEL)
         before = stripped[-1:]
         after = text[match.end() : match.end() + 1]
-        # The whole lines on each side of this wrap, for the list-item test.
-        before_line = stripped.rsplit("\n", 1)[-1].rsplit(_PARA_SENTINEL, 1)[-1]
+        # The whole lines on each side of this wrap, for the list-item test. The
+        # BEFORE line is taken from the already-joined output, not from the raw
+        # `\n`-split text: a single example is split across several producer
+        # node-lines (`彼は法律` / `に反して、計画を実行した`), so the last raw line is only
+        # a fragment. Reconstructing the joined line lets the parallel-example test
+        # see that the NEXT line restarts with the same stem -- without it two whole
+        # example sentences fused into one run (`…計画を実行した彼は法律に反する計画を実行した`,
+        # the sole residual run-on the UGD-08c gate still flagged on に反して).
+        joined_before = "".join(out).rsplit("\n", 1)[-1].rsplit(_PARA_SENTINEL, 1)[-1]
+        before_line = (joined_before.strip(" \t\u3000")
+                       or stripped.rsplit("\n", 1)[-1].rsplit(_PARA_SENTINEL, 1)[-1])
         after_line = re.split(
             rf"[\n{_PARA_SENTINEL}]", text[match.end() :], maxsplit=1
         )[0].rstrip(" \t\u3000")
@@ -316,6 +355,10 @@ def _join_soft_break(text: str) -> str:
             joiner = _PARA_SENTINEL
         elif _is_parallel_list_item(before_line, after_line):
             # A bullet-less variant list: every item repeats the grammar point.
+            joiner = _PARA_SENTINEL
+        elif _restarts_with_shared_stem(before_line, after_line):
+            # The next line restarts the current example's construction from its
+            # own stem, so it is a fresh parallel example, not a mid-sentence wrap.
             joiner = _PARA_SENTINEL
         elif _PATTERN_LINE.match(before_line) and _PATTERN_LINE.match(after_line):
             # Two adjacent construction patterns each own their line. Both sides

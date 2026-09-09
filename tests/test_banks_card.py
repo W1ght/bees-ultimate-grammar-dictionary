@@ -411,6 +411,34 @@ def test_prose_keeps_the_break_between_wave_dash_pattern_list_items():
     assert html_to_content("〜ごとし。\n〜ごとく。") == "〜ごとし。\n〜ごとく。"
 
 
+def test_prose_keeps_the_break_between_stem_sharing_parallel_examples():
+    """Consecutive example sentences that restart a shared stem stay separate.
+
+    edewakaru writes some ［例］ runs as parallel example sentences varying one slot
+    of a shared opening, each split further into node-lines so the next example's
+    first node is exactly the stem the previous one opened with. Neither sentence
+    ends in punctuation, so `_paragraphize` Japanese-joined them into one run
+    (`…計画を実行した彼は法律に反する計画を実行した`) -- the sole residual run-on the UGD-08c
+    gate still flagged on に反して after the first three fixes.
+
+    A soft wrap whose NEXT line is a >=3-char Japanese leading prefix of the
+    CURRENT (fully-joined) line is a fresh parallel example, so the break survives.
+    """
+    from bugd.richtext import html_to_content
+
+    # The reported に反して parallel set: each variant restarts `彼は法律`.
+    assert html_to_content(
+        "彼は法律\nに反して、計画を実行した\n彼は法律\nに反する計画を実行した"
+    ) == "彼は法律に反して、計画を実行した\n彼は法律に反する計画を実行した"
+
+    # An ordinary single sentence wrapped mid-way still joins: the continuation is
+    # NOT a leading prefix of the sentence so far.
+    assert html_to_content("友達を待っている\n間、音楽を聞いた") == "友達を待っている間、音楽を聞いた"
+    # A two-character shared opening (a bare particle `私は`) is below the stem
+    # floor, so two unrelated sentences are not split apart.
+    assert html_to_content("私は学生\nですが働いています") == "私は学生ですが働いています"
+
+
 def test_prose_paragraph_sentinel_cannot_be_smuggled_in_by_a_source():
     """The break sentinel must not be forgeable from source bytes."""
     from bugd.richtext import html_to_content
