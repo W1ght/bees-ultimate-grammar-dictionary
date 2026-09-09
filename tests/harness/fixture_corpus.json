@@ -1,0 +1,5999 @@
+{
+ "corpusEntryCount": 2419,
+ "entries": {
+  "english_gloss": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": "I'm not as strong as Ken.",
+       "highlight": [],
+       "japanese": "私はケンほど強くない・強くありません。"
+      },
+      {
+       "ai_generated": false,
+       "english": "This job is so easy that even a child can do it.",
+       "highlight": [],
+       "japanese": "この仕事は子共でも出来るほど易しい・易しいです。"
+      },
+      {
+       "ai_generated": false,
+       "english": "I can't walk as fast as you can.",
+       "highlight": [],
+       "japanese": "僕は君ほど速く歩けません。"
+      },
+      {
+       "ai_generated": false,
+       "english": "There is no student who studies as hard as Jennifer.",
+       "highlight": [],
+       "japanese": "ジェニファーほどよく勉強する学生はいない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "I didn't think that Mr. Nishida could play the piano that well.",
+       "highlight": [],
+       "japanese": "私は西田さんがあれほどピアノが弾けるとは思わなかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Mr. Lewis' Japanese is so good that even Professor Ota didn't notice he was a foreigner.",
+       "highlight": [],
+       "japanese": "ルイスさんの日本語は太田先生も外国人だと気づかなかったほど上手です。"
+      }
+     ],
+     "explanation": "A particle which indicates an extent or a degree to which someone/something does something or is in some state.",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "To the extent of; to the extent that ~; (not as) ~ as ~; about",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "glossaryFormat": "plain-text",
+      "licenseTier": "C",
+      "producerTermTags": "DOJG基本",
+      "redistributable": false,
+      "sourceLabel": "DoJG 日本語文法辞典(全集)",
+      "volume": "基本 (Basic)"
+     },
+     "reading": "ほど",
+     "source": "dojg",
+     "source_id": "ほど",
+     "structure": "(i) Noun | ほど | |\n| 君ほど | As you |\n(ii) Demonstrative | ほど | |\n| それほど | To that extent |\n(iii) Sinformal | ほど | |\n| 家が倒れるほど | To the extent that houses would fall down |",
+     "tags": [
+      "DOJG基本"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": "The closer (you sit) to the stage, the easier this music is to hear.",
+       "highlight": [],
+       "japanese": "この音楽は舞台に近いほど聞きやすい。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Oxygen is less dense at higher altitudes. (literally: Oxygen becomes thinner as you go higher / the extent to which you go higher in the air.)",
+       "highlight": [],
+       "japanese": "上空に行くほど酸素が薄くなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": "I get more motivated by a harder job.",
+       "highlight": [],
+       "japanese": "私は難しい仕事ほどやる気が出てくる。"
+      },
+      {
+       "ai_generated": false,
+       "english": "The more you nag children, the more they disobey you.",
+       "highlight": [],
+       "japanese": "子供は小言を言うほど反発するものだ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "The quieter it is, the more uneasy I feel.",
+       "highlight": [],
+       "japanese": "私は静かなほど落ち着かない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "The closer to the station, the higher the rent.",
+       "highlight": [],
+       "japanese": "駅に近くなるほど家賃が高くなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": "The more I exercise, the worse I feel.",
+       "highlight": [],
+       "japanese": "運動するほど体の調子が変になる。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Stronger people tend to strain themselves more.",
+       "highlight": [],
+       "japanese": "元気な人ほど無理をしがちだ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Lazier people complain more.",
+       "highlight": [],
+       "japanese": "あまり働かない者ほど不平が多い。"
+      }
+     ],
+     "explanation": "A particle which indicates the extent or the degree to which someone/something does something or is in some state.",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "The ~, the ~; as; to the extent",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "glossaryFormat": "plain-text",
+      "licenseTier": "C",
+      "producerTermTags": "DOJG中級編",
+      "redistributable": false,
+      "sourceLabel": "DoJG 日本語文法辞典(全集)",
+      "volume": "中級編 (Intermediate)"
+     },
+     "reading": "ほど",
+     "source": "dojg",
+     "source_id": "ほど",
+     "structure": "(i) Noun | ほど | |\n| 君ほど | As you |\n(ii) Demonstrative | ほど | |\n| それほど | To that extent |\n(iii) Sinformal | ほど | |\n| 家が倒れるほど | To the extent that houses would fall down |",
+     "tags": [
+      "DOJG中級編"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "山は登れば登るほど、気温が低くなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "お礼の手紙を出すのは早ければ早いほどいい。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "毎日使う道具の使い方は簡単なら簡単なほどいい。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "このABC社で仕事をするには、外国語が上手なら上手なほどいい。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "あの人の話は聞けば聞くほどわからなくなる。"
+      }
+     ],
+     "explanation": "ば～ほど\n～すれば…になり、もっと～すればもっと…になる\n\n１）「一方の程度が変われば、それとともに他方も変わる」と言いたいときの表現。ナ形容詞の場合は「～なら～なほど」となる。\n２） ❺ のように、普通予想することと反対の結果となる場合にも使う。\n１）As degree of one thing changes, so does another. ナ-adjectives become ～なら～なほど.\n２）Also used for results contrary to what is usually expected, as in sentence ❺ .ば",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "the more…the more; the less…the less",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "ほど",
+     "source": "donna_toki",
+     "source_id": "ほど",
+     "structure": "Vば＋Vる／イAければ＋イAい／ナAなら＋ナAな＋ほど",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "ば～ほど"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "きのうは山登りに行って、もう１歩も歩けないほど疲れました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "Ａ：足、けがしたんですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "悩んでいたとき、友人が話を聞いてくれて、うれしくて涙が出るほどだった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "いじめは子どもにとっては死にたいほどのつらい経験なのかもしれない。"
+      }
+     ],
+     "explanation": "ほど〈程度〉\n～の程度に\nＢ：うん、きのうまでは泣きたいほど痛かったけど、今日は大分よくなったよ。\n\n１）ある状態がどのくらいそうなのか、その程度を強調して言いたいときに使う。\n２）話者の意志を表さない動詞や、動詞の「たい」の形につくことが多い。\n３）意味・用法は「くらい」とほとんど同じだが、｢ほど｣は程度が高い場合に使われることが多い。\n◆ × 痛いけれど、がまんできるほどの痛さだ。→○痛いけれど、がまんできるくらいの痛さだ。\n２）Often used with verbs not expressing speaker's volition, or ～たい form of verb.\n３）Nearly same usage and meaning as くらい, but ほど is used when level is high.ほど\n\n１）Emphasizes degree.",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "to the extent that; so much that",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "seeAlso": "くらい〈程度〉",
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "ほど",
+     "source": "donna_toki",
+     "source_id": "ほど",
+     "structure": "〔普通形〕（主にイＡとＶの現在形）＋ほど",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "ほど〈程度〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "外国語は勉強するほど難しくなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "アパートを探しています。駅に近いほどいいんですが、どこかありませんか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "わたしは何もしないでいるのが好きだから、休みの日は暇なほどいい。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "優れた営業マンほど客の声に耳を傾ける。"
+      }
+     ],
+     "explanation": "ほど〈相関関係〉\n～すれば…になり、もっと～すればもっと…になる\n\n１）「ば～ほど・なら～ほど」の「ば・なら」を省略した文。\n２）この使い方では「名詞＋ほど」もある。\n１）Sentence pattern in which ば and なら have been dropped from ば～ほど, and なら～ほど, respectively.\n２）Also, noun +ほど.ほど",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "if do…becomes…, the more…the more",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "seeAlso": "ば～ほど",
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "ほど",
+     "source": "donna_toki",
+     "source_id": "ほど",
+     "structure": "Vる／イAい／ナAな／N＋ほど",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "ほど〈相関関係〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "今日も風が強いです。でも、今日はきのうほど寒くないです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "わたしはテイさんほど速く走れません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "この町は今も人が多いですが、むかしほどにぎやかではありません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "Ａ：今度の社長はきびしいですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "この番組は思っていたほどおもしろくなかったです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "このテスト問題はあなたが考えているほど易しくないです。"
+      }
+     ],
+     "explanation": "ほど～ない\nＢ：ええ、でも、前の社長ほどではありません。\n\n１）二つのもの（N1とN2）の程度は大きくは違わないが、話題にしたもの（N1）はN2に及ばないと言いたいときに使う。程度がまったく違うものの比較には使わない。\n◆ × かめはうさぎほど速く走れません。\n２） ❺ ❻ のように、「ほど」が名詞以外につく形もある。\n１）Two topics (N1 and N2）are not very different, but topic being taken up (N1）is not same degree as N2. Not used to compare completely different things.ほど",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "not as…as",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "ほど",
+     "source": "donna_toki",
+     "source_id": "ほど",
+     "structure": "Ｎ＋ほど～ない",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "ほど～ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "妻：暑いわねえ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "困っているとき、思いやりのある友人の言葉ほどうれしいものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "旅行前に、あれこれ旅行案内の本を見るほど楽しいことはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "志望の会社に就職できなかったときほど悔しかったことはない。"
+      }
+     ],
+     "explanation": "ほど～はない\n～は最高に～だ\n夫：まったく今年の夏ほど暑い夏はないね。\n\n１）「Nほど～はない」の形で、話者が主観的に「Nは最高に～だ」と感じ、強調して言うときに使う。\n２）「ほど」の代わりに「くらい～はない」の言い方もある。\n３）客観的な事実については使わない。\n◆ × 富士山ほど高い山\nはない。\n→◯富士山は日本で一番高い山だ。\n２）Pattern くらい～はない can replace ほど.\n３）Not used for objective facts.ほど\n\n１）Speaker subjectively feels and emphasizes that the N that comes before pattern is supreme.",
+     "expression": "ほど",
+     "jlpt": null,
+     "meaning": "nothing is as supremely…as",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "seeAlso": "くらい～はない",
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "ほど",
+     "source": "donna_toki",
+     "source_id": "ほど",
+     "structure": "Vる／N＋ほど～はない",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "ほど～はない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ば",
+        "ほど"
+       ],
+       "japanese": "ダイヤモンドは大きければ大きいほど高い\n→ダイヤモンドは大きさ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ば",
+        "ほど"
+       ],
+       "japanese": "勉強すれば勉強するほど日本語が上手になる\n→勉強するとそれに比例して、更に日本語が上手になる"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ば",
+        "ほど"
+       ],
+       "japanese": "私は、食べれば食べるほど太っちゃうの…（復習：〜ちゃう・〜じゃう）\n→私は、食べる"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ば",
+        "ほど",
+        "であれば",
+        "であるほど"
+       ],
+       "japanese": "テストは簡単であれば、簡単であるほどいい\n→テストは簡単"
+      }
+     ],
+     "explanation": "「AばBほど」は「Aだったら、それに比例してBも〜」というように、【比例変化】【程度の変化】を表す文型です。\n\n［例］\nダイヤモンドは大きけれ\nば\n大きい\nほど\n高い\n\nこの例文では、\n「ダイヤモンドは大きさが変わると、それに比例して値段も高くなる」\nというように、【大きさ】が変化すると【値段】も比例して変わるという意味を表しています😀\n\n【補足説明】\n「〜ば〜ほど」はN２にレベルになると「〜ば」が省略されることがあります😨\n\n［例］\n①ダイヤモンドは（大きければ）大きい\nほど\n高い\n\n②（勉強すれば）勉強する\nほど\n日本語が上手になる\n\nまた、「な形容詞」は\n「〜であれば〜なほど」「〜であれば〜であるほど」「〜であればあるほど」\nなどを使うことができます😮\n\n［例］\nテストは簡単\nであれば\n簡単な\nほど\nいい\n\nテストは簡単\nであれば\n簡単\nであるほど\nいい\n\nテストは（簡単であれば）簡単な\nほど\nいい\n\nテストは（簡単であれば）簡単\nであるほど\nいい\n\nテストは簡単\nであればあるほど\nいい\n\n「な形容詞」はいくつかの形がありますが、\n「〜であればあるほど」が一番よく使われると思います\n😀「ば形」が苦手な人は復習をしておいてくださいね😉\n\nにほんブログ村\n\n\n\n――以上――",
+     "expression": "ほど",
+     "jlpt": "N3",
+     "meaning": "〜に比例して、更に〜\n〜だったら、更に〜",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/10008729.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ほど",
+     "source": "edewakaru",
+     "source_id": "ほど",
+     "structure": "動詞・い形容詞［ば形］＋動詞・い形容詞［辞書形］＋ほど\nな形容詞［であれば形］＋な形容詞［ーな・ーである］＋ほど\n名詞［であれば形］＋名詞［ーである］＋ほど",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "ば〜ほど"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "お母さんほどこわい人はいない\n→お母さんが"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "プリンほど好きなものはない\n→プリンが"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "彼女ほどかわいい女の子はいない\n→彼女が"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "家族ほど大切なものはない\n→家族が"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "英語ほど嫌いな教科はない\n→英語が"
+      }
+     ],
+     "explanation": "「〜ほど〜はない」は「〜が一番〜だ」「〜が最高に〜だ」という意味を表す文型です。「〜以上のものはな」と言いたい時に使われます😊\nこの文型は話し手が「〜が一番〜だ」という気持ちを表す場合に使われますので、一般的事実（いっぱんてきじじつ）には使われません\n😮\n\n❌日本には富士山\nほど\n高い山は\nない\n【事実】\n→⭕️富士山は日本で一番高い山です\n⭕️日本には富士山\nほど\nきれいな山は\nない\n【話し手の気持ち】\n\n初級で勉強する文型ですが、とてもよく使いますので、しっかりと覚えておいてください😉\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n\n\n――以上――",
+     "expression": "ほど",
+     "jlpt": "N4",
+     "meaning": "〜が一番〜だ\n〜が最高に〜だ",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/12876281.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ほど",
+     "source": "edewakaru",
+     "source_id": "ほど",
+     "structure": "名詞［辞書形］＋ほど〜はない",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "ほど〜はない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "ほど",
+     "jlpt": "N4",
+     "meaning": "\"XはYほど〜ない\"で、XもYも同じぐらい～であるが、比べるとXはYよりは程度が低いことを表す。\n\n[英訳]\nX is not as ~ as Y.",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2019/04/18/jlptn4-grammar-hodo-nai/"
+      ],
+      "producerTermTags": "日本語NETーN4文法",
+      "producerTitle": "〜ほど〜ない（比較）",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "ほど",
+     "source": "nihongo_net",
+     "source_id": "ほど",
+     "structure": "N + ほど〜ない",
+     "tags": [
+      "日本語NETーN4文法"
+     ],
+     "variants": [
+      "ほど〜ない（比較）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "外国語は勉強すればするほどむずかしくなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "日本語は話せば話すほど、早く上達します。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "山頂に近づけば近づくほど空気が薄くなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "彼を好きになればなるほど私の気持ちを抑えられなくなるの。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "この問題は考えれば考えるほどわからなくなる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "頑張れば頑張るほど給料がもらえる会社で働きたいです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "彼は酔えば酔うほど強くなるのよ。酔拳の使い手だからね。"
+      }
+     ],
+     "explanation": null,
+     "expression": "ほど",
+     "jlpt": "N3",
+     "meaning": "〜すれば・・・になり、もっと〜すれば・・・になる\n前件の程度が強まると、それに影響して後件の程度もさらに強まることを表す。\n\n[英訳]\nif do〜becomes・・・, the more 〜the more・・・",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2018/06/07/jlptn3-grammar-hodo/"
+      ],
+      "producerTermTags": "日本語NETーN3文法",
+      "producerTitle": "〜ば〜ほど（相関関係）",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "ほど",
+     "source": "nihongo_net",
+     "source_id": "ほど",
+     "structure": "V（ば形） + V（辞書形） + ほど\nイAければ + イAい + ほど\nナAなら + ナAな + ほど / ナAであれば + ナAであるほど",
+     "tags": [
+      "日本語NETーN3文法"
+     ],
+     "variants": [
+      "ば〜ほど（相関関係）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "送別会で持ち帰れないほどのプレゼントを頂きました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "セールのせいで、歩けないほど人が多い。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "あぁ〜、死ぬほど疲れた〜。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "好きな子に振られて、死ぬほど辛い。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "さっきの地震は立っていられないほど大きかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "オークションでは、びっくりするほどの値段がつけられた。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "昨日はお腹いっぱいで、動けなくなるほど食べました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "今、家の近くで工事をしていて、集中できないほどうるさいです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "試験に受かった時は、涙が出るほど嬉しかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "その犬は震えるほど怯えていた。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "値段を見て、目が飛び出るほど驚いた。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "部長からは若いころの話をうんざりするほど聞かされた。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "募金を呼びかけたところ、信じられないほどのお金が集まった。"
+      }
+     ],
+     "explanation": null,
+     "expression": "ほど",
+     "jlpt": "N3",
+     "meaning": "動作や状態の程度を例を使って表す。\n\n[英訳]\nShows the degree of an action or state.",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2019/04/16/jlptn3-grammar-hodo-2/"
+      ],
+      "producerTermTags": "日本語NETーN3文法",
+      "producerTitle": "〜ほど（程度）",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "ほど",
+     "source": "nihongo_net",
+     "source_id": "ほど",
+     "structure": "V（普通形 / ナイ形） + ほど\nイA（普通形） + ほど\nN + ほど",
+     "tags": [
+      "日本語NETーN3文法"
+     ],
+     "variants": [
+      "ほど（程度）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "JLPTに合格できなかったことほど悔しかったことはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "１日中寝ることほど幸せなことはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "好きな子に告白することほど、緊張するものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "私ほどスマートな人はこの学校にはいないでしょう。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "日本ほど治安のいい国はあまりありません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "私の彼氏ほどかっこいい男はいないよ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "日本語の勉強で漢字ほど嫌なものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "スマホほど便利なものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ファイナルファンタジーほどおもしろいRPGはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "アラビア語ほど難しい言語は他にない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "トムさんほど元気な人はこの学校にはいない。"
+      }
+     ],
+     "explanation": null,
+     "expression": "ほど",
+     "jlpt": "N3",
+     "meaning": "〜が一番いい。\n話し手が主観的に「最高だ」、「一番いい」と強調して言いたい時に使う。\nそのため、客観的な事実については使えない。\n\n誤用例\n× エベレストほど高い山はない。\n→ エベレストが世界で一番高い山だ。\n\n[英訳]\nthe best",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2019/04/17/jlptn3-grammar-hodo-wanai/"
+      ],
+      "producerTermTags": "日本語NETーN3文法",
+      "producerTitle": "〜ほど〜はない",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "ほど",
+     "source": "nihongo_net",
+     "source_id": "ほど",
+     "structure": "V（辞書形）こと + ほど・・・はない\nN + ほど・・・はない",
+     "tags": [
+      "日本語NETーN3文法"
+     ],
+     "variants": [
+      "ほど〜はない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "囲碁ほどルールを聞いても分からない盤上競技は他にない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "くらい"
+       ],
+       "japanese": "人生において、両親が死ぬくらいつらいことはないだろう。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "くらい"
+       ],
+       "japanese": "バングラディシュのダッカくらい人口密度が高い都市は他にない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "人前に出ることほど嫌なことはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "彼女ほど努力した人を他に見たことがない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "結末を知りながら見る映画ほどつまらないものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "エンターテイナーでは、マイケルジャクソンほど有名な人はいない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "彼ほどこの分野に精通した人はいない。"
+      }
+     ],
+     "explanation": "物事が最高の程度に達して、それ以上ないことを表します。\n後件に否定形を伴い、「～くらい～ない」の文型を取ります。\n後件には「少ない」「珍しい」「他にない」「いない」「存在しない」などの語が続きます。",
+     "expression": "ほど",
+     "jlpt": "N2",
+     "meaning": "…最…",
+     "notes": "「くらい」と「ぐらい」に違いはありません。どちらを使っても意味は同じです。\n\n「くらい／ぐらい」シリーズ",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "meaningZh": "没有比…更…",
+      "notes": "「くらい」と「ぐらい」に違いはありません。どちらを使っても意味は同じです。\n\n「くらい／ぐらい」シリーズ",
+      "producerBand": "日本語教師―Ｎ２",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=22388"
+      ],
+      "producerTermTags": "日本語教師―Ｎ２",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "ほど",
+     "source": "nihongo_no_sensei",
+     "source_id": "ほど",
+     "structure": "名詞＋ほど＋名詞＋は～ない\n名詞＋くらい＋名詞＋は～ない\n名詞＋ぐらい＋名詞＋は～ない",
+     "tags": [
+      "日本語教師―Ｎ２"
+     ],
+     "variants": [
+      "ほど～は～ない",
+      "くらい～は～ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "近ければ近いほど"
+       ],
+       "japanese": "駅から近ければ近いほど家賃は高くなります。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "反対されればされるほど"
+       ],
+       "japanese": "周囲に反対されればされるほど恋は燃える。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "明確であればあるほど"
+       ],
+       "japanese": "目標は明確であればあるほどいい。（目标越明确越好。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "練習すればするほど"
+       ],
+       "japanese": "何でも練習すればするほど上手になる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "冷たければ冷たいほど"
+       ],
+       "japanese": "今日は暑いので、飲み物は冷たければ冷たいほど良い。（因为今天很热，饮料越冷越好。）"
+      }
+     ],
+     "explanation": "ある２つの物事が同時に変化することを表す文法で、前項が変化していくにつれて、後項もそれと共に変化していくことを表します。\n接続には同じ動詞を異なる活用で２度使います。ただし、な形容詞と名詞の場合は、後ろが省略されて「であればあるほど」と言うことができます。\n前件の「～ば」は省略可能です。\n「～ば～だけ」は動た形にも接続できる点で「～ば～ほど」と異なります。\n「～ば～だけ」の使用範囲はあまり広くなく、「～ば～ほど」の方が一般的に用いられやすいです。",
+     "expression": "ほど",
+     "jlpt": "N3",
+     "meaning": "越…越…",
+     "notes": "「だけ」シリーズ",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "「だけ」シリーズ",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerContributors": [
+       "四ツ谷カオル 様"
+      ],
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=9310"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "ほど",
+     "source": "nihongo_no_sensei",
+     "source_id": "ほど",
+     "structure": "動ば形＋動辞形＋ほど\n動ば形＋動辞形／動た形＋だけ\nい形容詞語幹＋ければ＋い形容詞辞書形＋ほど／だけ\nな形容詞語幹＋であれば＋な形容詞語幹＋である／な＋ほど／だけ\n（な形容詞語幹＋であればあるほど／であればあるだけ）\n名詞＋であれば＋名詞＋であるほど／であるだけ\n（名詞＋であればあるほど／であればあるだけ）",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ば～ほど",
+      "ば～だけ"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "友だちと３時間ほど電話で喋ってた。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "今の職場では、自分の息子ほどの人と一緒に働いている。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "昨日は１２時間ほど寝た。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "この世界には、異性は星の数ほどいる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "今の所持金は２００円ほどしかない。（现在所带的钱只有200日元左右。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "夏休みまであと１か月ほどだ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "私たちは３年ほど付き合っている。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど"
+       ],
+       "japanese": "仕事が山ほどある。（工作堆积如山。）②程度"
+      }
+     ],
+     "explanation": "多さ、大きさ、時間、範囲等が大体その数値に近いこと、あるいはほとんど同じことを表します。\n「約～」「大体～」と同じ意味です。\n例文（２）の「息子ほど」は「息子と同じ年齢ほど」が省略された表現です。\n「くらい／ぐらい」に言い換えられます。「くらい」を使うと口語的な表現になります。「ほど」はやや硬い表現です。",
+     "expression": "ほど",
+     "jlpt": "N4",
+     "meaning": "…左右\n大概…\n…多\n与…相同\n和…一样",
+     "notes": "「ほど」シリーズ",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_4.json",
+      "licenseTier": "B",
+      "meaningZh": "大约…",
+      "notes": "「ほど」シリーズ",
+      "producerBand": "日本語教師―Ｎ４、Ｎ５",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=22471"
+      ],
+      "producerTermTags": "日本語教師―Ｎ４、Ｎ５",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "ほど",
+     "source": "nihongo_no_sensei",
+     "source_id": "ほど",
+     "structure": "数量＋ほど\n名詞＋ほど",
+     "tags": [
+      "日本語教師―Ｎ４、Ｎ５"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "今年の冬は去年の冬ほど寒くはない。（今年冬天不如去年冬天冷。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "子どもほど大切なものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "彼ほど仕事熱心な人はいない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "Ａ社の新商品は、我が社にとって多くの人が言うほど脅威にはならないだろう。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "皆嫌々参加する会議ほど生産性の無いものはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "なかった"
+       ],
+       "japanese": "完治するまでに思っていたほど時間はかからなかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "皆さんから参考にされるほど私は上手くないです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ほど",
+        "ない"
+       ],
+       "japanese": "お前の相手をしているほど暇ではない。"
+      }
+     ],
+     "explanation": "比較を表します。\n「ほど」の直前に接続された語が基準となり、後件では比較が述べられます。",
+     "expression": "ほど",
+     "jlpt": "N4",
+     "meaning": "不如…",
+     "notes": "「ほど」シリーズ",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_4.json",
+      "licenseTier": "B",
+      "meaningZh": "没有那么…",
+      "notes": "「ほど」シリーズ",
+      "producerBand": "日本語教師―Ｎ４、Ｎ５",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=22473"
+      ],
+      "producerTermTags": "日本語教師―Ｎ４、Ｎ５",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "ほど",
+     "source": "nihongo_no_sensei",
+     "source_id": "ほど",
+     "structure": "動詞普通形＋ほど～ない\n名詞＋ほど～ない",
+     "tags": [
+      "日本語教師―Ｎ４、Ｎ５"
+     ],
+     "variants": [
+      "ほど～ない"
+     ]
+    }
+   ],
+   "expression": "ほど",
+   "variants": [
+    "ば～ほど",
+    "ほど〈程度〉",
+    "ほど〈相関関係〉",
+    "ほど～ない",
+    "ほど～はない",
+    "ば〜ほど",
+    "ほど〜はない",
+    "ほど〜ない（比較）",
+    "ば〜ほど（相関関係）",
+    "ほど（程度）",
+    "ほど～は～ない",
+    "くらい～は～ない",
+    "ば～だけ"
+   ]
+  },
+  "longest_expression": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "させてやっていただけませんか",
+        "せてやっていただけませんか"
+       ],
+       "japanese": "彼に一言言って、安心させてやっていただけませんか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "せてやっていただけませんか"
+       ],
+       "japanese": "次回のプレゼンは彼に任せてやっていただけませんか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "せてやっていただけないですか"
+       ],
+       "japanese": "疲れているみたいなので、彼を休ませてやっていただけないですか。（好像很累，能让他休息一下吗？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "させてやっていただけませんか",
+        "せてやっていただけませんか"
+       ],
+       "japanese": "彼にも参加させてやっていただけませんか。新人のうちに参加すると良い経験になりますので。"
+      }
+     ],
+     "explanation": "自分の行為について、その行為が向かう先の人物を立てて述べたり、相手に対して丁重に述べる謙譲表現です。\n自分の近い第三者に物事をさせることを相手にお願いする表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\nもともとは「～させてやってもらえませんか」です。この「もらう」の謙譲語が「頂く」です。\n（～させてやってもらえますか）\n（～させてやってもらえませんか）\n～させてやって頂けますか\n～させてやって頂けませんか\n～させてやって頂けないでしょうか\n～させてやって頂けませんでしょうか",
+     "expression": "させてやって頂けませんか",
+     "jlpt": "N3",
+     "meaning": "能否让…做呢",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20385"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "させてやっていただけませんか",
+     "source": "nihongo_no_sensei",
+     "source_id": "させてやって頂けませんか",
+     "structure": "五段動詞のない形＋せてやって頂けませんか\n一段動詞のない形＋させてやって頂けませんか\nする→させてやって頂けませんか\n来る→来させてやって頂けませんか",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": []
+    }
+   ],
+   "expression": "させてやって頂けませんか",
+   "variants": []
+  },
+  "most_variants": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "先生、ご家族の皆さんはお元気ですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "田中さん、お宅の皆さんはいつもお忙しそうですね。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "この部屋にあるものはどうぞご自由にお使いください。"
+      }
+     ],
+     "explanation": "お～・ご～\n\n１）相手を対象として行うことやもの（お手紙・お招き）、相手に関係のあるものなどに「お」や「ご」をつけて尊敬や丁寧な気持ちを表す。\n２）和語には「お」がつくことが多く、漢語には「ご」がつくことが多い。\n１）Prefixes お and ご append to things or actions (letters, invitations) concerning another person to indicate an honorific or polite attitude towards that person.\n２）Prefix お most often appends to words of Japanese origin, while ご attaches to words deriving from China．お",
+     "expression": "お",
+     "jlpt": null,
+     "meaning": "polite nominal and adjectival prefixes",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "お",
+     "source": "donna_toki",
+     "source_id": "お",
+     "structure": "お＋イＡい／ナＡ／Ｎ ご＋ナＡ／Ｎ",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "お～",
+      "ご～"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "お",
+     "jlpt": null,
+     "meaning": null,
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "aliasOf": "お",
+      "bankMember": "term_bank_1.json",
+      "entryShape": "alias-redirect",
+      "licenseTier": "C",
+      "producerLinks": [
+       "?query=お"
+      ],
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "お",
+     "source": "donna_toki",
+     "source_id": "お",
+     "structure": null,
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "お～いたす"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（駅で）危ないですから、黄色い線の内側にお下がりください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（空港のカウンターで）パスポートと航空券をお見せください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（病院などで）予約のある方は、10分前においでください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（デパートで）7階レストランへは、エレベーターをご利用ください。"
+      }
+     ],
+     "explanation": "お～ください\n\n１）公の場所でよく使われる勧めや指示の簡潔な言い方。自分のための依頼には使わない。\n◆ × 先生、わたしの作文をお直しください。\n→○先生、わたしの作文を直してくださいませんか。\n２） ❸ の「おいでください」は特別な形で、「来てください」の意味。\n３）「する・来る」や1字の動詞Ⅱ「見る・着る・寝る・出る」などはこの形で使えない。\n◆ × この写真をお見ください。\n→○この写真をご覧ください。\n１）Concise phrase of suggestion or directions often used in public places. Not used for speaker’s own requests．お",
+     "expression": "お",
+     "jlpt": null,
+     "meaning": "please…",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "お",
+     "source": "donna_toki",
+     "source_id": "お",
+     "structure": "お＋Vます／ご＋する動詞のN＋ください",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "お～ください"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "学生：先生、おかばんをお持ちします。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "学生：先生、プーケットにいらっしゃってください。わたしがご案内いたします。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "わたしは結婚式の写真を先生にお見せしました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "店員：では、修理ができましたら、お知らせいたします。"
+      }
+     ],
+     "explanation": "お～する\n先生：ああ、タンさん、ありがとう。\n先生：それはありがとう。\n客 ：じゃ。よろしくお願いします。\n\n１）相手に対する尊敬の気持ちを表すために話す人が自分の行為をへりくだって話す（謙譲を表す）場合に使う形。\n２）相手のためにする行為に使う。尊敬する相手のない動作には使わない。\n◆ × わたしは夜一人でCDをおかけして、お聞きします。\n→○わたしは夜一人でCDをかけて、聞きます。\n３） ❷ のように「案内」などの漢語の場合は「ご～します・ご～いたします」となる。\n２）Describes actions done for other party． Not used for actions without recipient that can be elevated.お\n\n１）To elevate the other party, speaker uses humble language for his own actions.",
+     "expression": "お",
+     "jlpt": null,
+     "meaning": "the speaker humbly (does verb)",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "お",
+     "source": "donna_toki",
+     "source_id": "お",
+     "structure": "お ＋Ｖます＋する",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "お～する"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（改札口で）特急券をお持ちですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "会長、先ほどから、田中様がお待ちです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "社長、何をお探しですか。"
+      }
+     ],
+     "explanation": "お～だ\n\n「Ｖています」の尊敬の形である。「Ｖていらっしゃいます」の簡潔な言い方。 ❶ 「お持ちです」は「持っていらっしゃいます」の意味。\nHonorific form of Vています. Concise form of Vていらっしゃいます. The お持ちです in sentence ❶ means 持っていらっしゃいます.お",
+     "expression": "お",
+     "jlpt": null,
+     "meaning": "the honorable listener does (verb)",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "お",
+     "source": "donna_toki",
+     "source_id": "お",
+     "structure": "おＶます＋だ",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "お～だ"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "会長は10月8日にバンコクからお帰りになります。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "社員：社長、奥さまにお電話をおかけになりましたか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "学生：この新聞はもうお読みになりましたか。"
+      }
+     ],
+     "explanation": "お～になる\n社長：ああ、さっきかけたよ。\n先生：いえ、まだなんですよ。\n\n１）相手や第三者に尊敬の気持ちを表すときに使う形。\n２）尊敬できない行為を表す動詞（ぬすむ・なぐる、など）やくだけた言葉（がんばる・しゃべる、など）はこの形で使わない。\n２）Cannot be used for actions for which honorifics are inappropriate, such as ぬすむ or なぐる, and for informal words such as がんばる or しゃべる, etc.お\n\n１）Shows respect toward others and third parties.",
+     "expression": "お",
+     "jlpt": null,
+     "meaning": "someone does (verb) honorifically",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "お",
+     "source": "donna_toki",
+     "source_id": "お",
+     "structure": "お＋Ｖます＋になる",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "お～になる"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "「〜ていらっしゃる」の簡潔な言い方",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2019/07/11/jlptn3-grammar-o-da/"
+      ],
+      "producerTermTags": "日本語NETーN3文法",
+      "producerTitle": "お〜だ",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "お",
+     "source": "nihongo_net",
+     "source_id": "お",
+     "structure": "お+ V（ます形）ます+ だ",
+     "tags": [
+      "日本語NETーN3文法"
+     ],
+     "variants": [
+      "お〜だ"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "いただきまして",
+        "いただき"
+       ],
+       "japanese": "いつも当店をご利用いただきまして誠にありがとうございます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "お",
+        "頂きまして",
+        "頂き"
+       ],
+       "japanese": "早速お返事頂きましてありがとうございます。（感谢您迅速的回信。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "頂きまして",
+        "頂き"
+       ],
+       "japanese": "夜遅くにご対応頂きましてありがとうございます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "お",
+        "頂き"
+       ],
+       "japanese": "本日も多数のお客様にご来店頂き、ありがとうございました。"
+      }
+     ],
+     "explanation": "自分の行為について、その行為が向かう先の人物を立てて述べたり、相手に対して丁重に述べる謙譲表現です。\n相手の行為に対する感謝を表します。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\n「～て頂く／て頂きます」よりも謙虚な表現です。\n読み方は「いただく／いただきます」です。\nお／ご～いただく\nお／ご～いただきます",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20375"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋頂く／頂きます\nお／ご＋五段動詞ます形＋頂く／頂きます\nご＋サ変動詞語幹＋頂く／頂きます",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～頂く",
+      "頂きます"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "頂けませんか"
+       ],
+       "japanese": "こちらを１つ私にお譲り頂けませんか？"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "いただけないでしょうか"
+       ],
+       "japanese": "詳しくお教えいただけないでしょうか。（能详细告诉我吗？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "頂けますか"
+       ],
+       "japanese": "この事はお約束頂けますか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "いただけますでしょうか"
+       ],
+       "japanese": "恐れ入りますが、少々お待ちいただけますでしょうか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "いただけますか"
+       ],
+       "japanese": "お名前をお聞かせいただけますか。（能告诉我您的名字吗？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "いただけますでしょうか",
+        "ご"
+       ],
+       "japanese": "記入した内容に誤りがないかご確認いただけますでしょうか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ご",
+        "願えますか"
+       ],
+       "japanese": "あなたのご意見をお聞かせ願えますか？（能让我听听您的意见吗？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "願います"
+       ],
+       "japanese": "署までご同行願います。"
+      }
+     ],
+     "explanation": "自分の行為について、その行為が向かう先の人物を立てて述べたり、相手に対して丁重に述べる謙譲表現です。\n婉曲的に相手に行為を求める表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\n「頂けませんでしょうか／願えませんでしょうか」が最も謙虚な表現です。\n読み方は「いただけませんか」「ねがえませんか」です。\nお／ご～頂けますか\nお／ご～頂けませんか\nお／ご～頂けないでしょうか\nお／ご～頂けませんでしょうか\nお／ご～願います\nお／ご～願えますか\nお／ご～願えませんか\nお／ご～願えないでしょうか\nお／ご～願えませんでしょうか",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": null,
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "meaningZh": "能否请您…",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20377"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋頂けますか／頂けませんか\nお／ご＋五段動詞ます形＋頂けますか／頂けませんか\nご＋サ変動詞語幹＋頂けますか／頂けませんか",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～頂けませんか",
+      "願えませんか"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください"
+       ],
+       "japanese": "番組はまだまだ続きます。引き続きお楽しみください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください"
+       ],
+       "japanese": "今しばらくお待ちください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください"
+       ],
+       "japanese": "詳細はメールをお確かめください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください"
+       ],
+       "japanese": "どうぞ、お受け取りください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください"
+       ],
+       "japanese": "何かありましたら、お気軽にお声がけください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ください",
+        "ご"
+       ],
+       "japanese": "詳細は下記をご覧ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください",
+        "ご"
+       ],
+       "japanese": "もしお困りでしたらご連絡くださいませ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください",
+        "ご"
+       ],
+       "japanese": "数量限定ですのでお早めにご購入ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください",
+        "ご"
+       ],
+       "japanese": "皆さん良い１日をお過ごしください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください",
+        "ご"
+       ],
+       "japanese": "ご自由にお使いください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ください",
+        "ご"
+       ],
+       "japanese": "氏名、連絡先を添えてご応募ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください",
+        "ご"
+       ],
+       "japanese": "お返事にお時間いただく場合がございます。予めご了承ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ください",
+        "ご"
+       ],
+       "japanese": "ご協力いただける方は、ぜひ街の清掃美化活動にご参加ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ください",
+        "ご"
+       ],
+       "japanese": "仕事をお探しの方は、無料職業紹介所をお気軽にご利用ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご"
+       ],
+       "japanese": "当社の名前を装った不審なメールにご"
+      }
+     ],
+     "explanation": "相手あるいは第三者の行為・物事・状態等を立てて述べる尊敬表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\n「～くださいませ」のように「ませ」が付くことがあります。この「ませ」は「ます」の命令形で、より相手を立てる丁寧な表現となります。\n漢字は「下さる／下さい」です。\nお／ご～くださる\nお／ご～ください\nお／ご～くださいませ",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "ください\n。\n（请注意伪装成本公司名字的可疑邮件。）\n（16） ゴミは\nお\n持ち帰り\nください\n。\n（垃圾请带走。）\n（17） 寒くなってまいりましたので、\nご\n自愛\nください\n。\n（天气变冷了，请保重身体。）\n（18） 数に限りがございます。売り切れの際は\nご\n容赦\nください\n。\n（数量有限。卖完的时候请原谅。）",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "ください\n。\n（请注意伪装成本公司名字的可疑邮件。）\n（16） ゴミは\nお\n持ち帰り\nください\n。\n（垃圾请带走。）\n（17） 寒くなってまいりましたので、\nご\n自愛\nください\n。\n（天气变冷了，请保重身体。）\n（18） 数に限りがございます。売り切れの際は\nご\n容赦\nください\n。\n（数量有限。卖完的时候请原谅。）",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20356"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋くださる／ください\nお／ご＋五段動詞ます形＋くださる／ください\nご＋サ変動詞語幹＋くださる／ください",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～くださる",
+      "ください"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "します",
+        "お"
+       ],
+       "japanese": "いらっしゃいませ。お席にご案内します。（欢迎光临。我带您去座位。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "します",
+        "お"
+       ],
+       "japanese": "荷物をお預かりします。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "します",
+        "お"
+       ],
+       "japanese": "１６時頃に折り返しお電話します。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "します",
+        "致します",
+        "して"
+       ],
+       "japanese": "こちらで確認してから、後ほどご連絡致します。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "します",
+        "お",
+        "いたします",
+        "いたしま"
+       ],
+       "japanese": "最新情報はホームページ上で随時お伝えいたします。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "します",
+        "お",
+        "いたします",
+        "いたしま"
+       ],
+       "japanese": "未成年の方のご来店はお断りいたします。（谢绝未成年人光临本店。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "します",
+        "お",
+        "いたします",
+        "いたしま"
+       ],
+       "japanese": "この話の続きは、次回お話しいたします。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "して"
+       ],
+       "japanese": "自転車を少しお借りしてもいいですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "します",
+        "お"
+       ],
+       "japanese": "ご冥福をお祈りします。（愿在天之灵可以安息。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "いたしま"
+       ],
+       "japanese": "荷物をお持ちいたしましょうか。（我帮您拿行李吧。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "します",
+        "お"
+       ],
+       "japanese": "駅までお送りします。"
+      }
+     ],
+     "explanation": "自分の行為について、その行為が向かう先の人物を立てて述べたり、相手に対して丁重に述べる謙譲表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\n「致す（いたす）」は「する」よりも更に謙虚な表現です。\nお／ご～する\nお／ご～します\nお／ご～いたす\nお／ご～いたします",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20372"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋する／します／いたす／いたします\nお／ご＋五段動詞ます形＋する／します／いたす／いたします\nご＋サ変動詞語幹＋する／します／いたす／いたします",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～する",
+      "します",
+      "致す",
+      "致します"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "です"
+       ],
+       "japanese": "社長がお呼びです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "です",
+        "ご"
+       ],
+       "japanese": "社長は所用でご欠席です。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "です"
+       ],
+       "japanese": "「山田はただいま外出中です。」「何時頃お帰りですか？」"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "です",
+        "ご"
+       ],
+       "japanese": "お元気でお過ごしですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "です"
+       ],
+       "japanese": "「どちらからお越しですか？」「神奈川から来ました。」"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "です",
+        "でした"
+       ],
+       "japanese": "お久しぶりです。お元気でしたか？"
+      }
+     ],
+     "explanation": "相手あるいは第三者の行為・物事・状態等を立てて述べる尊敬表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\nお／ご～です\n※「お～です」は事実を述べるときに使いやすく、「お～なる」は状況や状態に変化が起きるときに用いやすいです。",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20358"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋です\nお／ご＋五段動詞ます形＋です\nご＋サ変動詞語幹＋です",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～です"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "なさい"
+       ],
+       "japanese": "「お休みなさい」（“晚安”）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "なさい"
+       ],
+       "japanese": "「お帰りなさい」"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なさい",
+        "ご"
+       ],
+       "japanese": "レジ袋をご利用なさいますか？（您需要用购物袋吗？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "ご",
+        "なさる"
+       ],
+       "japanese": "初めてお取引なさる方はまず取引のルールをご確認ください。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "なさって"
+       ],
+       "japanese": "佐藤さんは著書を多数ご執筆なさっています。（佐藤先生著作等身。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "なさって"
+       ],
+       "japanese": "先生は日本文学をご研究なさっています。（老师在研究日本文学。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "なさる"
+       ],
+       "japanese": "明日からご旅行なさるそうですね。どちらに行かれるんですか？"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "なさる"
+       ],
+       "japanese": "Ａさんはご結婚なさるそうですね。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "なさって"
+       ],
+       "japanese": "先生が先日、テレビ番組にご出演なさっていました。（老师前些天出演了电视节目。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ご",
+        "なさって"
+       ],
+       "japanese": "詳しいことについては添付データをご確認なさってください。"
+      }
+     ],
+     "explanation": "相手あるいは第三者の行為・物事・状態等を立てて述べる尊敬表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\n他の尊敬表現に比べ比較的古い言い方です。\nお／ご～なさる\nお／ご～なさいます\nお／ご～なさいました",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20360"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋なさる／なさいます\nお／ご＋五段動詞ます形＋なさる／なさいます\nご＋サ変動詞語幹＋なさる／なさいます",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～なさる",
+      "なさいます"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になります"
+       ],
+       "japanese": "ピアノには自信があります。お聞きになりますか？"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になりました"
+       ],
+       "japanese": "お客様がお見えになりました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になりました"
+       ],
+       "japanese": "社長は先ほどお帰りになりました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "になります",
+        "ご"
+       ],
+       "japanese": "田中さんは結婚式にご出席になりますか？（田中先生出席婚礼吗？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になる"
+       ],
+       "japanese": "この料理をお作りになる前に、食材の下処理をしてください。"
+      }
+     ],
+     "explanation": "相手あるいは第三者の行為・物事・状態等を立てて述べる尊敬表現です。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\nお／ご～になる\nお／ご～になります\nお／ご～になりました\n※「お～です」は事実を述べるときに使いやすく、「お～なる」は状況や状態に変化が起きるときに用いやすいです。",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20362"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋になる／になります\nお／ご＋五段動詞ます形＋になる／になります\nご＋サ変動詞語幹＋になる／になります",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～になる",
+      "になります"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になれます"
+       ],
+       "japanese": "インターネットでもお電話でもお申し込みになれます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になれます"
+       ],
+       "japanese": "入場券はオンラインでもお求めになれます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "になれます",
+        "ご"
+       ],
+       "japanese": "このカードは日本国内のみでご利用になれます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "になれます",
+        "ご"
+       ],
+       "japanese": "電話でもホームページからでもご応募になれます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "になれます",
+        "ご"
+       ],
+       "japanese": "館内はどなたでもご利用になれます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になれます"
+       ],
+       "japanese": "ここのWi-Fiは無料でお使いになれます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "になれます"
+       ],
+       "japanese": "料理はお持ち帰りになれます。（料理可以打包带走。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "になれます",
+        "ご"
+       ],
+       "japanese": "ここは休憩所としてどなたでもご利用になれます。"
+      }
+     ],
+     "explanation": "相手あるいは第三者の行為・物事・状態等を立てて述べる尊敬表現です。可能を表します。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\nお／ご～になれる\nお／ご～になれます",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "您能够…\n您可以…",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20364"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋になれる／になれます\nお／ご＋五段動詞ます形＋になれる／になれます\nご＋サ変動詞語幹＋になれる／になれます",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～になれる",
+      "になれます"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "申し上げます"
+       ],
+       "japanese": "よろしくお願い申し上げます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "申し上げます",
+        "ご"
+       ],
+       "japanese": "ご冥福をお祈り申し上げます。（愿在天之灵可以安息。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "申し上げます"
+       ],
+       "japanese": "Ａさんに哀悼の意を表すと共に、心からお悔やみ申し上げます。（向A先生表示哀悼的同时，并由衷地表示哀伤之意。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "申し上げます",
+        "ご"
+       ],
+       "japanese": "亡くなった多くの方々のご冥福をお祈り申し上げます。（愿去世的各位英灵可以安息。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "申し上げます",
+        "ご"
+       ],
+       "japanese": "このたびのご退院、心よりお喜び申し上げます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "お",
+        "申し上げます",
+        "ご"
+       ],
+       "japanese": "ご結婚おめでとうございます。心よりお祝い申し上げます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "申し上げます",
+        "ご"
+       ],
+       "japanese": "今回の結果について、皆様にご報告申し上げます。"
+      }
+     ],
+     "explanation": "自分の行為について、その行為が向かう先の人物を立てて述べたり、相手に対して丁重に述べる謙譲表現です。\n伝達、依頼、祝い、謝罪等を表す語について、相手にその旨を伝えることを表します。\n原則として和語には「お」、漢語には「ご」が付きます。ただし多少の例外もあります。\nお／ご～申し上げる\nお／ご～申し上げます",
+     "expression": "お",
+     "jlpt": "N3",
+     "meaning": "-",
+     "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "尊敬語\nお／ご～くださる／ください\n–\n\nお／ご～です\n–\n\nお／ご～なさる／なさいます\n–\n\nお／ご～になる／になります\n–\n\nお／ご～になれる／になれます\n可能\n\n～ていらっしゃる／ていらっしゃいます／ておいでになる／ておいでになります\n–\n\n～れる／られる／される（尊敬）\n–\n\n～させてくださる／させてください\n–\n\n謙譲語\nお／ご～する／します／致す／致します\n–\n\nお／ご～頂く／頂きます\n相手の行為に対する感謝\n\nお／ご～頂けませんか／願えませんか\n婉曲的に相手に行為を求める\n\n～て頂けますか／て頂けませんか\n婉曲的に相手に行為を求める\n\nお／ご～申し上げる／申し上げます\n伝達、依頼、祝い、謝罪…\n\n～させていただく／させていただきます\n自分の行為の許可を請う\n\n～させてやって頂けませんか\n自分の近い第三者に物事をさせることを相手にお願いする\n\n～て頂けるとありがたい／て頂けると幸いです\n相手がそれをしてくれたら非常に嬉しい\n\n～ておる／ております\n「～ている」の謙譲語\n\n丁寧語\n～です／～ます\n–\n\n～ても宜しいですか／ても宜しいでしょうか\n婉曲的に問い掛け、お願いする\n\n～ございます\n「～です」「～あります」の丁寧形\n\n美化語\n「お料理」「ご挨拶」などの「お」と「ご」\n物事を美化して述べる",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=20381"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "お",
+     "source": "nihongo_no_sensei",
+     "source_id": "お",
+     "structure": "お／ご＋一段動詞ます形＋申し上げる／申し上げます\nお／ご＋五段動詞ます形＋申し上げる／申し上げます\nご＋サ変動詞語幹＋申し上げる／申し上げます",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": [
+      "ご～申し上げる",
+      "申し上げます"
+     ]
+    }
+   ],
+   "expression": "お",
+   "variants": [
+    "お～",
+    "ご～",
+    "お～いたす",
+    "お～ください",
+    "お～する",
+    "お～だ",
+    "お～になる",
+    "お〜だ",
+    "ご～頂く",
+    "頂きます",
+    "ご～頂けませんか",
+    "願えませんか",
+    "ご～くださる",
+    "ください",
+    "ご～する",
+    "します",
+    "致す",
+    "致します",
+    "ご～です",
+    "ご～なさる",
+    "なさいます",
+    "ご～になる",
+    "になります",
+    "ご～になれる",
+    "になれます",
+    "ご～申し上げる",
+    "申し上げます"
+   ]
+  },
+  "multi_source_rich": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "日本料理は好きだが、寿司が好きかというと、そうでもない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "高いものをプレゼントしたら彼女が喜ぶかというと、そうではないこともある"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "お金持ちが幸せかというと、そういうわけでもなさそうだ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "歌がうまければ誰でも歌手になれるかというと、そうとは限らない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "仕事はとても大変だが、辞めたいかというと、そんなことはない"
+      }
+     ],
+     "explanation": "「Aかというと〜ない」は「実際はAではない」「実はAではない」という意味の文型です。「〜だからAだと思うのが当然だが、実際はAではない」「普通に考えるとAだと思われがちだが、実はAではない」と言いたい時に使われます。\n\n［例］\n①日本料理が好きだが、寿司が好き\nかというと\n、そうでもない\n→日本料理が好きだから、お寿司も好きだと思われるのが当然だが、お寿司は好きではない\n\n②高いものをプレゼントしたら彼女が喜ぶ\nかというと\n、そうではないこともある\n→高いものをプレゼントしたら彼女が喜ぶと思うのが普通だが、そうではないこともある\n\n③お金持ちが幸せ\nかというと\n、そういうわけでもなさそうだ\n→普通に考えるとお金持ちは幸せだと思われがちだが、実際はそうではない\n\n④歌がうまければ誰でも歌手になれる\nかというと\n、そうとは限らない\n→歌がうまければ歌手になれると思うのが普通だが、そうとは限らない\n\n⑤仕事はとても大変だが、辞めたい\nかというと\n、そんなことはない\n→仕事が大変だと辞めたいと思っていると思われがちだが、そんなことはない\n\n「〜かというと〜ない」は「〜とは限らない」「〜わけではない」「〜というものではない」などとよく使われますので、一緒に覚えておきましょう😉\n\n【関連文型】\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "実際は〜ではない\n実は〜ではない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/25967077.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞・形容詞・名詞［普通形］＋かというと〜ない\n動詞・形容詞・名詞［普通形］＋かといえば〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "かというと〜ない",
+      "かといえば〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "日本料理は好きだが、寿司が好きかというと、そうでもない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "高いものをプレゼントしたら彼女が喜ぶかというと、そうではないこともある"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "お金持ちが幸せかというと、そういうわけでもなさそうだ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "歌がうまければ誰でも歌手になれるかというと、そうとは限らない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "かというと"
+       ],
+       "japanese": "仕事はとても大変だが、辞めたいかというと、そんなことはない"
+      }
+     ],
+     "explanation": "「Aかというと〜ない」は「実際はAではない」「実はAではない」という意味の文型です。「〜だからAだと思うのが当然だが、実際はAではない」「普通に考えるとAだと思われがちだが、実はAではない」と言いたい時に使われます。\n\n［例］\n①日本料理が好きだが、寿司が好き\nかというと\n、そうでもない\n→日本料理が好きだから、お寿司も好きだと思われるのが当然だが、お寿司は好きではない\n\n②高いものをプレゼントしたら彼女が喜ぶ\nかというと\n、そうではないこともある\n→高いものをプレゼントしたら彼女が喜ぶと思うのが普通だが、そうではないこともある\n\n③お金持ちが幸せ\nかというと\n、そういうわけでもなさそうだ\n→普通に考えるとお金持ちは幸せだと思われがちだが、実際はそうではない\n\n④歌がうまければ誰でも歌手になれる\nかというと\n、そうとは限らない\n→歌がうまければ歌手になれると思うのが普通だが、そうとは限らない\n\n⑤仕事はとても大変だが、辞めたい\nかというと\n、そんなことはない\n→仕事が大変だと辞めたいと思っていると思われがちだが、そんなことはない\n\n「〜かというと〜ない」は「〜とは限らない」「〜わけではない」「〜というものではない」などとよく使われますので、一緒に覚えておきましょう😉\n\n【関連文型】\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "実際は〜ではない\n実は〜ではない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/25967077.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞・形容詞・名詞［普通形］＋かというと〜ない\n動詞・形容詞・名詞［普通形］＋かといえば〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "かというと〜ない",
+      "かといえば〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なくしては"
+       ],
+       "japanese": "努力なくしては、N１には合格できないわよ\n→努力がなければ、N１には合格できないわよ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なくしては"
+       ],
+       "japanese": "みんなの協力なくしては、成功できなかっただろう\n→みんなの協力がなければ、成功はできなかっただろう"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なくしては"
+       ],
+       "japanese": "親の援助なくしては大学には行けない\n→親の援助がなければ大学には行けない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なくしては"
+       ],
+       "japanese": "話し合いなくしては、問題は解決しないと思います\n→話し合いがなければ、問題は解決しないと思います"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なくしては"
+       ],
+       "japanese": "彼なくしては、今回の試合には勝てなかっただろう\n→彼がいなければ、今回の試合には勝てなかっただろう"
+      }
+     ],
+     "explanation": "「AなくしてはBない」は「AがなければBない」「AがなければBできない」という意味の文型です。これは「Aがなかったら、Bは成立しない」と言いたい時に使う文型で、「A」がとても重要だということを強調します。「〜なくしては」の「は」は、省略されることもあります。「A」に動詞が入る場合は\n「V辞＋ことなくしては〜ない」\nになります。\n\n［例］\n努力する\nことなくしては\n、N１に合格できないわよ\n\n「〜なくしては〜ない」は「〜なしでは〜ない・〜なしには〜ない」よりかたい言い方です。「〜なしでは〜ない・〜なしには〜ない」の復習をしておきましょう😊\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "〜がなければ〜ない\n〜がなければ〜できない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/24863090.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞［辞書形］＋ことなくしては\n名詞［辞書形］＋なくしては",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "なくしては〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "ない"
+       ],
+       "japanese": "もうスマホなしでは生きていけないな…\n→もうスマホ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "ない"
+       ],
+       "japanese": "辞書なしでは、英語の本が読めない\n→辞書"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "なかった"
+       ],
+       "japanese": "彼なしではチームは優勝できなかった\n→彼"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "ない"
+       ],
+       "japanese": "社長なしでは会議が始められない\n→社長"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "なかった"
+       ],
+       "japanese": "両親の援助なしでは留学することはできなかっただろう\n→両親の援助"
+      }
+     ],
+     "explanation": "「AなしではBない・AなしにはBない」は「AがなかったらBできない」「Aがない状態ではBすることができない」という意味の文型です。\n「Aがどうしても必要だ」\nということを強調したい時に使われます。【B】には「〜ない」「〜できない」など、否定形が入ります。\n「〜なしでは〜ない」は「〜なしには〜ない」にチェンジすることができます。\nまた、\n【A】に人が入る場合は「Aがいなくては〜ない」「Aがいなければ〜ない」という形もあります。\n\n［例］\n社長\nなしでは\n会議を始められ\nない\n\n＝社長\nなしには\n会議を始められ\nない\n\n＝社長\nがいなくては\n会議を始められ\nない\n\n＝社長\nがいなければ\n会議を始められ\nない\n\nN１に「〜なしに」「〜なくしては〜ない」という文型もありますので、一緒に覚えておきましょう😊\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "〜がなかったら、〜できない\n〜がない状態では、〜することができない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/22596815.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋なしでは〜ない\n名詞［辞書形］＋なしには〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "なしでは〜ない",
+      "なしには〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "ない"
+       ],
+       "japanese": "もうスマホなしでは生きていけないな…\n→もうスマホ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "ない"
+       ],
+       "japanese": "辞書なしでは、英語の本が読めない\n→辞書"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "なかった"
+       ],
+       "japanese": "彼なしではチームは優勝できなかった\n→彼"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "ない"
+       ],
+       "japanese": "社長なしでは会議が始められない\n→社長"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "なしでは",
+        "なかった"
+       ],
+       "japanese": "両親の援助なしでは留学することはできなかっただろう\n→両親の援助"
+      }
+     ],
+     "explanation": "「AなしではBない・AなしにはBない」は「AがなかったらBできない」「Aがない状態ではBすることができない」という意味の文型です。\n「Aがどうしても必要だ」\nということを強調したい時に使われます。【B】には「〜ない」「〜できない」など、否定形が入ります。\n「〜なしでは〜ない」は「〜なしには〜ない」にチェンジすることができます。\nまた、\n【A】に人が入る場合は「Aがいなくては〜ない」「Aがいなければ〜ない」という形もあります。\n\n［例］\n社長\nなしでは\n会議を始められ\nない\n\n＝社長\nなしには\n会議を始められ\nない\n\n＝社長\nがいなくては\n会議を始められ\nない\n\n＝社長\nがいなければ\n会議を始められ\nない\n\nN１に「〜なしに」「〜なくしては〜ない」という文型もありますので、一緒に覚えておきましょう😊\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "〜がなかったら、〜できない\n〜がない状態では、〜することができない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/22596815.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋なしでは〜ない\n名詞［辞書形］＋なしには〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "なしでは〜ない",
+      "なしには〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に",
+        "れなかった",
+        "なかった",
+        "寝る"
+       ],
+       "japanese": "蚊がいたので寝るに寝られなかった\n→蚊がいたので寝"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に",
+        "なかった",
+        "ない",
+        "買う"
+       ],
+       "japanese": "お金がないので、買うに買えなかった\n→お金がないので、買い"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に",
+        "れなかった",
+        "なかった"
+       ],
+       "japanese": "上司が残業しているので、帰るに帰れなかった\n→上司が残業しているので、帰り"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に",
+        "ない",
+        "泣くに泣けない"
+       ],
+       "japanese": "スマホをなくして、泣くに泣けない気持ちになった\n→スマホをなくして、"
+      }
+     ],
+     "explanation": "「〜に〜ない」は「〜たいのに〜できない」という意味を表す文型です。\nこの文型は「何か理由があって、〜たいのに〜できない」というように、理由があるからできないということを表します\n😮後ろには可能否定形（かのうひていけい）がきて、同じ動詞を繰り返すと覚えておきましょう😀\n\n［例］\n\n寝る\nに\n寝られない\n\n買う\nに\n買えない\n\nまた、この文型にはいくつか慣用表現（かんようひょうげん）がありますので暗記しておきましょう😉\n\n［慣用表現］\n・\n泣くに泣けない\n（なくになけない）\n【意味】すごくつらい\n\n・\n言うに言えない\n（いうにいえない）\n【意味】言葉では表現できない\n\n・\n引くに引けない\n（ひくにひけない）\n【意味】今さら引き下がれない\n\n似ている文型がいくつかありますが、「〜に〜ない」は「理由があって、〜たいのに〜できない」と覚えておくといいと思います。慣用表現は少し難しいですが、N１を受ける人は必ず覚えておきましょう😀\n（復習：テストをするvsテストを受ける）\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "〜たいのに〜できない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/13252306.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞［辞書形］＋に＋動詞［可能否定形］",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "に〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "たりとも",
+        "も"
+       ],
+       "japanese": "ごはん粒は１粒たりとも残してはいけないよ！\n→ごはん粒は１粒"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "たりとも",
+        "も",
+        "できない"
+       ],
+       "japanese": "明日は試験だ。１日たりとも無駄にはできない\n→明日は試験だ。１日"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "たりとも",
+        "も"
+       ],
+       "japanese": "試合中は１分たりとも油断するな！\n→試合中は１分"
+      }
+     ],
+     "explanation": "「１〜たりとも〜ない」は「１〜も〜ない」という意味を表す文型です。「１〜も〜ない」を強調して言いたい時に使われますが、かたい言い方ですので、あまり会話では使われません😅日常会話では「１〜も〜ない」を使うのが一般的です。\nほとんどの場合は「１〜たりとも〜ない」というように「１」と一緒に使われます。\n後ろには「〜するな」「〜てはいけない」など、禁止・命令などの表現がよくきます😀\n\n【上級レベルの人へ】\n「何人たりとも」は慣用表現です。とてもかたい表現ですから、普段の会話では使うと不自然に聞こえますので、聞いてわかればOKです😉\n\n「何人たりとも」→誰でも例外なく\n\n書き言葉的な表現ですが、N１を受ける人はしっかりと覚えておきましょう😊\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "１〜も〜ない\n〜であっても、絶対に〜ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/10386513.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "１＋助数詞＋たりとも〜ない\n名詞［辞書形］＋たりとも〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "たりとも〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "おうにも",
+        "なかった"
+       ],
+       "japanese": "高すぎて、買おうにも買えなかった\n→高すぎて、買"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "おうにも",
+        "なかった"
+       ],
+       "japanese": "買おうにもお金がなかったんです\n→買"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "もうに",
+        "ない"
+       ],
+       "japanese": "忙しくて、休もうに休めない\n→忙しくて、休"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "ろうにも"
+       ],
+       "japanese": "終電がなくなったので、帰ろうにも帰れない\n→終電がなくなったので、帰"
+      }
+     ],
+     "explanation": "「〜ようにも〜ない」は「〜しようと思っても〜できない」という意味を表す文型です。どうしてもできない場合などに使います😊 後ろには「〜ない」がくる場合と「可能形の否定形」がくる場合があります😮\n「可能形の否定形」がくる場合は同じ動詞を繰り返して使うと覚えておきましょう\n😉\n\n［「〜ない」がくる場合］\n\n高くて、買\nおうにも\nお金が\nない\n\n帰\nろうにも\n電車が\nない\n\n［「可能形の否定形」がくる場合］\n\n高くて、買\nおうにも\n買え\nない\n\n電車がなくて、帰\nろうにも\n帰れない\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "〜しようと思っても〜できない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/9888646.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞［意向形］＋にも〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "ようにも〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "１つとして",
+        "ない",
+        "として"
+       ],
+       "japanese": "お金がなくて、おにぎり１つとして買えない\n→お金がなくて、おにぎり"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "１匹として",
+        "として"
+       ],
+       "japanese": "１日中釣りをしているが、魚は１匹として釣れない\n→１日中釣りをしているが、魚は"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "１分として",
+        "できない",
+        "として"
+       ],
+       "japanese": "明日は日本語能力試験だ。１分として無駄にはできない\n→明日は日本語能力試験だ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "１日として",
+        "として",
+        "も"
+       ],
+       "japanese": "４人も子供がいると、１日としてゆっくりできる日はない\n→４人も子供がいると、"
+      }
+     ],
+     "explanation": "「１〜として…ない」は「１〜も…ない」というように「全然〜ない」というのを強調する文型です\n。「〜として」の部分は強調の「〜も」にチェンジができます。ですから、\n「１〜も…ない＝１〜も…ない」\nと覚えてしまってOKです😉\n\n１匹\nとして\n釣れない→１匹\nも\n釣れない\n１つ\nとして\n買えない→１つ\nも\n買えない\n１人\nとして\nいない→１人\nも\nいない\n\n【補足説明】\nこの文型はほとんどの場合「１」と一緒に使用されますが、\n「誰一人として」「何一つとして」「どれ一つとして」\nという慣用表現もあります😮また、これらの場合は\n「として」を省略することもできます\n😀\n\n彼に賛成する人は\n誰一人として\nいなかった\n彼に賛成する人は\n誰一人\nいなかった\n彼に賛成する人は\n誰も\nいなかった\n彼に賛成する人は\n一人も\nいなかった\n\n上の例文は全て同じ意味です😄「〜として…ない」は書き言葉的ですので、会話では「１人も…ない」を使うのが一般的です😊\n\n【余裕のある人へ】\n「〜として…ない」は「１」と使う場合・慣用表現を使う以外に「２」が使われる場合もあります😮「１〜しかない」「他には〜ない」という意味を表す表現です。\n\nこんなすばらしい作品はこの世に２つとしてない\n→こんなすばらしい作品はこの世に１つしかない\n\n彼ほどケチな人は２人としていないよ…\n→あんなにケチな人は彼１人しかいないよ…\n\nあまり聞きなれない文型かもしれませんが、N１の「〜たりとも…ない」の類似文型ですのでしっかりと覚えておきましょう😌「〜たりとも…ない」との違いはまた次回説明します😅\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "１〜も〜ない\n全然〜ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる上級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/7745871.html"
+      ],
+      "producerTermTags": "絵でわかる上級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "１＋助数詞＋として〜ない",
+     "tags": [
+      "絵でわかる上級文法"
+     ],
+     "variants": [
+      "として〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "としか",
+        "ない"
+       ],
+       "japanese": "A：山田くん、彼女ができたって言ってたよ〜B：彼に彼女ができるわけないよ！うそをついているとしか思えないわ\n→絶対にうそをついていると思うわ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "としか",
+        "ない"
+       ],
+       "japanese": "A：こんな時間になっても彼女から連絡がこないなんておかしいねB：うん。事故にでもあったとしか思えないね…\n→きっと事故にでもあったんだわ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "としか",
+        "ない",
+        "ません"
+       ],
+       "japanese": "A：明日のイベントは行われますか？B：今のところ、わからないとしか言えませんね\n→わからないと答えられるだけです"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "としか",
+        "ない"
+       ],
+       "japanese": "A：彼、今回のテスト１００点だったんだって！B：え！？カンニングしたとしか考えられない！！\n→絶対にカンニングしたんだと思う！！"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "としか",
+        "ない"
+       ],
+       "japanese": "床に足跡がついている…泥棒が入ったとしか考えられない\n→絶対に泥棒が入ったんだと思う"
+      }
+     ],
+     "explanation": "「AとしかBない」は［強調］を表す文型で、「絶対にAだ」「ただAだけだ」という意味です。他の可能性はなく、「絶対にAだ」と強く主張する場合に使われます。「B」には「言う」「思う」「考える」などの\n［可能形］の否定形\nが入り、「言えない」「思えない」「考えられない」となります。\n\n「〜としか〜ない」は、会話でもよく使われますので覚えておきましょう😉\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "絶対に〜だ\n〜だけだ",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/26275183.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞・形容詞・名詞［普通形］＋としか〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "としか〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "ない",
+     "jlpt": "N3",
+     "meaning": null,
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/23764120.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": null,
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "別に〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "を除いて",
+        "ない",
+        "まい"
+       ],
+       "japanese": "A：彼女はかわいいし、歌がとてもうまいよね！B：うん！こんなに歌が上手な歌手は、彼女を除いていないわ\n→彼女以外に歌が上手に歌える人はいない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "を除いて",
+        "ない"
+       ],
+       "japanese": "彼を除いて、あれほど勉強ができる人はいない\n→彼以外に、あれほど勉強ができる人はいない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "を除いて",
+        "まい"
+       ],
+       "japanese": "田中さんを除いて、この仕事を任せられる人はいるまい…\n→田中さん以外に、この仕事を任せられる人はいない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "を除いて",
+        "ない"
+       ],
+       "japanese": "彼女：この式場を除いて、結婚式をするのに最適な場所はないわ！彼氏：そうだね。じゃあ、ここに決めよう！\n→この式場以外に、結婚式をするのに最適な場所はないわ！"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "を除いて",
+        "なかった"
+       ],
+       "japanese": "彼女：あなたを除いて頼める人はいなかったの彼氏：ほかならぬ君のためなら何でもするさ\n→あなた以外に頼める人はいなかったの"
+      }
+     ],
+     "explanation": null,
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "〜以外に〜できる人はいない\n〜以外に適当なものはない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/22980507.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋を除いて〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "を除いて〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "ない"
+       ],
+       "japanese": "娘：遅刻しそうだから、ごはんいらない母：朝ごはん抜きには力が出ないわよ…\n→朝ごはんを食べなければ、力が出ないわよ…"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "なかった"
+       ],
+       "japanese": "彼女の活躍抜きには、チームは優勝しなかっただろう\n→彼女の活躍がなければ、チームは優勝しなかっただろう"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "なかった",
+        "できなかった"
+       ],
+       "japanese": "両親の協力抜きには留学できなかったと思う\n→両親の協力がなければ留学できなかったと思う"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "かねる"
+       ],
+       "japanese": "これは重大なことなので、社長の意見抜きには決めかねる\n→社長の意見がなければ決めかねる"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "できませんでした"
+       ],
+       "japanese": "先生のご指導抜きには、N１には合格できませんでした\n→先生のご指導がなければ、N１には合格できませんでした"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "ない"
+       ],
+       "japanese": "寿司抜きには、日本料理を語れない\n→寿司を入れなければ、日本料理は語れない"
+      }
+     ],
+     "explanation": "「A抜きにBない」は「AがなければBはない」「Aを考えなければBはない」という意味を表す文型です。「AがなければBは不可能だ」というのを強調したい時に使われます。「B」には「〜ない」「〜できない」「〜得ない」など、\n否定形・否定表現（ひていひょうげん）\nがきます。 また「〜抜きに〜ない」は「〜抜きでは〜ない」「〜を抜きにしては〜ない」にチェンジすることができます😊\n\n［例］\n朝ごはん\n抜きには\n力が出\nない\nわよ！\n＝朝ごはん\n抜きでは\n力が出\nない\nわよ！\n＝朝ごはん\n抜きにしては\n力が出\nない\nわよ！\n\n「抜く・抜き」がつく文型はいくつかあります。混乱しないように、区別して覚えておくといいと思います。\n\n【関連文型】\n\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "〜なければ〜ない\n〜を考えなければ〜ない\n〜を入れないでは〜ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/21745483.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋抜きには〜ない\n名詞［辞書形］＋抜きでは〜ない\n名詞［辞書形］＋抜きにしては〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "抜きには〜ない",
+      "抜きでは〜ない",
+      "抜きにしては〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "ない"
+       ],
+       "japanese": "娘：遅刻しそうだから、ごはんいらない母：朝ごはん抜きには力が出ないわよ…\n→朝ごはんを食べなければ、力が出ないわよ…"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "なかった"
+       ],
+       "japanese": "彼女の活躍抜きには、チームは優勝しなかっただろう\n→彼女の活躍がなければ、チームは優勝しなかっただろう"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "なかった",
+        "できなかった"
+       ],
+       "japanese": "両親の協力抜きには留学できなかったと思う\n→両親の協力がなければ留学できなかったと思う"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "かねる"
+       ],
+       "japanese": "これは重大なことなので、社長の意見抜きには決めかねる\n→社長の意見がなければ決めかねる"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "できませんでした"
+       ],
+       "japanese": "先生のご指導抜きには、N１には合格できませんでした\n→先生のご指導がなければ、N１には合格できませんでした"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "ない"
+       ],
+       "japanese": "寿司抜きには、日本料理を語れない\n→寿司を入れなければ、日本料理は語れない"
+      }
+     ],
+     "explanation": "「A抜きにBない」は「AがなければBはない」「Aを考えなければBはない」という意味を表す文型です。「AがなければBは不可能だ」というのを強調したい時に使われます。「B」には「〜ない」「〜できない」「〜得ない」など、\n否定形・否定表現（ひていひょうげん）\nがきます。 また「〜抜きに〜ない」は「〜抜きでは〜ない」「〜を抜きにしては〜ない」にチェンジすることができます😊\n\n［例］\n朝ごはん\n抜きには\n力が出\nない\nわよ！\n＝朝ごはん\n抜きでは\n力が出\nない\nわよ！\n＝朝ごはん\n抜きにしては\n力が出\nない\nわよ！\n\n「抜く・抜き」がつく文型はいくつかあります。混乱しないように、区別して覚えておくといいと思います。\n\n【関連文型】\n\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "〜なければ〜ない\n〜を考えなければ〜ない\n〜を入れないでは〜ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/21745483.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋抜きには〜ない\n名詞［辞書形］＋抜きでは〜ない\n名詞［辞書形］＋抜きにしては〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "抜きには〜ない",
+      "抜きでは〜ない",
+      "抜きにしては〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "ない"
+       ],
+       "japanese": "娘：遅刻しそうだから、ごはんいらない母：朝ごはん抜きには力が出ないわよ…\n→朝ごはんを食べなければ、力が出ないわよ…"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "なかった"
+       ],
+       "japanese": "彼女の活躍抜きには、チームは優勝しなかっただろう\n→彼女の活躍がなければ、チームは優勝しなかっただろう"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "なかった",
+        "できなかった"
+       ],
+       "japanese": "両親の協力抜きには留学できなかったと思う\n→両親の協力がなければ留学できなかったと思う"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "かねる"
+       ],
+       "japanese": "これは重大なことなので、社長の意見抜きには決めかねる\n→社長の意見がなければ決めかねる"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "できませんでした"
+       ],
+       "japanese": "先生のご指導抜きには、N１には合格できませんでした\n→先生のご指導がなければ、N１には合格できませんでした"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "抜きには",
+        "ない"
+       ],
+       "japanese": "寿司抜きには、日本料理を語れない\n→寿司を入れなければ、日本料理は語れない"
+      }
+     ],
+     "explanation": "「A抜きにBない」は「AがなければBはない」「Aを考えなければBはない」という意味を表す文型です。「AがなければBは不可能だ」というのを強調したい時に使われます。「B」には「〜ない」「〜できない」「〜得ない」など、\n否定形・否定表現（ひていひょうげん）\nがきます。 また「〜抜きに〜ない」は「〜抜きでは〜ない」「〜を抜きにしては〜ない」にチェンジすることができます😊\n\n［例］\n朝ごはん\n抜きには\n力が出\nない\nわよ！\n＝朝ごはん\n抜きでは\n力が出\nない\nわよ！\n＝朝ごはん\n抜きにしては\n力が出\nない\nわよ！\n\n「抜く・抜き」がつく文型はいくつかあります。混乱しないように、区別して覚えておくといいと思います。\n\n【関連文型】\n\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "〜なければ〜ない\n〜を考えなければ〜ない\n〜を入れないでは〜ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/21745483.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋抜きには〜ない\n名詞［辞書形］＋抜きでは〜ない\n名詞［辞書形］＋抜きにしては〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "抜きには〜ない",
+      "抜きでは〜ない",
+      "抜きにしては〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に限って",
+        "ない"
+       ],
+       "japanese": "彼女に限って失敗しないよ\n→彼女"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に限って",
+        "ない"
+       ],
+       "japanese": "お母さんに限って、うそをつくはずがないよ\n→お母さん"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に限って",
+        "ない",
+        "）に限って"
+       ],
+       "japanese": "あの子（こ）に限って、０点を取るはずがない\n→あの子"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に限って",
+        "ない"
+       ],
+       "japanese": "口がかたい田中さんに限って、秘密を言ってしまうことはないと思うよ\n→田中さん"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に限って",
+        "ありません"
+       ],
+       "japanese": "うちの娘に限って、そんな悪いことをするわけがありません\n→うちの娘"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "に限って",
+        "ない"
+       ],
+       "japanese": "彼に限って、ドタキャンするなんてありえないわ！\n→彼"
+      }
+     ],
+     "explanation": "「〜に限って〜ない」は「〜だけは、絶対に〜ない」という意味を表す文型です。これは「〜だけは、絶対に〜ないから、悪い結果にはならない」という気持ちを込めて使われる文型です。\n（復習：〜を込めて・〜を込めた）\n\n「〜に限って」がつく文型は他にもありますので、復習をしておきましょう😀\n\n【「限る」シリーズ】\n\n〜限り（限界）\n〜限り\n〜限りだ\n〜限りで・N限りのN（限定）\n〜限りでは（範囲）\n限りなく〜に近い\n〜とは限らない\n〜ない限り\n〜に限ったことではない\n〜に限って①（悪いことの発生）\n〜に限って②（いつもと違う）\n〜に限って〜ない\n〜に限らず（〜も）\n〜に限る\n〜を限りに\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "〜だけは絶対〜ない\n〜だけは〜ないと信じている",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/20100829.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋に限って",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "に限って〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "てからでないと",
+        "ない"
+       ],
+       "japanese": "宿題をやってからでないと寝られない\n→宿題をやっ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "てからでないと",
+        "ない"
+       ],
+       "japanese": "仕事が終わってからでないと帰れない\n→仕事が終わっ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "てからでないと",
+        "ない"
+       ],
+       "japanese": "お母さんに相談してからでないと決められない\n→お母さんに相談し"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "てからでないと",
+        "ない"
+       ],
+       "japanese": "社長に聞いてからでないと答えられません\n→社長に聞い"
+      }
+     ],
+     "explanation": "「〜てからでないと〜ない」は「〜た後でないと〜できない」という意味を表す文型です。「AてからでないとBない」の形で、\n「A」をしないと、「B」をするのは不可能だ\nと言いたい時に使います😊また「〜てからでないと〜ない」は「〜てからでなければ〜ない」「〜てからでなかったら〜ない」にもチェンジすることができます😮\n\n［例］\n宿題をやっ\nてからでないと\n寝られない\n宿題をやっ\nてからでなければ\n寝られない\n宿題をやっ\nてからでなかったら\n寝られない\n\n「〜てからでないと〜ない」は会話でもよく使いますので、しっかりと覚えておきましょう😉\n\n【「から」シリーズ】\n\n〜から〜にかけて\n〜からする・〜からある・〜からの\n〜からといって・〜からって\n〜からなる\n〜からには\n〜てからでないと〜ない\n〜てからというもの\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N3",
+     "meaning": "〜た後でないと〜できない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/13333370.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞［て形］＋からでないと〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "てからでないと〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "たきり",
+        "ない"
+       ],
+       "japanese": "彼女とは、ケンカしたきり会っていない\n→彼女とは、ケンカし"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "たきり",
+        "ない"
+       ],
+       "japanese": "娘はアメリカに行ったきり帰ってこない\n→娘はアメリカに行っ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "たきり",
+        "ない"
+       ],
+       "japanese": "日本には５年前に旅行に行ったきり行っていない\n→日本には５年前に旅行に行っ"
+      }
+     ],
+     "explanation": "「〜たり…ない」は「〜したのが最後で、その後ずっと…ない」という意味を表す文型です。この文型はほとんどの場合、\n話者の不安な気持ちや残念だと思う気持ち、心配しているようすを強調したい時に使われます\n😀\n\n【余裕がある人へ】\n「〜たきり…ない」を使う時に\n「〜たっきり…ない」\nというように「っ」を入れる人もいますが、意味は同じです😊\n\n［例］\n彼女とは、ケンカをし\nたっきり\n会ってい\nない\n\nまた、「これっきり」「それっきり」「あれっきり」という言い方もあるというのを覚えておきましょう😀\n\n［例］\n日本には５年前に旅行に行きましたが、\nそれっきり\n行っていません\n\n会話でもよく使う文型ですのでしっかりと覚えておきましょう😉\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N3",
+     "meaning": "〜したのが最後で、その後ずっと…ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる中級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/8694321.html"
+      ],
+      "producerTermTags": "絵でわかる中級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "動詞［た形］＋きり〜ない",
+     "tags": [
+      "絵でわかる中級文法"
+     ],
+     "variants": [
+      "たきり〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "ない",
+     "jlpt": "N4",
+     "meaning": null,
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/25020095.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": null,
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "もう〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "しか",
+        "ない"
+       ],
+       "japanese": "A：どうしたの？寝不足？B：朝の５時までゲームをしていて、１時間しか寝ていないの\n→１時間以上寝ていないの"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "しか",
+        "ない"
+       ],
+       "japanese": "A：今日の朝ごはんは何を食べたの？B：朝はコーヒーしか飲まないのA ：え！？お腹が空かないの？\n→コーヒー以外は飲まないの"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "しか",
+        "ない"
+       ],
+       "japanese": "A：カラオケに行かない？B：ごめん、今１００円しか持っていないの\n→財布には１００円以上入っていない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "しか",
+        "ない"
+       ],
+       "japanese": "のどが痛くて、水しか飲めない…\n→水以外飲めない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "しか",
+        "ません"
+       ],
+       "japanese": "私は日本語しか話せません\n→日本語以外話せません"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "しか",
+        "なかった"
+       ],
+       "japanese": "何か食べようと思ったが、冷蔵庫には水しか入っていなかった\n→水以外入っていなかった"
+      }
+     ],
+     "explanation": "「AしかBない」は「A以外はBない」「A以上はBない」という意味の文型です。「B」には否定表現（ひていひょうげん）が入ります。\n「〜だけしか〜ない」\nは、さらに強調した言い方です。\n\n［例］\n朝はコーヒー\nしか\n飲ま\nない\n\n→朝はコーヒー\nだけしか\n飲ま\nない\n\n日本語\nしか\n話せ\nない\n\n→日本語\nだけしか\n話せ\nない\n\n「〜しか〜ない」は、会話でもよく使いますので復習をしておきましょう😉\n\n【関連記事】\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N5",
+     "meaning": "〜以外は〜ない\n〜以上は〜ない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/24724554.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋しか〜ない",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "しか〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "だけしか",
+        "ない"
+       ],
+       "japanese": "A：ケーキを食べに行こうよ！B：ごめん…今、お財布にはこれだけしか入っていないの…"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "だけしか",
+        "なかった"
+       ],
+       "japanese": "あの店のカレーは辛すぎて、１口だけしか食べられなかった"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "だけしか",
+        "なかった"
+       ],
+       "japanese": "A：眠そうだねB：昨日は２時間だけしか寝られなかったんだ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "だけしか",
+        "ない",
+        "だけしかない"
+       ],
+       "japanese": "母：冷蔵庫からたまごを３個出してくれる？娘：１個だけしかないよ〜"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "だけしか",
+        "なかった"
+       ],
+       "japanese": "残業で、見たかったドラマは半分だけしか見られなかった"
+      }
+     ],
+     "explanation": "「〜だけしか〜ない」は「〜しかない」を強調した文型です。数が少ないことを不満に思ったり、残念に思う気持ちを表す場合に使われます。\n\n［例］\n①今、お財布にはこれ\nだけしか\n入ってい\nない\nの…\n→入っているお金が少なくて残念だと思う気持ち\n\n②あの店のカレーは辛すぎて、１口\nだけしか\n食べられ\nなかった\n\n→全部食べたかったが、１口しか食べられなくて残念だったという気持ち\n\n③昨日は２時間\nだけしか\n寝られ\nなかった\nんだ\n→２時間しか眠れなかったと不満に思っている気持ち\n\n④１個\nだけしかない\nよ〜\n→３個ではなく１個しかなくて残念だと思う気持ち\n\n⑤残業で、見たかったドラマは半分\nだけしか\n見られ\nなかった\n\n→全部見たかったが、半分しか見られなくて残念だという気持ち\n\n「だけ」がつく文型はたくさんありますので、復習をしておきましょう😊\n\n語学(日本語)ランキング\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N4",
+     "meaning": "〜しかない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/23495942.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "名詞［辞書形］＋だけしか〜ない\n数量詞＋だけしか〜ない",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "だけしか〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "ない"
+       ],
+       "japanese": "今日はあまりお金を持っていない（復習：〜ている（結果の状態））"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "ない"
+       ],
+       "japanese": "この本はあまりおもしろくない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "ない"
+       ],
+       "japanese": "このパンはあまりおいしくない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "ない"
+       ],
+       "japanese": "牛乳があまり好きではない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "見なくなった"
+       ],
+       "japanese": "最近忙しいので、あまりテレビを見なくなった"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "ない"
+       ],
+       "japanese": "このカレーはあまり辛くない"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "あまり",
+        "ない"
+       ],
+       "japanese": "お酒があまり飲めない"
+      }
+     ],
+     "explanation": "「あまり〜ない」は「程度や頻度が高くない」「量が多くない」という意味を表す文型です。後ろには\n否定形\nがきます。形容詞に使う場合は「程度が高くない」という意味で、動詞に使うと「程度が高くない・量が多くない」という意味になります😮\n\n［例］\n①今日は\nあまり\nお金を持ってい\nない\n\n→持っているお金の\n量が多くない\n\n【「持つ」は動詞】\n\n②この本は\nあまり\nおもしろく\nない\n\n→「おもしろい」の\n程度が高くない\n\n【「おもしろい」は形容詞】\n\n③このパンは\nあまり\nおいしく\nない\n\n→「おいしい」の\n程度が高くない\n\n【「おいしい」は形容詞】\n\n④牛乳が\nあまり\n好きでは\nない\n\n→「好き」の程度が高くない\n【「好き」は形容詞】\n\n⑤最近忙しいので、\nあまり\nテレビを\n見なくなった\n\n→テレビを見る\n頻度が高くない\n\n【「見る」は動詞】\n\n⑥このカレーは\nあまり\n辛く\nない\n\n→「辛い」の\n程度が高くない\n\n【「辛い」は形容詞】\n\n⑦お酒が\nあまり\n飲め\nない\n\n→飲める\n量が多くない\n\n【「飲む」は動詞】\n\n「あまり〜ない」はN５の文型ですが、日常会話（にちじょうかいわ）でも、とてもよく使われます😊N２の文型「〜あまり」とは区別して覚えておきましょう。\n（復習：〜あまり）\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "ない",
+     "jlpt": "N5",
+     "meaning": "程度が高くない\n頻度が高くない\n量が多くない",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "partOfSpeech": "adj-i",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/19149102.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "ない",
+     "source": "edewakaru",
+     "source_id": "ない",
+     "structure": "あまり＋動詞［ない形］\nあまり＋い形容詞［ーくない］\nあまり＋な形容詞［ーではない］",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "あまり〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "君のことを１日として考えない日はないよ。本当に愛してる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ジョンさんは１日として授業をサボったことがない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "今とても大事な時期だから、１秒として無駄にできない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "部長の提案に誰一人として賛同しなかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "アルバイト募集の広告を出しているんだけど、誰一人として応募してこない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "津波により家が流されてしまい、何１つとして残っていない。"
+      }
+     ],
+     "explanation": null,
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "全く〜ない\n否定の強調。",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2019/05/24/jlptn2-grammar-toshite-nai/"
+      ],
+      "producerTermTags": "日本語NET―N2文法",
+      "producerTitle": "〜として〜ない",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "ない",
+     "source": "nihongo_net",
+     "source_id": "ない",
+     "structure": "1＋助数詞 + として〜ない",
+     "tags": [
+      "日本語NET―N2文法"
+     ],
+     "variants": [
+      "として〜ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "一概には",
+        "ない",
+        "一概に"
+       ],
+       "japanese": "Ａ案とＢ案に対する賛否が分かれていて、どっちが良いかは一概には決められない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "一概には",
+        "ない",
+        "一概に"
+       ],
+       "japanese": "今自分が何をしたいのか一概には答えられない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "一概に"
+       ],
+       "japanese": "諦めない方がいい事もあるが、諦めた方がいい事もある。一概にどうとは言えない。（虽然不放弃有比较好的事情，但也有放弃比较好的事情。不能一概而论。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "一概に"
+       ],
+       "japanese": "多くの証言があることから、幽霊の存在も一概に否定はできないだろう。（因为有很多证言，所以不能一概否定幽灵的存在。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "一概に"
+       ],
+       "japanese": "人それぞれ考え方が違うので、普通か普通ではないかは一概に断言できるものではない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "一概に"
+       ],
+       "japanese": "この２つの病気は初期症状が非常に似ているので、一概に判断することが難しい。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "一概に"
+       ],
+       "japanese": "どちらが正しいとは一概に言えない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "ない",
+        "一概に"
+       ],
+       "japanese": "この消毒液は人体には無害と書いてあったけど、アルコールが使われている以上一概にそうとは言えないはずだ。"
+      }
+     ],
+     "explanation": "様々な観点から物事見た結果、複数の評価や捉え方が存在するため、それらをひとまとめにすることはできないことを表します。\n「～とは一概に言えない／言い切れない」「一概に～とは言えない／言い切れない」の形が頻出する文型です。\n後件には必ず否定表現が伴います。",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "（不能）笼统地…\n统统地…\n一概地…",
+     "notes": "関連文法「【Ｎ２文法】必ずしも～とは限らない／必ずしも～わけではない」",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "canonicalExpression": "一概に",
+      "licenseTier": "B",
+      "meaningZh": "（不能一概而论…／不能完全说是…）",
+      "notes": "関連文法「【Ｎ２文法】必ずしも～とは限らない／必ずしも～わけではない」",
+      "partOfSpeech": "adj-i",
+      "producerBand": "日本語教師―Ｎ１",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=19499"
+      ],
+      "producerTermTags": "日本語教師―Ｎ１",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師",
+      "syntheticLookupForm": true
+     },
+     "reading": "ない",
+     "source": "nihongo_no_sensei",
+     "source_id": "ない",
+     "structure": "文＋とは一概に～ない\n一概に＋文＋とは～ない",
+     "tags": [
+      "日本語教師―Ｎ１"
+     ],
+     "variants": [
+      "一概に～ない",
+      "一概には～ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "笑うに笑えなかった"
+       ],
+       "japanese": "彼の仕草がとても面白かったが、周囲は真剣に聞いているので私は笑うに笑えなかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "寝るに寝れなかった"
+       ],
+       "japanese": "赤ちゃんが夜通し泣いて、私は寝るに寝れなかった。（婴儿彻夜哭泣，我睡不着。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "休むに休めない"
+       ],
+       "japanese": "今職場は深刻な人手不足に陥っていて、休日ですら休むに休めない状況だ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "引くに引けない"
+       ],
+       "japanese": "彼らは喧嘩でヒートアップしてしまい、お互いに引くに引けない状況になってしまっている。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "帰るに帰れない"
+       ],
+       "japanese": "連日の大雨で市内は冠水し、帰るに帰れない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "言うに言えない"
+       ],
+       "japanese": "経営には、理屈でない、目に見えない、言うに言えない要因が働いて、想像もできないような成果を生みだすことがある。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "断るに断れなくなった"
+       ],
+       "japanese": "土下座までしてお願いされたために、断るに断れなくなった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "逃げるに逃げられない"
+       ],
+       "japanese": "敵に四方を囲まれて、逃げるに逃げられない。（被敌人包围，想逃也逃不了。）"
+      }
+     ],
+     "explanation": "したいけど何らかの理由でできないことを表します。心理的な理由の場合に使いやすいです。\n話者の「本当はしたいけどできない」という気持ちを表すのが特徴です。\n後件は動詞可能形の否定形が接続されます。\n前件と後件の動詞は同じ動詞を用います。\n「泣くに泣けない」は「泣きたくても泣けない」と同じ意味となります。\n【Ｎ１文法】～（よ）うにも～ない （物理的理由でできない）\n【Ｎ１文法】～に～ない （心理的理由でできない）",
+     "expression": "ない",
+     "jlpt": "N1",
+     "meaning": "想…也不能…\n即使想…也不能…\n无论如何做不到…",
+     "notes": "似ている文法「【Ｎ１文法】～（よ）うにも～ない」",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "canonicalExpression": "に",
+      "licenseTier": "B",
+      "meaningZh": "即使想…也没办法…",
+      "notes": "似ている文法「【Ｎ１文法】～（よ）うにも～ない」",
+      "partOfSpeech": "adj-i",
+      "producerBand": "日本語教師―Ｎ１",
+      "producerContributors": [
+       "四ツ谷カオル 様"
+      ],
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=13373"
+      ],
+      "producerTermTags": "日本語教師―Ｎ１",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師",
+      "syntheticLookupForm": true
+     },
+     "reading": "ない",
+     "source": "nihongo_no_sensei",
+     "source_id": "ない",
+     "structure": "動辞形＋に＋動詞可能形の否定形＋ない",
+     "tags": [
+      "日本語教師―Ｎ１"
+     ],
+     "variants": [
+      "に～ない"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "と",
+        "ず"
+       ],
+       "japanese": "配属されて１週間と経たず辞めてしまった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "と",
+        "ない",
+        "な"
+       ],
+       "japanese": "集中力がなくて、１０分と机に向かっていられない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "と",
+        "ず",
+        "ない",
+        "な"
+       ],
+       "japanese": "ダイエットしても三日と持たず続かない。（即使减肥也坚持不了三天。）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "と",
+        "な"
+       ],
+       "japanese": "募集したのに、参加者は１０人と集まらなかった。"
+      }
+     ],
+     "explanation": "期間や数量を表す語について、それに少しも満たないことを表します。",
+     "expression": "ない",
+     "jlpt": "N2",
+     "meaning": "不到…",
+     "notes": "特になし",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_2.json",
+      "canonicalExpression": "と",
+      "licenseTier": "B",
+      "notes": "特になし",
+      "partOfSpeech": "adj-i",
+      "producerBand": "日本語教師―Ｎ２",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=18392"
+      ],
+      "producerTermTags": "日本語教師―Ｎ２",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師",
+      "syntheticLookupForm": true
+     },
+     "reading": "ない",
+     "source": "nihongo_no_sensei",
+     "source_id": "ない",
+     "structure": "数量詞＋と～ない",
+     "tags": [
+      "日本語教師―Ｎ２"
+     ],
+     "variants": [
+      "と～ない"
+     ]
+    }
+   ],
+   "expression": "ない",
+   "variants": [
+    "かというと〜ない",
+    "かといえば〜ない",
+    "なくしては〜ない",
+    "なしでは〜ない",
+    "なしには〜ない",
+    "に〜ない",
+    "たりとも〜ない",
+    "ようにも〜ない",
+    "として〜ない",
+    "としか〜ない",
+    "別に〜ない",
+    "を除いて〜ない",
+    "抜きには〜ない",
+    "抜きでは〜ない",
+    "抜きにしては〜ない",
+    "に限って〜ない",
+    "てからでないと〜ない",
+    "たきり〜ない",
+    "もう〜ない",
+    "しか〜ない",
+    "だけしか〜ない",
+    "あまり〜ない",
+    "一概に～ない",
+    "一概には～ない",
+    "に～ない",
+    "と～ない"
+   ]
+  },
+  "no_jlpt": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": "Even if I tell him that, he won't understand it.",
+       "highlight": [],
+       "japanese": "あの人には話したって分からない・分かりません。"
+      },
+      {
+       "ai_generated": false,
+       "english": "I will buy the ticket even if it is expensive.",
+       "highlight": [],
+       "japanese": "僕はその切符を高くたって買う・買います。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if I had money, I wouldn't want to buy a car.",
+       "highlight": [],
+       "japanese": "お金があったって車は買いたくない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if I buy books, I'm too busy to read them.",
+       "highlight": [],
+       "japanese": "本を買ったって、忙しくて読めない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "I don't care even if it is dirty.",
+       "highlight": [],
+       "japanese": "汚くたって構いません。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if it is far away and inconvenient, it doesn't matter if it is 'my home'.",
+       "highlight": [],
+       "japanese": "遠くて不便だってマイ・ホームなら構いません。"
+      },
+      {
+       "ai_generated": false,
+       "english": "No matter how good a teacher may be, he sometimes makes mistakes.",
+       "highlight": [],
+       "japanese": "どんなにいい先生だって時々間違います。"
+      }
+     ],
+     "explanation": "Even if someone did something or something were in some state (the desired result would not come about) or even if someone or something is in some state.",
+     "expression": "たって",
+     "jlpt": null,
+     "meaning": "Even if ~",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "glossaryFormat": "plain-text",
+      "licenseTier": "C",
+      "producerTermTags": "DOJG基本",
+      "redistributable": false,
+      "sourceLabel": "DoJG 日本語文法辞典(全集)",
+      "volume": "基本 (Basic)"
+     },
+     "reading": "たって",
+     "source": "dojg",
+     "source_id": "たって",
+     "structure": "(i) Vinformal past | って | |\n| 話しって | Even if someone talks/talked |\n| 食べだって | Even if someone eats/ate |\n(ii) Adjective い stem | くたって | |\n| 高くたって | Even if something is/were expensive |\n(iii) {Adjective な stem/ N} | だっ(たっ)て | |\n| 静かだっ(たっ)て | Even if something is/were quiet |\n| 先生だっ(たっ)て | Even if someone is/were a teacher |",
+     "tags": [
+      "DOJG基本"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": "It's not fun traveling (literally: if I travel) alone.",
+       "highlight": [],
+       "japanese": "一人で旅行に行ったって面白くない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "I make it a rule to buy good quality things even if they are a little more expensive.",
+       "highlight": [],
+       "japanese": "私は少しくらい高く(っ)たって、質のいいものを買うことにしている。"
+      },
+      {
+       "ai_generated": false,
+       "english": "No matter how good someone's Japanese is, he/she cannot do this translation without technical knowledge (in this ﬁeld).",
+       "highlight": [],
+       "japanese": "いくら日本語が上手だって専門知識がなかったらこの翻訳はできないよ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even professionals make mistakes. (literally: Even if he is a professional, there are times when he makes a mistake.)",
+       "highlight": [],
+       "japanese": "プロだって失敗することもある。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if you change your job, it won't solve the problem.",
+       "highlight": [],
+       "japanese": "仕事を変えたって問題は解決しない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if it's a struggle, you shouldn't give up.",
+       "highlight": [],
+       "japanese": "苦しくったって諦めちゃいけない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Whether it's old or new, a good thing is good.",
+       "highlight": [],
+       "japanese": "古くたって新しくたって、よいものはよいのだ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "No matter how convenient (the location) is for commuting, the rent is too high.",
+       "highlight": [],
+       "japanese": "いくら通勤に便利だってこの家賃は高すぎる。"
+      },
+      {
+       "ai_generated": false,
+       "english": "No matter who it is, anyone would get mad if you said that to him.",
+       "highlight": [],
+       "japanese": "誰だってそんなことを言われたら腹が立つよ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "You can do this job even if you don't have a computer.",
+       "highlight": [],
+       "japanese": "コンピュータがなくったってこの仕事はできる。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if you don't cook yourself, you can easily get what you want to eat now if you just pay for it.",
+       "highlight": [],
+       "japanese": "自分で料理しなくたって、お金さえ出せば食べたいものが簡単に手に入るようになった。"
+      }
+     ],
+     "explanation": "（っ）たって (1)The informal form of ても.",
+     "expression": "たって",
+     "jlpt": null,
+     "meaning": "Even if; if; whether; no matter what/who/how/etc.",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "glossaryFormat": "plain-text",
+      "licenseTier": "C",
+      "producerTermTags": "DOJG上級編",
+      "redistributable": false,
+      "sourceLabel": "DoJG 日本語文法辞典(全集)",
+      "volume": "上級編 (Advanced)"
+     },
+     "reading": "たって",
+     "source": "dojg",
+     "source_id": "たって",
+     "structure": "(i) Vinformal past | って | |\n| 話しって | Even if someone talks/talked |\n| 食べだって | Even if someone eats/ate |\n(ii) Adjective い stem | くたって | |\n| 高くたって | Even if something is/were expensive |\n(iii) {Adjective な stem/ N} | だっ(たっ)て | |\n| 静かだっ(たっ)て | Even if something is/were quiet |\n| 先生だっ(たっ)て | Even if someone is/were a teacher |",
+     "tags": [
+      "DOJG上級編"
+     ],
+     "variants": [
+      "（っ）たって (1)"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": "You'll never be able to do it alone! (literally: Even if you try to do it alone, that's impossible.)",
+       "highlight": [],
+       "japanese": "一人でしよう(っ)たって、それは無理だ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if you wanted to go buy it right now, the stores are all already closed.",
+       "highlight": [],
+       "japanese": "今すぐ買いに行く(っ)たって、もう店はみんな閉まっている。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even though it's said to be expensive, my guess is it won't cost more than one million yen.",
+       "highlight": [],
+       "japanese": "高い(っ)たって、１００万円はしないだろう。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Although she has experience teaching Japanese, she hasn't yet taught anywhere outside of Japan.",
+       "highlight": [],
+       "japanese": "日本語教育の経験者(だ)ったって、彼女はまだ日本以外で教えたことはない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "That house is not something you could buy even if you wanted to.",
+       "highlight": [],
+       "japanese": "あの家は君が買おうったって買えるようなものじゃない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "It won't work if you try to cheat me.",
+       "highlight": [],
+       "japanese": "僕を騙そうったってそうはいかない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Whatever he may want to say, I don't think I'll stop it.",
+       "highlight": [],
+       "japanese": "彼が何を言おうったってそれをとめようとは思わない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "There are no more trains even if (you say) you want to go home now.",
+       "highlight": [],
+       "japanese": "今から帰るったってもう電車はないよ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Even if you say you'll look through the materials, it's impossible for you to do it alone because there are so many.",
+       "highlight": [],
+       "japanese": "調べるったって、こんなたくさんある資料を一人で調べるのは無理だ。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Although (I say) it's close, it's not a distance you can walk at all.",
+       "highlight": [],
+       "japanese": "近いったってとても歩いて行ける距離じゃない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "No matter how simple (they say) it is, in fact you won't be able to use it without a minimum knowledge of computers.",
+       "highlight": [],
+       "japanese": "いくら簡単ったって、やっぱり最低限のパソコン知識がなくては使えない。"
+      },
+      {
+       "ai_generated": false,
+       "english": "Although I say \"\"fasting,\"\" it's not like you can't put anything in your mouth. You can drink vegetable juice twice a day.",
+       "highlight": [],
+       "japanese": "「断食」ったって、全く何も口に入れないんじゃない。1日に2回、野菜ジュースを飲むことはできる。"
+      }
+     ],
+     "explanation": "（っ）たって (2) The contracted form of と言っても or としても.",
+     "expression": "たって",
+     "jlpt": null,
+     "meaning": "Even if (someone says that); even if someone tries to; although",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "glossaryFormat": "plain-text",
+      "licenseTier": "C",
+      "producerTermTags": "DOJG上級編",
+      "redistributable": false,
+      "sourceLabel": "DoJG 日本語文法辞典(全集)",
+      "volume": "上級編 (Advanced)"
+     },
+     "reading": "たって",
+     "source": "dojg",
+     "source_id": "たって",
+     "structure": "(i) Vinformal past | って | |\n| 話しって | Even if someone talks/talked |\n| 食べだって | Even if someone eats/ate |\n(ii) Adjective い stem | くたって | |\n| 高くたって | Even if something is/were expensive |\n(iii) {Adjective な stem/ N} | だっ(たっ)て | |\n| 静かだっ(たっ)て | Even if something is/were quiet |\n| 先生だっ(たっ)て | Even if someone is/were a teacher |",
+     "tags": [
+      "DOJG上級編"
+     ],
+     "variants": [
+      "（っ）たって (2)"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "いくら安くたって、好きじゃないものは買わない。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "何回電話をかけたって、一郎は電話に出ない。なんだか変だ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "このパソコンソフトは簡単だから、子どもだって使えます。"
+      }
+     ],
+     "explanation": "「たって」は「ても」、「だって」は「でも」の意味。くだけた話し言葉。\nたって has same meaning as ても, だって as でも. Informal expression.たって",
+     "expression": "たって",
+     "jlpt": null,
+     "meaning": "no matter how",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "seeAlso": "ても",
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "たって",
+     "source": "donna_toki",
+     "source_id": "たって",
+     "structure": "Vた／イAく＋た／ナAだ／Nだ＋ってS",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "たって",
+     "jlpt": null,
+     "meaning": null,
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_4.json",
+      "licenseTier": "B",
+      "producerBand": "日本語文法リスト（あいうえお順）",
+      "producerLinks": [
+       "http://www.edewakaru.com/archives/6420251.html"
+      ],
+      "producerTermTags": "日本語文法リスト（あいうえお順）",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "たって",
+     "source": "edewakaru",
+     "source_id": "たって",
+     "structure": null,
+     "tags": [
+      "日本語文法リスト（あいうえお順）"
+     ],
+     "variants": [
+      "だって（口語形）"
+     ]
+    }
+   ],
+   "expression": "たって",
+   "variants": [
+    "（っ）たって (1)",
+    "（っ）たって (2)",
+    "だって（口語形）"
+   ]
+  },
+  "ruby_furigana": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "伊藤：きのうのパーティーは楽しかったですよ。木村さんも来られるとよかったのに。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "田中さんは、もう少し友だちの意見を聞くといいのに……。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（助手をする人について）もっと経験のある人だとよかったんだけれど。"
+      }
+     ],
+     "explanation": "と～（のに）〈反実仮想〉\n木村：そうですか。行けなくて、残念でした。\n\n１）「～と、…のに/けれど」の形で、「～と」で事実とは違うことを仮想して、「…」で実現しなかったことについて、残念な気持ちを述べる。\n２）文末は「のに・けれど」などの表現が多い。\n１）Using the form ～と、…のに/けれど, imagines something contrary to fact and expresses feelings of regret or gladness that fact was not realized.\n２）Often words such as のに、orけれどoccur at end of sentence.と",
+     "expression": "のに",
+     "jlpt": null,
+     "meaning": "(non-actual supposition) if only",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "seeAlso": "たら～（のに）・ば～（のに）〈反実仮想〉",
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "のに",
+     "source": "donna_toki",
+     "source_id": "のに",
+     "structure": "〔普通形〕の現在形＋と～（のに）",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "と～（のに）〈反実仮想〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "わたしが３時間もかけてケーキを焼いたのに、だれも食べません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ひろしは暑いのに、窓を開けないで勉強しています。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "冬の山は危険なのに、どうして登るんですか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "夜の12時なのに、電車にはおおぜいの人が乗っていました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "（パーティーに遅く来て）マリさんはもう帰ったんですか。会いたかったのに……。"
+      }
+     ],
+     "explanation": "のに〈逆接 不満・予想外〉\n\n１）「～のに、…」の形で、「～」では事実を述べて、「…」でそのことから予想されることと違った結果であることを言う。話す人の意外な気持ち・疑問・不満・非難・残念な気持ちを表すことが多い。\n２）文末に話す人の意志や希望を表す文や働きかけを表す依頼、命令などの文は使われない。\n◆ × 忙しいのに、手紙を書きなさい。→○忙しくても、手紙を書きなさい。\n２）Sentence ending does not take expressions of speaker's volition, hopes, appeals, requests, or commands.のに\n<ruby>不<rt>ふ</rt>満<rt>まん</rt></ruby>・<ruby>予<rt>よ</rt>想<rt>そう</rt>外<rt>がい</rt></ruby>〉\n\n１）Speaker describes fact before pattern; results speaker did not expect follow. Often shows speaker's doubts, dissatisfaction, criticism, regret, or feeling that something is unexpected.",
+     "expression": "のに",
+     "jlpt": null,
+     "meaning": "in spite of the fact",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "のに",
+     "source": "donna_toki",
+     "source_id": "のに",
+     "structure": "〔普通形〕（ナＡな／Ｎな）＋のに",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "のに〈逆接　不満",
+      "予想外〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "去年の冬は暖かかったのに、今年の冬はとても寒い。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "田中さんは日本人だが、日本語は下手なのに、英語はうまい。"
+      }
+     ],
+     "explanation": "のに〈対比〉\n\n１）「のに」の前後で、対比している事柄を結んでいる。\n２）「が」や「けれども」と同じような使い方であるが、「のに」の場合は話す人の意外な気持ち、疑問などの気持ちが含まれている。\n１）Contrasts linked by のに.\n２）Same kind of usage as が and けれども, but のに includes speaker's doubts or feeling that something is unexpected.のに",
+     "expression": "のに",
+     "jlpt": null,
+     "meaning": "even though",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "のに",
+     "source": "donna_toki",
+     "source_id": "のに",
+     "structure": "〔普通形〕（ナＡな／Ｎな）＋のに",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "のに〈対比〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "このナイフはチーズを切るのに便利です。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "電子辞書は言葉の意味を急いで調べるのに役に立ちます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "外国旅行をするのにはパスポートが必要だ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ここから空港に行くのには１時間かかる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "わたしは買い物に、いつもバイクを使っています。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "東京駅へ行くにはこのバスが便利です。"
+      }
+     ],
+     "explanation": "のに〈用途〉\n\n１）物の用途・目的・有用性などを言う言い方。「～のに…」の形で、「～」で用途や目的を言い、「…」で「便利だ・必要だ・役に立つ・使う・かかる」などの意味のことを言う。\n２） ❺ のように「する動詞」の場合、「する動詞のN＋に」の形でも使う。\n３） ❻ のように「のに＋は」の形で使う場合に、動詞の後ろの「の」がない使い方もある。\n１）Use, purpose, or utility. Use or purpose precedes のに; words meaning convenient, necessary, useful, use, or take (time, money, etc.) follow.\n２）When containsする verb, becomes: nominal of する verb + に, as in sentence ❺ .\n３） For のに + は, as in sentence ❻ , の after verb can be omitted.のに",
+     "expression": "のに",
+     "jlpt": null,
+     "meaning": "for",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "のに",
+     "source": "donna_toki",
+     "source_id": "のに",
+     "structure": "Vる＋の／する動詞のN＋に",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "のに〈用途〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "のに",
+     "jlpt": null,
+     "meaning": null,
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "aliasOf": "のに",
+      "bankMember": "term_bank_1.json",
+      "entryShape": "alias-redirect",
+      "licenseTier": "C",
+      "producerLinks": [
+       "?query=のに"
+      ],
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "のに",
+     "source": "donna_toki",
+     "source_id": "のに",
+     "structure": null,
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "A：ごめんなさい。きのうは、会議の場所を間違えて、遅くなったんです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "試合のとき、山田君がもっと元気なら勝てたのに。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "店できれいなセーターを見た。もっと安ければ買ったんだけれど……。"
+      }
+     ],
+     "explanation": "ば～（のに）〈反実仮想〉\nＢ：それで遅れたんですか。山崎さんといっしょに来ればよかったのに。\n\n１）「～ば、…のに／けれど」の形で、「～ば」で事実とは違うことを仮想して、「…」で実現しなかったことなどについて、残念な気持ちやよかったという気持ちなどを述べる。\n２）ナ形容詞と名詞では「なら（ば）」となる。\n３）文末は「よかった・のに・けれど」などの表現が多い。\n１）Speaker imagines some event contrary to fact before ば～のに/けれど, then expresses after pattern feelings of regret or gladness that event was not realized.\n２）With ナ-adjectives and nouns becomes なら(ば).\n３）Often sentence endings take よかった (good), のに (would have been), or けれど (but).ば",
+     "expression": "のに",
+     "jlpt": null,
+     "meaning": "would have",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_1.json",
+      "entryShape": "substantive",
+      "licenseTier": "C",
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "seeAlso": "たら～（のに）・と～（のに）〈反実仮想〉",
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "のに",
+     "source": "donna_toki",
+     "source_id": "のに",
+     "structure": "Vば／イＡければ／ナＡなら（ば）／ Nなら（ば）＋～（のに）",
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": [
+      "ば～（のに）〈反実仮想〉"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "便利だ",
+        "に"
+       ],
+       "japanese": "ピーラーは、皮をむくのに便利だよ"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "いい",
+        "に"
+       ],
+       "japanese": "A：東京はお店がいっぱいあるね！B：うん。買い物するのにいいよね（復習：〜よね？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "ドラマは日本語の勉強をするのに役立ちます"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "LINEは、友達と連絡を取るのに便利です（復習：「Google」や「Twitter」は日本語でどう読むの？）"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "いい",
+        "に"
+       ],
+       "japanese": "駅の近くに住んでいるので、学校に通うのにいい"
+      }
+     ],
+     "explanation": "「〜のに」は【評価】を表す文型です。「Aのに〜」の形で、「Aする時に、いい・便利だ」というように「A」に対する評価を表します。この文型は、後ろにくるものがほとんど決まっていますので暗記しておくといいと思います😀\n\n［「〜のに」とよく一緒に使う単語］\n\n・〜のに\nいい\n\n・〜のに\n便利だ\n\n・〜のに\n不便だ\n\n・〜のに\n役に立つ\n\n・〜のに\n役立つ\n\nまた「〜のに」は、名詞に使う場合は「名詞＋に〜」となります。\n\n［例］\nドラマは日本語の勉強をする\nのに\n役立ちます\n→ドラマは日本語の勉強\nに\n役立ちます\n\n「〜のに」にはいくつか意味がありますので、一緒に覚えておきましょう😉\n\n【「〜のに」がつく用法】\n〜のに（必要）\n〜のに（評価）\n〜のに（用途）\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "のに",
+     "jlpt": "N4",
+     "meaning": "評価を表す",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/19725998.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "のに",
+     "source": "edewakaru",
+     "source_id": "のに",
+     "structure": "動詞［辞書形］＋のに\n名詞［辞書形］＋に",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "のに（評価）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "カタカナを覚えるのに１か月かかった\n→カタカナを覚える"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "パスポートを作るのに16000円かかる\n→パスポートを作る"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "新しいスマホを買うのに8万円以上かかりそうだ\n→スマホを買う"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "必要だ"
+       ],
+       "japanese": "A：大阪まで新幹線でどのくらいかかるの？B：大阪まで行くのに２時間半かかるよA：じゃあ、いくらくらい必要なの？B：東京から大阪まで行くのに14000円ぐらい必要だよ〜\n→大阪まで行く\n→大阪まで行く"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "必要です"
+       ],
+       "japanese": "絵を描き上げるのに時間が必要です\n→絵を描き上げる"
+      }
+     ],
+     "explanation": "「〜のに」は「〜するために〜が必要」という意味の文型です。\n後ろには「かかる」「必要」など、決まった単語がきますので暗記しておくといいと思います😀\n\n［「〜のに」と使う単語］\n\n・〜のに＋\n〜かかる\n\n・〜のに ＋\n〜必要\n\n・〜のに＋\n〜要る\n\n初級で勉強する\n「〜かかる」\nを復習しておきましょう😉\n（復習：〜かかる）\n\n【「〜のに」がつく用法】\n〜のに（必要）\n〜のに（評価）\n〜のに（用途）\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "のに",
+     "jlpt": "N4",
+     "meaning": "〜するために〜が必要",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/19726114.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "のに",
+     "source": "edewakaru",
+     "source_id": "のに",
+     "structure": "動詞［辞書形］＋のに",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "のに（必要）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "A：これは何をするのに使うの？B：巻き寿司を作るのに使うのよ\n→巻き寿司を作る"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "辞書は日本語を勉強するのに使います\n→日本語を勉強する"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "ナイフはフルーツを切るのに使います\n→フルーツを切る"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "消しゴムは字を消すのに使います\n→字を消す"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに",
+        "に"
+       ],
+       "japanese": "お箸は、ごはんを食べたり料理をしたりするのに使います\n→ごはんを食べたり料理をしたりする"
+      }
+     ],
+     "explanation": "「〜のに」は【用途】を表す表現で、「〜ために使う」という意味で使われます。この文型は、後ろに「使う」がきますので「〜のに使う」の形で覚えておきましょう。また、名詞に使う場合は「名詞＋に〜」になります。\n\n［例］\n辞書は日本語を勉強する\nのに\n使います\n→辞書は日本語の勉強\nに\n使います\n\n「〜のに」は初級で勉強しますが、とてもよく使う大切な文型です。日常会話（にちじょうかいわ）で上手に使えるように復習をしておきましょう😀\n\n【「〜のに」がつく用法】\n〜のに（必要）\n〜のに（評価）\n〜のに（用途）\n\nにほんブログ村\n\nにほんブログ村\n\nにほんブログ村\n\n\n――以上――",
+     "expression": "のに",
+     "jlpt": "N4",
+     "meaning": "〜ために使う\n〜ために必要",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerBand": "絵でわかる初級文法",
+      "producerLinks": [
+       "https://www.edewakaru.com/archives/19717741.html"
+      ],
+      "producerTermTags": "絵でわかる初級文法",
+      "redistributable": false,
+      "sourceLabel": "絵でわかる日本語"
+     },
+     "reading": "のに",
+     "source": "edewakaru",
+     "source_id": "のに",
+     "structure": "動詞［辞書形］＋のに\n名詞［辞書形］＋に",
+     "tags": [
+      "絵でわかる初級文法"
+     ],
+     "variants": [
+      "のに（用途）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "あの時、頑張って彼女に好きって言えばよかったのに。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "あと５分あれば、全部の問題を解くことができたのに。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "もっと早く寝れば、朝起きられたのに、昨日は夜中ゲームしてしまった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "タクシーで行けば、間に合ったのに、バスに乗ってしまったので遅れてしまった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "犬アレルギーさえなければ、家で犬が飼えるのに。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "日本語がもっと上手なら、雇ってもらえそうなのになあ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "隣のクラスの先生、すごく美人だよな。俺らのクラスの先生ならいいのになあ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ジェシカさん、もっと静かにすれば、男性からモテそうなのに。いつもギャーギャーうるさいから・・・。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "アパートがもう少し学校から近ければ、便利なのになあ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "もう少し安くしてくれれば、買うのになあ。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "もうちょっと早く連絡してくれれば、迎えに行ったのに。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "もう少し優しく接してくれれば、いい先生なのに。いつも怒ってばかりで、ストレスだ。"
+      }
+     ],
+     "explanation": null,
+     "expression": "のに",
+     "jlpt": "N3",
+     "meaning": "～すれば違う結果になっていたのに・・・。\n～しなかったこと、〜でないことを残念に思ったり後悔する言い方。\n\n[英訳]\n\"would have\"\nA way of saying you regret what you did not or could not do.",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2019/01/22/jlptn3-grammar-ba-noni/"
+      ],
+      "producerTermTags": "日本語NETーN3文法",
+      "producerTitle": "～ば～のに（反実仮想）",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "のに",
+     "source": "nihongo_net",
+     "source_id": "のに",
+     "structure": "V（条件形） + 〜のに\nイAければ + 〜のに\nナAなら + 〜のに\nNなら + 〜のに\n\n「～ば」の他に「たら」や「なら」などの条件形も使うことができる。",
+     "tags": [
+      "日本語NETーN3文法"
+     ],
+     "variants": [
+      "ば〜のに（反実仮想）"
+     ]
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "薬を飲んだのに、全然良くなりません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "昨日、早くたくさん寝たのに、まだ眠いです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "トムさんは２年日本へ留学したのに、全然日本語が話せません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "このステーキは高いのに、おいしくないです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ジェームスさんはイケメンなのに、彼女がいません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "彼はカッコよくないのに、女の子からモテます。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "彼女は歌手なのに歌が下手です。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "息子はテスト前なのに、全然勉強しません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "この会社は給料が安いのに、仕事がたくさんあって大変です。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "全然勉強しなかったのに、JLPT N4に合格できました。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "今日は日曜日なのに、仕事がたまっているので出勤しなければなりません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "息子は部屋が汚いのに、全然掃除しません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "毎日、運動しているのに、全然痩せません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "頑張って勉強したのに、テストの結果は悪かったです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "全然勉強しなかったのに、テストの結果は良かったです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "エアコンをつけているのに、暑いです。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "ボタンを押したのに、ジュースが出てきません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "夜遅いのに、息子がまだ帰ってきません。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [],
+       "japanese": "彼は行くと言ったのに、来なかった。"
+      }
+     ],
+     "explanation": null,
+     "expression": "のに",
+     "jlpt": "N4",
+     "meaning": "〜けれど\n「当然〜だろう」と予想される事柄とは違った結果になったことを表す。話の手の驚きや不満などの気持ちが含まれる。\n\n[英訳]\n\"… despite of the 〜\"\nOften used to show the speaker’s dissatisfaction, regret or feeling that something is unexpected.",
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "producerLinks": [
+       "https://nihongokyoshi-net.com/2020/01/01/jlptn4-grammar-noni/"
+      ],
+      "producerTermTags": "日本語NETーN4文法",
+      "producerTitle": "〜のに",
+      "redistributable": false,
+      "sourceLabel": "日本語NET JLPT文法解説まとめ"
+     },
+     "reading": "のに",
+     "source": "nihongo_net",
+     "source_id": "のに",
+     "structure": "V（普通形） + のに\nイAい + のに\nナA + のに\nN + なのに",
+     "tags": [
+      "日本語NETーN4文法"
+     ],
+     "variants": []
+    },
+    {
+     "ai_generated": {},
+     "examples": [
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "完成させるのに２時間かかった。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "ビザを更新するのに３週間もかかる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "申請するのに身分の証明が必要となる。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "部屋を隅々まで掃除するのに一体何時間かかるのだろうか。"
+      },
+      {
+       "ai_generated": false,
+       "english": null,
+       "highlight": [
+        "のに"
+       ],
+       "japanese": "海外で生活するのに役に立つ知識を教えてもらった。"
+      }
+     ],
+     "explanation": "目的を表します。\n前項には目的を、後項にはその目的を達成するために必要な条件を述べます。\n後項にはよく「かかる」「必要」「役に立つ」などの動詞がきます。",
+     "expression": "のに",
+     "jlpt": "N3",
+     "meaning": "用于…\n为了…\n～するためには",
+     "notes": "似ている文法「～には」",
+     "nuance": null,
+     "provenance": {
+      "bankMember": "term_bank_3.json",
+      "licenseTier": "B",
+      "notes": "似ている文法「～には」",
+      "producerBand": "日本語教師―Ｎ３",
+      "producerLinks": [
+       "https://nihongonosensei.net/?p=8672"
+      ],
+      "producerTermTags": "日本語教師―Ｎ３",
+      "redistributable": false,
+      "sourceLabel": "毎日のんびり日本語教師"
+     },
+     "reading": "のに",
+     "source": "nihongo_no_sensei",
+     "source_id": "のに",
+     "structure": "動辞形＋のに",
+     "tags": [
+      "日本語教師―Ｎ３"
+     ],
+     "variants": []
+    }
+   ],
+   "expression": "のに",
+   "variants": [
+    "と～（のに）〈反実仮想〉",
+    "のに〈逆接　不満",
+    "予想外〉",
+    "のに〈対比〉",
+    "のに〈用途〉",
+    "ば～（のに）〈反実仮想〉",
+    "のに（評価）",
+    "のに（必要）",
+    "のに（用途）",
+    "ば〜のに（反実仮想）"
+   ]
+  },
+  "sparse_minimal": {
+   "contributions": [
+    {
+     "ai_generated": {},
+     "examples": [],
+     "explanation": null,
+     "expression": "け",
+     "jlpt": null,
+     "meaning": null,
+     "notes": null,
+     "nuance": null,
+     "provenance": {
+      "aliasOf": "け",
+      "bankMember": "term_bank_1.json",
+      "entryShape": "alias-redirect",
+      "licenseTier": "C",
+      "producerLinks": [
+       "?query=っけ"
+      ],
+      "producerTermTags": "どんなとき",
+      "redistributable": false,
+      "sourceLabel": "どんなときどう使う 日本語表現文型辞典"
+     },
+     "reading": "け",
+     "source": "donna_toki",
+     "source_id": "け",
+     "structure": null,
+     "tags": [
+      "どんなとき"
+     ],
+     "variants": []
+    }
+   ],
+   "expression": "け",
+   "variants": []
+  }
+ },
+ "sourceLabels": {
+  "dojg": "DoJG 日本語文法辞典(全集)",
+  "donna_toki": "どんなときどう使う 日本語表現文型辞典",
+  "edewakaru": "絵でわかる日本語",
+  "nihongo_net": "日本語NET JLPT文法解説まとめ",
+  "nihongo_no_sensei": "毎日のんびり日本語教師"
+ }
+}

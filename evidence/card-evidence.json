@@ -1,0 +1,258 @@
+{
+  "yomitan": {
+    "describe": "26.8.24.0",
+    "commit": "77e200428902abf4fa48284df92da7af3dcb4162",
+    "dirty": ""
+  },
+  "cardBuilder": "reference",
+  "viewports": {
+    "desktop": {
+      "width": 600,
+      "height": 900
+    },
+    "narrow": {
+      "width": 320,
+      "height": 900
+    }
+  },
+  "shots": [
+    {
+      "name": "desktop-collapsed",
+      "fixture": "multi_source_rich",
+      "options": {},
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [],
+      "file": "card-desktop-collapsed.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 322,
+        "height": 237
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "desktop-expanded",
+      "fixture": "multi_source_rich",
+      "options": {},
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [
+        "[data-sc-card-examples]",
+        "[data-sc-card-sources]"
+      ],
+      "file": "card-desktop-expanded.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 520.25,
+        "height": 4185
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "narrow-collapsed",
+      "fixture": "multi_source_rich",
+      "options": {},
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "expanded": [],
+      "file": "card-narrow-collapsed.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 240.25,
+        "height": 286
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "narrow-sources-expanded",
+      "fixture": "multi_source_rich",
+      "options": {},
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "expanded": [
+        "[data-sc-card-sources]"
+      ],
+      "file": "card-narrow-sources-expanded.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 240.25,
+        "height": 664
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "dark-collapsed",
+      "fixture": "multi_source_rich",
+      "options": {
+        "theme": "dark"
+      },
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [],
+      "file": "card-dark-collapsed.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 322,
+        "height": 237
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "dark-on-light-os",
+      "fixture": "multi_source_rich",
+      "options": {
+        "theme": "dark",
+        "os_scheme": "light"
+      },
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [
+        "[data-sc-card-sources]"
+      ],
+      "file": "card-dark-on-light-os.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 520.25,
+        "height": 552
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "forced-colors",
+      "fixture": "multi_source_rich",
+      "options": {
+        "forced_colors": true
+      },
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [
+        "[data-sc-card-examples]"
+      ],
+      "file": "card-forced-colors.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 520.25,
+        "height": 3870
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "narrow-zoom-200",
+      "fixture": "multi_source_rich",
+      "options": {
+        "font_size": 32
+      },
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "expanded": [],
+      "file": "card-narrow-zoom-200.png",
+      "cardBox": {
+        "x": 107.828125,
+        "y": 23.03125,
+        "width": 189.140625,
+        "height": 1409.1875
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "all-jlpt-badges",
+      "fixture": "english_gloss",
+      "options": {},
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [],
+      "file": "card-all-jlpt-badges.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 379.84375,
+        "height": 295
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "ruby-furigana",
+      "fixture": "ruby_furigana",
+      "options": {},
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [
+        "[data-sc-card-examples]"
+      ],
+      "file": "card-ruby-furigana.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 520.25,
+        "height": 2240
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "sparse-entry",
+      "fixture": "sparse_minimal",
+      "options": {},
+      "viewport": {
+        "width": 600,
+        "height": 900
+      },
+      "expanded": [],
+      "file": "card-sparse-entry.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 71.234375,
+        "height": 50
+      },
+      "overflowBoxes": 0
+    },
+    {
+      "name": "most-variants",
+      "fixture": "most_variants",
+      "options": {},
+      "viewport": {
+        "width": 320,
+        "height": 900
+      },
+      "expanded": [
+        "[data-sc-card-also-written]"
+      ],
+      "file": "card-most-variants.png",
+      "cardBox": {
+        "x": 69.671875,
+        "y": 10.078125,
+        "width": 240.25,
+        "height": 867
+      },
+      "overflowBoxes": 0
+    }
+  ]
+}
