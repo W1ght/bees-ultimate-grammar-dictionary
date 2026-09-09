@@ -1,0 +1,32 @@
+{
+ "A": {
+  "description": "polarity-flipped headword (upstream expression column)",
+  "count": 12,
+  "path": "data/review/clusters/cluster_A.json"
+ },
+ "B": {
+  "description": "wrong reading (upstream reading column)",
+  "count": 9,
+  "path": "data/review/clusters/cluster_B.json"
+ },
+ "C": {
+  "description": "structure block copied from a different grammar point",
+  "count": 6,
+  "path": "data/review/clusters/cluster_C.json"
+ },
+ "D": {
+  "description": "defective example sentence",
+  "count": 136,
+  "path": "data/review/clusters/cluster_D.json"
+ },
+ "E": {
+  "description": "wrong formation / attachment rule",
+  "count": 94,
+  "path": "data/review/clusters/cluster_E.json"
+ },
+ "F": {
+  "description": "wrong or self-contradictory explanation / gloss",
+  "count": 51,
+  "path": "data/review/clusters/cluster_F.json"
+ }
+}

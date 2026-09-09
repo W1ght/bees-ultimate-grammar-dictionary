@@ -61,29 +61,55 @@ def run_extract(
     sources_dir: pathlib.Path = DEFAULT_SOURCES_DIR,
     extracted_dir: pathlib.Path = DEFAULT_EXTRACTED_DIR,
     only: list[str] | None = None,
+    corrections_dir: pathlib.Path | None = None,
 ) -> dict[str, object]:
-    """Run every registered extractor and write one artifact per source."""
+    """Run every registered extractor and write one artifact per source.
+
+    After an extractor produces its records, confirmed post-extraction content
+    corrections (``bugd.corrections``) are applied to the in-memory records. The
+    extractor's locked publisher bytes are never mutated — the digest-checked
+    lock still guards them — so the build stays reproducible while the corpus
+    reflects the review's confirmed dispositions. Pass ``corrections_dir`` to
+    override the default location; a missing directory means "no corrections".
+    """
+    from .corrections import (
+        DEFAULT_CORRECTIONS_DIR,
+        apply_corrections,
+        load_corrections,
+    )
     from .sources import all_extractors, get_extractor
 
     extracted_dir.mkdir(parents=True, exist_ok=True)
     classes = [get_extractor(name) for name in only] if only else all_extractors()
 
+    correction_dir = corrections_dir if corrections_dir is not None else DEFAULT_CORRECTIONS_DIR
+    corrections = load_corrections(correction_dir)
+
     written: dict[str, int] = {}
+    corrections_report: dict[str, object] = {}
     for cls in classes:
         result = cls(sources_dir / cls.name).extract()
+        points = list(result.points)
+        if corrections:
+            points, report = apply_corrections(points, corrections, source=cls.name)
+            if report["applied"]:
+                corrections_report[cls.name] = report
         payload = {
             "source": result.source,
             "label": cls.label or cls.name,
             "aiGeneratedSource": cls.ai_generated_source,
             "consumed": result.consumed,
             "stats": result.stats,
-            "points": [point_to_json(point) for point in result.points],
+            "points": [point_to_json(point) for point in points],
         }
         (extracted_dir / f"{cls.name}.json").write_text(
             dump_json(payload) + "\n", encoding="utf-8"
         )
-        written[cls.name] = len(result.points)
-    return {"sources": written, "total": sum(written.values())}
+        written[cls.name] = len(points)
+    out: dict[str, object] = {"sources": written, "total": sum(written.values())}
+    if corrections_report:
+        out["corrections"] = corrections_report
+    return out
 
 
 # --------------------------------------------------------------------------
