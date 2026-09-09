@@ -44,10 +44,29 @@ from bugd.unify import (
 # --------------------------------------------------------------------------
 
 
+#: Row identities handed out to fixture rows, keyed by `(source, source_id)`.
+#: Fixture rows are built one at a time rather than through `ExtractResult`, so
+#: they need the same `<source>:<ordinal>` identity the extract stage stamps —
+#: the merge stage fails closed without it, because `source_id` is not unique and
+#: an unstamped row could not be traced to a single source record. Memoised so a
+#: given fixture row keeps one identity however many times it is rebuilt, which
+#: is what the byte-identical-artifact test depends on.
+_FIXTURE_ROW_UIDS: dict[tuple[str, str], str] = {}
+
+
+def _fixture_row_uid(source: str, source_id: str) -> str:
+    key = (source, source_id)
+    if key not in _FIXTURE_ROW_UIDS:
+        used = sum(1 for existing_source, _ in _FIXTURE_ROW_UIDS if existing_source == source)
+        _FIXTURE_ROW_UIDS[key] = f"{source}:{used + 1}"
+    return _FIXTURE_ROW_UIDS[key]
+
+
 def _row(source, source_id, expression, **extra):
     record = {
         "source": source,
         "source_id": source_id,
+        "row_uid": extra.pop("row_uid", None) or _fixture_row_uid(source, source_id),
         "expression": expression,
         "variants": [],
         "reading": extra.pop("reading", expression),
@@ -942,3 +961,99 @@ def test_the_stage_entry_point_writes_both_artifacts(tmp_path):
     # a dataset and a keymap belong together.
     assert stats["artifact"]["keymapContentHash"]
     assert stats["artifact"]["byteCount"] > 0
+
+
+# --------------------------------------------------------------------------
+# row identity: a claim must name exactly ONE source record
+# --------------------------------------------------------------------------
+
+
+def test_two_rows_sharing_a_source_id_keep_distinct_claim_handles():
+    """The filed defect, as a property of the merged dataset.
+
+    Before this, `(source, sourceId)` addressed BOTH of these rows, so a reader
+    could not tell which record asserted N5 and which asserted N2 — measured on
+    the real corpus as 289 ambiguous handles and 54 entries whose single handle
+    claimed two JLPT levels.
+    """
+    a = _row("edewakaru", "あまり", "あまり", meaning="Not very", jlpt="N5", row_uid="edewakaru:1")
+    b = _row("edewakaru", "あまり", "あまり", meaning="Too much", jlpt="N2", row_uid="edewakaru:2")
+    keymap = _keymap(
+        [("edewakaru", a, "あまり#sense1"), ("edewakaru", b, "あまり#sense2")],
+        [
+            _point("あまり#sense1", "あまり", "あまり", jlptLevels=["N5"]),
+            _point("あまり#sense2", "あまり", "あまり", jlptLevels=["N2"]),
+        ],
+    )
+    entries, _ = unify(
+        [("edewakaru", a), ("edewakaru", b)], keymap, {"edewakaru": "絵でわかる"}
+    )
+    contributions = [c for e in entries for c in e.contributions]
+    assert len(contributions) == 2
+    # The producer's handle is still shared...
+    assert len({c.source_id for c in contributions}) == 1
+    # ...but the claim handle is not, so each claim names one record.
+    assert len({c.row_uid for c in contributions}) == len(contributions)
+    # And each identity resolves to the level its own row asserted.
+    assert {c.row_uid: c.jlpt for c in contributions} == {
+        "edewakaru:1": "N5",
+        "edewakaru:2": "N2",
+    }
+
+
+def test_row_identity_is_unique_across_the_whole_merged_dataset():
+    """Uniqueness inside one entry is not enough: two entries must not collide."""
+    rows = [
+        _row("dojg", "A", "から", meaning="Because", row_uid="dojg:1"),
+        _row("dojg", "A", "ので", meaning="Since", row_uid="dojg:2"),
+    ]
+    keymap = _keymap(
+        [("dojg", rows[0], "から"), ("dojg", rows[1], "ので")],
+        [_point("から", "から", "から"), _point("ので", "ので", "ので")],
+    )
+    entries, _ = unify([("dojg", r) for r in rows], keymap, {"dojg": "DoJG"})
+    uids = [c.row_uid for e in entries for c in e.contributions]
+    assert len(uids) == 2
+    assert len(set(uids)) == len(uids)
+
+
+def test_a_row_without_an_identity_fails_the_merge_closed():
+    """Merging an unstamped row would reintroduce an unattributable claim."""
+    row = _row("dojg", "A", "から", meaning="m")
+    del row["row_uid"]
+    keymap = _keymap([("dojg", row, "から")], [_point("から", "から", "から")])
+    with pytest.raises(MalformedPayload, match="row_uid"):
+        unify([("dojg", row)], keymap, {"dojg": "DoJG"})
+
+
+@pytest.mark.parametrize("bad", ["dojg:0", "dojg:１", "dojg:1_0", "nihongo_net:1", ""])
+def test_a_row_with_a_malformed_identity_fails_the_merge_closed(bad):
+    """The merge re-checks the grammar; it does not trust the extract stage."""
+    row = _row("dojg", "A", "から", meaning="m", row_uid="dojg:1")
+    row["row_uid"] = bad
+    keymap = _keymap([("dojg", row, "から")], [_point("から", "から", "から")])
+    with pytest.raises(MalformedPayload, match="row_uid"):
+        unify([("dojg", row)], keymap, {"dojg": "DoJG"})
+
+
+def test_row_identity_survives_the_artifact_round_trip():
+    """A claim handle that is lost on read-back cannot be cited by an audit."""
+    row = _row("dojg", "A", "から", meaning="m", row_uid="dojg:4")
+    keymap = _keymap([("dojg", row, "から")], [_point("から", "から", "から")])
+    entries, _ = unify([("dojg", row)], keymap, {"dojg": "DoJG"})
+    contribution = entries[0].contributions[0]
+    assert contribution.row_uid == "dojg:4"
+    payload = contribution_to_json(contribution)
+    assert payload["rowUid"] == "dojg:4"
+    assert contribution_from_json(payload).row_uid == "dojg:4"
+
+
+def test_the_projection_onto_the_bank_input_keeps_row_identity():
+    """`to_grammar_point` must not drop identity on the way to the renderer."""
+    from bugd.unify import to_grammar_point
+
+    row = _row("dojg", "A", "から", meaning="m", row_uid="dojg:5")
+    keymap = _keymap([("dojg", row, "から")], [_point("から", "から", "から")])
+    entries, _ = unify([("dojg", row)], keymap, {"dojg": "DoJG"})
+    projected = to_grammar_point(entries[0].contributions[0], expression="から")
+    assert projected.row_uid == "dojg:5"

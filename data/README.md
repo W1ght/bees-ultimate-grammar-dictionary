@@ -66,6 +66,45 @@ One artifact per source, written by `make extract`:
 Extractors preserve the whole tail. Compact-card truncation is a rendering
 decision made in `bugd.banks`, never here.
 
+### Row identity: `row_uid` vs `source_id`
+
+Each serialized record carries **two** identifiers, and they mean different
+things:
+
+| field | meaning | unique? |
+| --- | --- | --- |
+| `source_id` | the producer's own handle, usually its headword or bank sequence | **no** |
+| `row_uid` | `<source>:<ordinal>` — this build's identity for the row | **yes**, within a source |
+
+`source_id` is not unique and never was: one `edewakaru` `source_id` names 22
+different rows, and across the five sources 435 handles are reused. That is not a
+source defect — a dictionary legitimately publishes several senses of `あまり` —
+but it means `(source, source_id)` cannot address a claim. Measured on the merged
+dataset before `row_uid` existed: **289** handles named 2+ genuinely different
+source records, **742** contributions carried an ambiguous handle, and on **54**
+entries one handle asserted two different JLPT levels.
+
+`row_uid` is assigned once, in `ExtractResult.__post_init__`, from the row's
+1-based position in its source's deterministic emission order. Consequences worth
+knowing:
+
+* **it fails closed on a repeat.** A duplicate raises `DuplicateRowIdentity`
+  rather than renumbering, because renumbering would silently repoint every claim
+  that already cites the id;
+* **the grammar is explicit ASCII.** `<source>:<positive-decimal>` with no sign,
+  underscore, or non-ASCII digit — `int()` accepts `1_0`, `+1` and `１`, any of
+  which would let two spellings of one ordinal coexist;
+* **the merge stage re-checks it** and refuses to build a contribution from an
+  unstamped row, so a stale `data/extracted/` cannot reintroduce ambiguous
+  claims;
+* **it is dataset identity, not card content.** Nothing renders it; adding it
+  left the packaged bank bytes unchanged.
+
+Audit it with `scripts/audit/row_identity.py` (uniqueness plus a check that each
+uid names the row whose substance the contribution actually restates) and
+`scripts/audit/attribution_precision.py --handle sourceId|rowUid`, which measures
+the same collision count under either handle.
+
 ## `data/merge/keymap.json`
 
 Written by `scripts/build_keymap.py` (module: `bugd.keymap`): the authority for

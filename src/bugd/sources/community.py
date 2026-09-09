@@ -25,7 +25,7 @@ import re
 from ..jsonio import MalformedPayload, dump_json
 from ..model import Example, GrammarPoint
 from ..source_corrections import correct_point
-from .base import Extractor, ExtractResult, load_source_lock
+from .base import Extractor, ExtractResult, assign_row_uids, load_source_lock
 from .yomitan_bank import TermRow, read_term_bank
 
 #: Per-source JSONL lands beside the locked bytes so a reviewer can read one
@@ -192,6 +192,9 @@ class CommunityBankExtractor(Extractor):
             points.append(point)
 
         points = self.finalize(points)
+        # Row identity is stamped before the sidecar is written so the reviewable
+        # JSONL and the artifact agree on it; `ExtractResult` re-checks it.
+        points = assign_row_uids(self.name, points)
         self.write_jsonl(points)
         return ExtractResult(
             source=self.name,
