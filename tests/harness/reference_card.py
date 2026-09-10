@@ -277,17 +277,6 @@ def _sources_section(entry: dict, source_labels: dict[str, str]) -> dict:
         facts: list[Any] = [
             _role("cardSourceLabel", "div", _label(source, source_labels), lang="ja")
         ]
-        tier = provenance.get("licenseTier")
-        if tier:
-            facts.append(_role("cardSourceFact", "div", f"Licence tier {tier}"))
-        if "redistributable" in provenance:
-            facts.append(
-                _role(
-                    "cardSourceFact",
-                    "div",
-                    "Redistributable" if provenance["redistributable"] else "Not redistributable",
-                )
-            )
         band = provenance.get("producerBand") or provenance.get("volume")
         if band:
             facts.append(_role("cardSourceFact", "div", str(band), lang="ja"))

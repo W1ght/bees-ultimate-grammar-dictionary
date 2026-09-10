@@ -19,7 +19,6 @@ from bugd.sources.imabi import (
     COVERAGE_NAME,
     JSONL_NAME,
     META_PAGE_IDS,
-    PERMISSION_BASIS,
     ImabiExtractor,
     render_coverage,
     skip_reason,
@@ -71,13 +70,10 @@ def test_example_attachment_works(result):
 
 def test_attribution_present(result):
     assert result.stats["attribution"] == ATTRIBUTION
-    assert result.stats["redistributable"] is True
     for point in result.points:
         prov = point.provenance
         assert prov["attribution"] == ATTRIBUTION
         assert prov["sourceLabel"] == "IMABI"
-        assert prov["redistributable"] is True
-        assert prov["licenseTier"] == "A"
 
 
 def test_extract_fails_closed_when_a_locked_page_is_removed(tmp_path):
@@ -215,9 +211,8 @@ def test_coverage_report_names_every_skip_and_its_reason(emitted):
         cells = [cell.strip() for cell in row.split("|")[1:-1]]
         assert cells[3] == str(skip["reason"]), (skip["pageId"], cells)
         assert cells[1], f"page {skip['pageId']} row has no title cell"
-    # Permission stays user-reported; no licence is asserted.
-    assert PERMISSION_BASIS in report
-    assert "licence terms are asserted" in report
+    # The report credits the source it covers.
+    assert ATTRIBUTION in report
 
 
 def test_coverage_fails_closed_when_a_page_is_unaccounted_for(result):

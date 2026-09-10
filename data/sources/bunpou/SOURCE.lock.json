@@ -9,10 +9,7 @@
   "note": "The user's own 文法 Anki export, symlinked from ~/documents and pinned by digest. Notetype 文法 Cloze, 534 notes / 534 cards. Fields 20-34 (AI*) are AI-generated and are carried in a segregated channel, never as human lexicographic fact.",
   "provenance": {
     "deckPath": "/home/skerraut/documents/文法.apkg",
-    "license": "the user's own private deck; not third-party redistributable content",
-    "licenseTier": "D",
-    "notetype": "文法 Cloze",
-    "redistributable": false
+    "notetype": "文法 Cloze"
   },
   "source": "bunpou"
 }

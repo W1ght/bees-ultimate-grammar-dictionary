@@ -1,12 +1,5 @@
 """Acquire the Yokubi lesson corpus into `data/sources/yokubi/`.
 
-Licence note (verified, not assumed): Yokubi is published under
-Creative Commons Attribution 4.0 International. Both the repository `LICENSE`
-file and `src/Credits.md` state it, and `src/Credits.md` explicitly grants use,
-redistribution, and modification conditioned on attributing the original work.
-The licence text and the credits page are themselves acquired and locked, so the
-grant travels with the corpus instead of living only in a commit message.
-
 Acquisition properties:
 
 * the upstream git repository is the source of truth, pinned to an exact commit;
@@ -44,8 +37,10 @@ USER_AGENT = "bees-ultimate-grammar-dictionary/1.0 (local Yomitan dictionary bui
 DEFAULT_DIR = pathlib.Path("data/sources/yokubi")
 LOCK_NAME = "SOURCE.lock.json"
 
-# Members worth storing: the lesson prose, the licence that permits using it, and
-# the book manifest that documents mdBook's furigana preprocessor.
+# Members worth storing: the lesson prose, the book manifest that documents
+# mdBook's furigana preprocessor, and the two upstream files the lock pins
+# alongside them (LICENSE, src/Credits.md) so a re-acquisition reproduces the
+# same 78-file manifest.
 WANTED_PREFIXES = ("src/",)
 WANTED_EXACT = ("LICENSE", "book.toml")
 WANTED_SUFFIXES = (".md",)
@@ -55,30 +50,6 @@ WANTED_SUFFIXES = (".md",)
 MAX_MEMBER_BYTES = 2 * 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
 MAX_MEMBERS = 5000
-
-LICENCE = {
-    "source": "yokubi",
-    "label": "Yokubi",
-    "site": "https://yoku.bi/",
-    "repository": f"https://github.com/{REPO}",
-    "licence": "CC-BY-4.0",
-    "licenceName": "Creative Commons Attribution 4.0 International",
-    "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
-    "licenceBasis": "declared-by-source",
-    "attributionRequired": True,
-    "attribution": "Yokubi — The Common Grammar Guide (https://yoku.bi), CC BY 4.0",
-    "notes": [
-        "Declared in the repository LICENSE file and in src/Credits.md, both of "
-        "which are acquired and locked alongside the lesson prose.",
-        "src/Credits.md grants use, redistribution, and modification, including "
-        "commercially, conditioned on attributing the original work.",
-        "Yokubi is itself a revision of Sakubi, which its authors released as "
-        "CC0 public domain; that is recorded upstream, not re-asserted here.",
-        "Redistribution beyond local use is gated by the separate licensing "
-        "card, not by this acquisition.",
-    ],
-}
-
 
 def fetch(url: str) -> bytes:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
@@ -190,7 +161,6 @@ def acquire(target: pathlib.Path, *, revision: str, force: bool) -> dict:
         "revisionCommittedAt": commit["committedAt"],
         "archive": f"https://codeload.github.com/{REPO}/tar.gz/{sha}",
         "archiveSha256": hashlib.sha256(tarball).hexdigest(),
-        "licence": LICENCE,
         "files": files,
     }
     (target / LOCK_NAME).write_text(

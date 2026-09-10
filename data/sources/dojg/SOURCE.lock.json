@@ -13,9 +13,6 @@
     }
   },
   "provenance": {
-    "license": "unlicensed community derivative of a commercial print work",
-    "licenseTier": "C",
-    "redistributable": false,
     "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
     "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
   },

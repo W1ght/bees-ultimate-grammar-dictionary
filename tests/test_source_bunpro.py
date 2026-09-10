@@ -128,14 +128,10 @@ def test_examples_are_attached_with_translation_highlight_and_html(result):
     assert saw_english and saw_highlight and saw_html
 
 
-def test_licence_tier_and_attribution_travel_on_every_record(result):
-    assert result.stats["licenseTier"] == "C"
-    assert result.stats["redistributable"] is False
+def test_the_source_label_travels_on_every_record(result):
+    """Every record names the source that made it -- that is the card's badge."""
     for point in result.points:
-        provenance = point.provenance
-        assert provenance["sourceLabel"] == "Bunpro Grammar Reference"
-        assert provenance["licenseTier"] == "C"
-        assert provenance["redistributable"] is False
+        assert point.provenance["sourceLabel"] == "Bunpro Grammar Reference"
 
 
 def test_normalized_jsonl_lands_beside_the_locked_bytes(result):

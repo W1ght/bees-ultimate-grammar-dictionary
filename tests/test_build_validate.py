@@ -49,8 +49,10 @@ def test_index_requires_a_revision():
 
 def test_local_only_index_omits_the_updater_fields():
     # Yomitan's schema pins isUpdatable to const:true and makes it depend on
-    # indexUrl + downloadUrl, so a local-only index must omit all three.
-    index = build_index("2026.09.08")
+    # indexUrl + downloadUrl, so a local-only index must omit all three. Both URLs
+    # have to be switched off explicitly, because the published coordinates are the
+    # default (a shipped archive has to say where it came from).
+    index = build_index("2026.09.08", index_url=None, download_url=None)
     assert "isUpdatable" not in index
     assert "indexUrl" not in index
     assert "downloadUrl" not in index
@@ -58,9 +60,9 @@ def test_local_only_index_omits_the_updater_fields():
 
 def test_self_updating_index_needs_both_urls():
     with pytest.raises(MalformedPayload):
-        build_index("1", index_url="https://example.invalid/index.json")
+        build_index("1", index_url="https://example.invalid/index.json", download_url=None)
     with pytest.raises(MalformedPayload):
-        build_index("1", download_url="https://example.invalid/d.zip")
+        build_index("1", index_url=None, download_url="https://example.invalid/d.zip")
 
 
 def test_self_updating_index_validates_against_the_pinned_schema(tmp_path):
@@ -544,9 +546,9 @@ def test_validate_refuses_a_member_yomitan_would_silently_ignore(tmp_path):
     assert any("unrecognised archive member" in failure for failure in failures)
 
 
-def test_licence_and_attribution_members_are_allowed(tmp_path):
-    # The per-source licences require notices to accompany redistribution, so
-    # these must travel with the archive without tripping the stray-member gate.
+def test_notice_and_attribution_members_are_allowed(tmp_path):
+    # A credits or notice file may travel with the archive without tripping the
+    # stray-member gate.
     zip_path = _built(
         tmp_path,
         package_members(
@@ -630,7 +632,11 @@ def test_dist_publication_is_atomic_over_an_existing_artifact(tmp_path):
         revision="2026.09.08",
     )
     assert (dist_dir / zip_name()).read_bytes() != b"stale"
-    assert sorted(p.name for p in dist_dir.iterdir()) == ["SHA256SUMS", zip_name()]
+    assert sorted(p.name for p in dist_dir.iterdir()) == [
+        "SHA256SUMS",
+        zip_name(),
+        "index.json",
+    ]
     assert result["sha256"] in (dist_dir / "SHA256SUMS").read_text(encoding="utf-8")
 
 

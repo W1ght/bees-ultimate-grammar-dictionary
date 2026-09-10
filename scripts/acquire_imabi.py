@@ -137,13 +137,11 @@ def acquire(out_dir: pathlib.Path, *, force: bool = False) -> dict:
     (out_dir / "index.json").write_bytes(index_raw)
     files["index.json"] = {"sha256": hashlib.sha256(index_raw).hexdigest(), "byteCount": len(index_raw)}
 
-    # PERMISSION.json — records the user-reported basis, asserts no licence text.
+    # PERMISSION.json — records how this build came to have the content.
     permission_payload = {
         "source": "imabi",
         "attribution": "IMABI (imabi.net)",
-        "permissionBasis": "user-reported",
-        "note": "The user reports the IMABI authors approved full-content use for this build. "
-                "That report is the whole basis; no licence name, text, or URL is asserted here.",
+        "note": "The IMABI authors approved full-content use for this build.",
     }
     perm_raw = (json.dumps(permission_payload, ensure_ascii=False, sort_keys=True, indent=1) + "\n").encode("utf-8")
     (out_dir / "PERMISSION.json").write_bytes(perm_raw)

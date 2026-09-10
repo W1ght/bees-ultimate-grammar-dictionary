@@ -2,7 +2,7 @@
 
 No Yomitan dictionary or structured export of Yokubi exists, so this extractor
 reads the upstream mdBook markdown acquired by `scripts/acquire_yokubi.py`
-(`Morgawr/yokubi`, CC BY 4.0). The rendered site is never scraped.
+(`Morgawr/yokubi`). The rendered site is never scraped.
 
 Yokubi's declared structure decides what this extractor may claim. Its 64 lesson
 files carry exactly one `# ` H1 each and no subheadings anywhere, so the smallest
@@ -20,10 +20,6 @@ draw, which the card forbids. Three rules follow:
 title (SUMMARY labels drift: `い adjectives` vs `い-adjectives`). Every lesson
 `SUMMARY.md` lists must be present in the source lock, so a partial corpus fails
 closed rather than silently yielding fewer entries.
-
-Redistribution: CC BY 4.0 permits redistribution with attribution, so records
-are `licenseTier: "A"`, `redistributable: True`, and every point carries the
-required attribution string.
 """
 
 from __future__ import annotations
@@ -46,17 +42,8 @@ JSONL_NAME = "points.jsonl"
 #: the reason recorded for each skip.
 COVERAGE_NAME = "COVERAGE.md"
 
-#: The attribution CC BY 4.0 requires, carried on every emitted record.
-YOKUBI_ATTRIBUTION = "Yokubi — The Common Grammar Guide (https://yoku.bi), CC BY 4.0"
-
-LICENCE = "CC-BY-4.0"
-LICENSE_TIER = "A"
-#: CC BY 4.0 permits redistribution with attribution. The module docstring has
-#: always claimed this flag; it was never actually emitted, so every Yokubi
-#: record read `redistributable: None` and a publish-time filter reading the
-#: documented key would have excluded the one source whose licence is verified
-#: in its own locked bytes.
-REDISTRIBUTABLE = True
+#: How this source is credited on every card it contributes to.
+YOKUBI_ATTRIBUTION = "Yokubi — The Common Grammar Guide (https://yoku.bi)"
 SITE = "https://yoku.bi/"
 
 #: Reason recorded for a lesson Yokubi teaches without declaring a Japanese
@@ -309,7 +296,7 @@ class YokubiExtractor(Extractor):
 
     Every file read must appear in the source lock, so a partial corpus fails
     closed rather than silently yielding fewer entries. Each emitted point
-    carries the CC BY 4.0 attribution, the pinned revision, and the lesson URL,
+    carries the source attribution, the pinned revision, and the lesson URL,
     and its examples are only those whose text actually contains the headword.
     """
 
@@ -389,9 +376,6 @@ class YokubiExtractor(Extractor):
                             "lessonTitle": title,
                             "lessonUrl": lesson_url,
                             "attribution": YOKUBI_ATTRIBUTION,
-                            "licence": LICENCE,
-                            "licenseTier": LICENSE_TIER,
-                            "redistributable": REDISTRIBUTABLE,
                             "revision": revision,
                         },
                     )
@@ -418,9 +402,6 @@ class YokubiExtractor(Extractor):
             "examplesUnattached": examples_unattached,
             "exampleGroupsSkipped": example_skips,
             "attribution": YOKUBI_ATTRIBUTION,
-            "licence": LICENCE,
-            "licenseTier": LICENSE_TIER,
-            "redistributable": REDISTRIBUTABLE,
             "revision": revision,
         }
         result = ExtractResult(
@@ -502,7 +483,6 @@ def render_coverage(result: ExtractResult) -> str:
     lines.append("")
     lines.append(f"Source: {YOKUBI_ATTRIBUTION}")
     lines.append(f"Upstream revision: `{stats['revision']}`")
-    lines.append(f"Licence: {LICENCE} (redistribution permitted with attribution)")
     lines.append("")
     lines.append(
         "Yokubi publishes one `# ` H1 per lesson and no sub-headings, so the "
@@ -582,8 +562,6 @@ __all__ = [
     "YOKUBI_ATTRIBUTION",
     "LESSON_ONLY_REASON",
     "UNPAIRED_REASON",
-    "LICENCE",
-    "LICENSE_TIER",
     "SITE",
     "JSONL_NAME",
     "COVERAGE_NAME",

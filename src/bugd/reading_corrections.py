@@ -129,9 +129,9 @@ def apply_corrections(
 
     **Staleness is scoped to the sources the corpus actually carries.** A
     correction for a source that contributes NO rows here is not stale -- the
-    corpus simply does not include that source, which happens legitimately in two
-    real cases: a single-source stage run (`--source dojg`), and the public build,
-    where the redistribution filter removes eight of the ten sources. Raising
+    corpus simply does not include that source, which happens legitimately
+    whenever the corpus is narrower than the overlay -- a single-source stage run
+    (`--source dojg`), or a checkout that has acquired only some sources. Raising
     there would make a narrower corpus fail for the wrong reason.
 
     A correction whose source IS present but whose row is not remains

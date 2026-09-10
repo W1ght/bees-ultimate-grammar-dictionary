@@ -5,7 +5,7 @@ Reproducibility rules enforced here:
 * fixed member timestamps and permissions, so identical content yields identical
   archive bytes;
 * deterministic member order (sorted);
-* bank JSON, `index.json`, `styles.css`, and licence notices at the ZIP root —
+* bank JSON, `index.json`, and `styles.css` at the ZIP root —
   Yomitan requires bank JSON at the root; only media may live in a subfolder.
 """
 

@@ -32,12 +32,6 @@ about what the sentence says. `highlight` is taken from the source's own
 `highlight` spans, never re-derived by searching for the headword. The same
 sentences are also embedded inside `Explanation`; those are deliberately ignored
 so an example is attached once, from the field that exists to hold examples.
-
-Redistribution: Bunpro is a paid subscription service and this content is its
-proprietary material. Regardless of the user's clearance to *use* the export
-locally, it is not clearly redistributable, so records are marked
-`licenseTier: "C"`, `redistributable: False` — mirroring `dojg.py`. The separate
-licensing gate (UGD-15) decides mechanically what may ever be published.
 """
 
 from __future__ import annotations
@@ -232,9 +226,6 @@ def _examples(field: str) -> tuple[Example, ...]:
 class BunproExtractor(Extractor):
     name = "bunpro"
     label = "Bunpro Grammar Reference"
-    #: License tier and redistribution posture recorded on every record.
-    license_tier = "C"
-    redistributable = False
 
     def extract(self) -> ExtractResult:
         self._fixups_applied = 0
@@ -264,8 +255,6 @@ class BunproExtractor(Extractor):
                 "notes": len(notes),
                 "points": len(points),
                 "notetype": NOTETYPE,
-                "licenseTier": self.license_tier,
-                "redistributable": self.redistributable,
                 "withExamples": sum(1 for point in points if point.examples),
                 "withJlpt": sum(1 for point in points if point.jlpt),
                 "examples": sum(len(point.examples) for point in points),
@@ -304,8 +293,6 @@ class BunproExtractor(Extractor):
 
         provenance: dict[str, object] = {
             "sourceLabel": self.label,
-            "licenseTier": self.license_tier,
-            "redistributable": self.redistributable,
             "notetype": NOTETYPE,
             "grammarOrder": (fields.get("Grammar_Order") or "").strip() or None,
         }

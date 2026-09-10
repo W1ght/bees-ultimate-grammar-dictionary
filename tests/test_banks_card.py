@@ -21,7 +21,13 @@ import zipfile
 
 import pytest
 
-from bugd import DICTIONARY_AUTHOR, DICTIONARY_TITLE, DICTIONARY_URL
+from bugd import (
+    DICTIONARY_AUTHOR,
+    DICTIONARY_DOWNLOAD_URL,
+    DICTIONARY_INDEX_URL,
+    DICTIONARY_TITLE,
+    DICTIONARY_URL,
+)
 from bugd.banks import build_banks, build_index, build_tag_bank, build_term_entry
 from bugd.merge import MergedEntry
 from bugd.model import Example, GrammarPoint
@@ -131,13 +137,27 @@ def test_index_carries_the_required_card_contract_metadata():
     # Per-source attribution travels with the archive, not only inside cards.
     for label in SOURCE_LABELS.values():
         assert label in index["attribution"]
-    # Local-only by default: no updater fields unless both URLs are supplied.
+    # Self-updating by default: the archive says where it came from, which is what
+    # lets a downstream installer verify it and check for a newer revision.
+    assert index["isUpdatable"] is True
+    assert index["indexUrl"] == DICTIONARY_INDEX_URL
+    assert index["downloadUrl"] == DICTIONARY_DOWNLOAD_URL
+
+
+def test_index_can_be_built_local_only():
+    """Both URLs off together is still a valid archive: it just advertises no updates."""
+    index = build_index("2026.09.08", index_url=None, download_url=None)
     assert "isUpdatable" not in index
+    assert "indexUrl" not in index
+    assert "downloadUrl" not in index
 
 
 def test_index_refuses_a_half_configured_updater():
+    """Yomitan makes `isUpdatable` depend on BOTH URLs, so one alone is invalid."""
     with pytest.raises(Exception):
-        build_index("2026.09.08", index_url="https://example.test/index.json")
+        build_index("2026.09.08", index_url=None)
+    with pytest.raises(Exception):
+        build_index("2026.09.08", download_url=None)
 
 
 # ------------------------------------------------------------- card integrity

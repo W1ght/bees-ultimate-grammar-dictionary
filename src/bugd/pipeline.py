@@ -33,15 +33,11 @@ from .validate import term_entry_count, validate_zip
 
 DEFAULT_SOURCES_DIR = pathlib.Path("data/sources")
 DEFAULT_EXTRACTED_DIR = pathlib.Path("data/extracted")
-#: Redistributable-only projection of `data/extracted/`, written by the publish
-#: filter. A SEPARATE directory on purpose: the local build legitimately uses all
-#: ten acquired sources, so filtering must never edit the full corpus in place.
-DEFAULT_PUBLIC_EXTRACTED_DIR = pathlib.Path("data/extracted-public")
 DEFAULT_MERGED_DIR = pathlib.Path("data/merged")
 DEFAULT_BUILD_DIR = pathlib.Path("build")
-#: Distribution directory holding the one publishable artifact. A ZIP only
-#: appears here after it has passed pinned-schema validation, so `dist/` never
-#: contains an archive that failed the gate.
+#: Distribution directory holding the built artifact. A ZIP only appears here
+#: after it has passed pinned-schema validation, so `dist/` never contains an
+#: archive that failed the gate.
 DEFAULT_DIST_DIR = pathlib.Path("dist")
 
 #: Inspectable bank directory written alongside the ZIP. Packaging reads its
@@ -163,9 +159,8 @@ def run_extract(
                 # existing: every source directory exists in a fresh clone because
                 # `SOURCE.lock.json` is committed (it is the reproducibility
                 # contract), so a directory check skipped nothing and a clean
-                # clone with only the two CC BY 4.0 sources acquired could not run
-                # `make extract` at all -- which made `make public`, the one build
-                # a public user CAN do, unreachable.
+                # clone that had acquired only some sources could not run
+                # `make extract` at all.
                 #
                 # The skip is REPORTED, not silent: the reason lands in the
                 # stage's output so a missing acquisition is visible rather than
@@ -328,8 +323,9 @@ def run_build(
         source_labels = {}
 
     revision = revision or datetime.datetime.now(datetime.UTC).strftime("%Y.%m.%d")
+    index = build_index(revision, source_labels=source_labels)
     members = package_members(
-        index=build_index(revision, source_labels=source_labels),
+        index=index,
         banks=build_banks(entries),
         tag_bank=build_tag_bank(source_labels),
         styles_css=STYLES_CSS,
@@ -360,7 +356,9 @@ def run_build(
     }
 
     if dist_dir is not None:
-        result["distPath"] = str(publish_dist(archive, digest, dist_dir=dist_dir))
+        result["distPath"] = str(
+            publish_dist(archive, digest, dist_dir=dist_dir, index=index)
+        )
     return result
 
 
@@ -388,13 +386,23 @@ def write_banks_dir(
 
 
 def publish_dist(
-    archive: bytes, digest: str, *, dist_dir: pathlib.Path = DEFAULT_DIST_DIR
+    archive: bytes,
+    digest: str,
+    *,
+    dist_dir: pathlib.Path = DEFAULT_DIST_DIR,
+    index: dict | None = None,
 ) -> pathlib.Path:
-    """Publish validated bytes to `dist/` plus a `SHA256SUMS` sidecar.
+    """Publish validated bytes to `dist/` plus `SHA256SUMS` and `index.json`.
 
     The write is atomic (temp file + replace) so a reader never observes a
     half-written archive, and the sidecar records the digest of the exact bytes
     published rather than of a later rebuild.
+
+    `index.json` is published BESIDE the archive, byte-identical to the copy inside
+    it, because that is what the archive's own `indexUrl` points at: an update
+    checker reads the small index to learn the current revision without downloading
+    six megabytes of banks. Writing it from the same `index` dict the archive was
+    packaged from is what keeps the two from disagreeing about the revision.
     """
     dist_dir.mkdir(parents=True, exist_ok=True)
     dist_path = dist_dir / zip_name()
@@ -402,6 +410,8 @@ def publish_dist(
     _atomic_write(
         dist_dir / "SHA256SUMS", f"{digest}  {zip_name()}\n".encode("utf-8")
     )
+    if index is not None:
+        _atomic_write(dist_dir / "index.json", (dump_json(index) + "\n").encode("utf-8"))
     return dist_path
 
 

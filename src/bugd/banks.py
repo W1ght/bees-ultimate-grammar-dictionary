@@ -24,7 +24,9 @@ import re
 
 from . import (
     DICTIONARY_AUTHOR,
+    DICTIONARY_DOWNLOAD_URL,
     DICTIONARY_FORMAT,
+    DICTIONARY_INDEX_URL,
     DICTIONARY_TITLE,
     DICTIONARY_URL,
     TERM_BANK_SHARD,
@@ -32,6 +34,7 @@ from . import (
 from .jsonio import MalformedPayload
 from .merge import MergedEntry
 from .model import GrammarPoint
+from .dialects import prose_to_html
 from .richtext import html_to_content, html_to_text
 
 #: Marker attributes for this dictionary's own CSS.
@@ -226,10 +229,19 @@ def _text(value: object) -> str:
     return html_to_text(value)
 
 
-def _prose(value: object) -> object | None:
-    """Convert a source prose field to structured content, or None when empty."""
+def _prose(value: object, point: GrammarPoint | None = None) -> object | None:
+    """Convert a source prose field to structured content, or None when empty.
+
+    `point` supplies the producer whose notation the field is written in. Markup is
+    part of the content — a table is a table because the author laid it out as one —
+    so the source's dialect is resolved to HTML first and the shared converter then
+    renders it. A source with no declared dialect (nine of the ten) passes through
+    untouched; see `bugd.dialects`.
+    """
     if not isinstance(value, str) or not value.strip():
         return None
+    if point is not None:
+        value = prose_to_html(value, source=point.source)
     return html_to_content(value)
 
 
@@ -1124,7 +1136,7 @@ _CONTINUES_SENTENCE = re.compile(
 )
 
 
-def _prose_paragraph(line: str, next_line: str = "") -> dict:
+def _prose_paragraph(line: str, next_line: str = "", field_lang: str = "ja") -> dict:
     """One prose paragraph, tagged as a section heading when it is one.
 
     A fully bracketed short line is the producer's own subsection heading, so it
@@ -1136,9 +1148,14 @@ def _prose_paragraph(line: str, next_line: str = "") -> dict:
     that label emphasised inline instead, because it leads into its own content
     rather than heading a following block.
 
-    A predominantly-Latin line inside a Japanese field is a TRANSLATION of the
+    A predominantly-Latin line inside a JAPANESE field is a TRANSLATION of the
     explanation beside it, so it is marked `proseTranslation` and declares
-    `lang="en"`. Reviewing a 7/10 v28 tile: `２）基本的に、名詞につく場合は…` and
+    `lang="en"`. `field_lang` is what makes that conditional: five of the ten
+    sources (`bunpro`, `dojg`, `donna_toki`, `imabi`, `yokubi`) explain IN English,
+    so every paragraph they write is Latin-dominant and subordinating all of them
+    would indent and quieten the primary explanation of half the corpus — the
+    opposite of the distinction this role exists to draw. Reviewing a 7/10 v28
+    tile: `２）基本的に、名詞につく場合は…` and
     `２）Generally, くらい becomes ぐらい…` rendered at the same size, weight, colour
     and indent, so the reader could not tell a translation from the primary
     explanation -- and because the producer emits the numbered Japanese points and
@@ -1171,7 +1188,7 @@ def _prose_paragraph(line: str, next_line: str = "") -> dict:
             tail = _split_dialogue_prose(rest)
             content.extend(tail) if isinstance(tail, list) else content.append(tail)
         return {"tag": "div", "content": content}
-    if _is_latin_dominant(stripped):
+    if field_lang == "ja" and _is_latin_dominant(stripped):
         return {
             "tag": "div",
             "data": {"proseTranslation": ""},
@@ -1181,7 +1198,7 @@ def _prose_paragraph(line: str, next_line: str = "") -> dict:
     return {"tag": "div", "content": _split_dialogue_prose(line)}
 
 
-def _paragraphs(content: object) -> object:
+def _paragraphs(content: object, field_lang: str = "ja") -> object:
     """Split preserved paragraph breaks into sibling blocks.
 
     `bugd.richtext` keeps the producer's paragraph breaks as `\\n`, and the card
@@ -1251,9 +1268,9 @@ def _paragraphs(content: object) -> object:
                 # prose, so it must fall OUTSIDE the tinted block.
                 in_example = False
                 example_first = False
-                out.append(_prose_paragraph(part, following(position)))
+                out.append(_prose_paragraph(part, following(position), field_lang))
                 continue
-            node = _prose_paragraph(part, following(position))
+            node = _prose_paragraph(part, following(position), field_lang)
             if in_example:
                 example_first = False
                 if part.strip() in recurring:
@@ -1280,7 +1297,7 @@ def _paragraphs(content: object) -> object:
     if isinstance(content, list):
         out2: list[object] = []
         for item in content:
-            split = _paragraphs(item)
+            split = _paragraphs(item, field_lang)
             out2.extend(split) if isinstance(split, list) and isinstance(item, str) else out2.append(split)
         return out2
     return content
@@ -1343,14 +1360,19 @@ def _source_block(point: GrammarPoint) -> list[object]:
     body: list[object] = []
     for field_name in ("explanation", "nuance", "notes"):
         raw = getattr(point, field_name, None)
-        content = _prose(raw)
+        content = _prose(raw, point)
         if content is not None:
             # Prose is Japanese for most sources but English for DoJG (373 of its
             # explanations); the card root declares `ja`, so an English block must
             # say so explicitly or it inherits the wrong language.
-            node: dict = {"tag": "div", "data": {"prose": ""}, "content": _paragraphs(content)}
+            field_lang = _lang_of(raw) if isinstance(raw, str) else "ja"
+            node: dict = {
+                "tag": "div",
+                "data": {"prose": ""},
+                "content": _paragraphs(content, field_lang),
+            }
             if isinstance(raw, str):
-                node["lang"] = _lang_of(raw)
+                node["lang"] = field_lang
             body.append(node)
     construction = _construction_section(point)
     if construction is not None:
@@ -1714,21 +1736,26 @@ def build_term_entry(entry: MergedEntry, sequence: int) -> list:
 def build_index(
     revision: str,
     *,
-    index_url: str | None = None,
-    download_url: str | None = None,
+    index_url: str | None = DICTIONARY_INDEX_URL,
+    download_url: str | None = DICTIONARY_DOWNLOAD_URL,
     source_labels: dict[str, str] | None = None,
 ) -> dict:
     """Build `index.json` for the unified dictionary.
 
-    Yomitan's index schema pins `isUpdatable` to `const: true` and makes it
-    depend on both `indexUrl` and `downloadUrl`, so a self-updating index is
-    valid only as all three together. The dictionary is local-only by default:
-    the updater fields are omitted unless both URLs are supplied.
+    Yomitan's index schema pins `isUpdatable` to `const: true` and makes it depend
+    on both `indexUrl` and `downloadUrl`, so a self-updating index is valid only as
+    all three together — pass `index_url=None, download_url=None` for an archive
+    that should not advertise updates.
 
-    `attribution` names every contributing source by its human-facing label, so
-    the licence notices required by the per-source terms travel with the archive
-    and are visible in Yomitan's dictionary details pane rather than only inside
-    individual cards.
+    They default to the published coordinates because a reader has no other way to
+    know where this archive came from. Hachidori re-reads the imported `index.json`
+    and refuses any dictionary whose `indexUrl` does not equal the URL it was
+    fetched under, so an archive built without these fields cannot be installed as
+    one of its recommended dictionaries at all.
+
+    `attribution` names every contributing source by its human-facing label, so the
+    credit for each source travels with the archive and is visible in Yomitan's
+    dictionary details pane rather than only inside individual cards.
     """
     if not isinstance(revision, str) or not revision.strip():
         raise MalformedPayload("index revision must be a non-empty string")

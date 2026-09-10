@@ -27,17 +27,5 @@ NOTE ON SCOPE
 This licence covers the BUILD PIPELINE in this repository only — the code under
 `src/`, `scripts/`, `tests/`, `docs/`, and the build configuration.
 
-It does NOT cover dictionary CONTENT. Each grammar source's content remains
-under its own licence, recorded per source in `LICENSING.md`. The published
-release artifact contains content from two sources only, both CC BY 4.0:
-
-  * 日本語文型データベース (NINJAL 国立国語研究所 研究系)
-    CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
-    DOI https://doi.org/10.15084/0002000610
-
-  * Yokubi — The Common Grammar Guide (https://yoku.bi)
-    CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/
-
-Both are transformed for this dictionary: source prose is re-segmented into
-Yomitan structured content. CC BY 4.0 requires that changes be indicated, and
-that is the change.
+It does not cover dictionary CONTENT. Each grammar source's content belongs to
+whoever wrote it, and every card names that source.

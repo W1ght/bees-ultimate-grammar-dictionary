@@ -117,8 +117,6 @@ def test_community_extract_reports_and_applies_the_repair(tmp_path):
         name = "polarity-fixture"
         label = "Polarity Fixture"
         members = ("term_bank_1.json",)
-        license_tier = "Z"
-        redistributable = False
 
         def parse(self, row):
             return _point(row.expression, row.reading, source=self.name, source_id="1")

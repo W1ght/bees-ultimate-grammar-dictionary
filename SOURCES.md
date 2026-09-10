@@ -40,14 +40,13 @@ Model policy (Bedrock-only, per user): every Kanban worker pinned to
 ## Web / community sources to scrape or find existing dictionaries for
 Prefer finding an EXISTING Yomitan dict / Anki deck before re-scraping from scratch.
 - Yokubi (yoku.bi) — repo: github.com/Morgawr/yokubi. Grammar lessons.
-- IMABI (imabi.org) — user says authors approved full-content use (prior session). Large; modern + classical lessons.
+- IMABI (imabi.org) — large; modern + classical lessons.
 - DoJG — Dictionary of Japanese Grammar (A/I/A Dictionary of Basic/Intermediate/Advanced JP Grammar). Existing Yomitan dicts exist (search MarvNC / yomitan-dictionaries community).
 - NINJAL grammar patterns, Donna Toki Dou Tsukau (どんなときどう使う), Tae Kim, 日本語NET, 絵でわかる日本語, Nihongo no Sensei — check for existing Yomitan/Anki exports first.
 
-## Attribution & licensing
-- Preserve per-source label on every merged entry.
-- Redistribution/licensing check is a SEPARATE gate; does not block core build.
-- Local-only unless user asks to publish (user policy).
+## Attribution
+- Preserve per-source label on every merged entry: a statement is never detached
+  from the source that made it.
 
 ## Reference data (validation gates, not dictionary content)
 

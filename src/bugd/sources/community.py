@@ -11,10 +11,6 @@ Two policies are enforced for every community source:
   when the producer's own term tag names one. DoJG's tags name print volumes
   (基本/中級編/上級編), not JLPT levels, and Donna Toki has no level tag at all, so
   both correctly yield `None` rather than an invented level.
-* **Redistribution posture travels with the data.** Each record carries the
-  source's `licenseTier` and `redistributable` flag in `provenance`, so the
-  separate licensing gate (UGD-15) can decide mechanically what may be published
-  without re-deriving posture from prose.
 """
 
 from __future__ import annotations
@@ -145,9 +141,6 @@ class CommunityBankExtractor(Extractor):
 
     #: Bank members to read, in order. Set by each source module.
     members: tuple[str, ...] = ()
-    #: License tier and redistribution posture recorded per record.
-    license_tier: str = ""
-    redistributable: bool = False
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         """Turn one term row into a GrammarPoint, or None to skip it."""
@@ -215,8 +208,6 @@ class CommunityBankExtractor(Extractor):
                 "skipped": skipped,
                 "polarityRepaired": repaired,
                 "members": list(self.members),
-                "licenseTier": self.license_tier,
-                "redistributable": self.redistributable,
                 "withExamples": sum(1 for point in points if point.examples),
                 "withJlpt": sum(1 for point in points if point.jlpt),
             },
@@ -225,8 +216,6 @@ class CommunityBankExtractor(Extractor):
     def base_provenance(self, row: TermRow) -> dict[str, object]:
         provenance: dict[str, object] = {
             "sourceLabel": self.label,
-            "licenseTier": self.license_tier,
-            "redistributable": self.redistributable,
             "bankMember": row.member,
             "producerTermTags": row.term_tags,
         }

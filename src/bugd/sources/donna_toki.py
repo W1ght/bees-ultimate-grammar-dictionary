@@ -26,10 +26,6 @@ cross-reference, and an English explanation:
 `➡` pointing at the entry that holds the content. They are emitted with
 `aliasOf` provenance and no fabricated body: dropping them would break lookup
 for the alternate written form, and inventing content for them would be worse.
-
-Redistribution: the content derives from the published ALC title via
-itazuraneko, with no license upstream, so records are `licenseTier: "C"`,
-`redistributable: False` — local build only.
 """
 
 from __future__ import annotations
@@ -67,8 +63,6 @@ class DonnaTokiExtractor(CommunityBankExtractor):
     name = "donna_toki"
     label = "どんなときどう使う 日本語表現文型辞典"
     members = ("term_bank_1.json",)
-    license_tier = "C"
-    redistributable = False
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         text = _CHROME.sub("", row.text)

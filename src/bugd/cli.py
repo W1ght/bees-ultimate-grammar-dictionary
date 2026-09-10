@@ -7,8 +7,7 @@ import pathlib
 import sys
 
 from . import unify
-from .jsonio import MalformedPayload, dump_json
-from .publish_filter import filter_extracted
+from .jsonio import dump_json
 from .reading_corrections import (
     DEFAULT_CORRECTIONS_PATH as DEFAULT_READING_CORRECTIONS_PATH,
 )
@@ -17,7 +16,6 @@ from .pipeline import (
     DEFAULT_DIST_DIR,
     DEFAULT_EXTRACTED_DIR,
     DEFAULT_MERGED_DIR,
-    DEFAULT_PUBLIC_EXTRACTED_DIR,
     DEFAULT_SOURCES_DIR,
     SchemaValidationError,
     run_build,
@@ -69,13 +67,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--revision", default=None, help="explicit YYYY.MM.DD[.N] revision")
     parser.add_argument("--source", action="append", dest="only", help="limit extract to a source")
-    parser.add_argument(
-        "--public-dir",
-        type=pathlib.Path,
-        default=DEFAULT_PUBLIC_EXTRACTED_DIR,
-        help="where `publish-filter` writes the redistributable-only corpus "
-        f"(default: {DEFAULT_PUBLIC_EXTRACTED_DIR})",
-    )
     corrections = parser.add_mutually_exclusive_group()
     corrections.add_argument(
         "--reading-corrections",
@@ -98,7 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     subparsers = parser.add_subparsers(dest="stage", required=True)
-    for stage in ("extract", "merge", "build", "validate", "all", "publish-filter"):
+    for stage in ("extract", "merge", "build", "validate", "all"):
         subparsers.add_parser(stage)
     return parser
 
@@ -106,21 +97,6 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     stage = args.stage
-
-    if stage == "publish-filter":
-        # The publish gate UGD-15 required: keep only records whose own
-        # provenance grants public redistribution, fail closed if that leaves
-        # nothing, and report every excluded source so the exclusion list can be
-        # checked against LICENSING.md rather than trusted.
-        try:
-            manifest = filter_extracted(
-                extracted_dir=args.extracted_dir, public_dir=args.public_dir
-            )
-        except MalformedPayload as error:
-            print(f"[publish-filter] {error}", file=sys.stderr)
-            return 1
-        print(f"[publish-filter] {dump_json(manifest)}")
-        return 0
 
     if stage in ("extract", "all"):
         result = run_extract(

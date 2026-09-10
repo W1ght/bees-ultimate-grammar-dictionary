@@ -38,11 +38,8 @@
     }
   },
   "provenance": {
-    "license": "unlicensed community derivative; producer publishes 利用規約",
-    "licenseTier": "B",
     "meaningSectionLanguage": "zh",
     "producer": "https://nihongonosensei.net/?page_id=10246",
-    "redistributable": false,
     "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
     "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
   },

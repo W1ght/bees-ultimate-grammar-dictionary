@@ -18,10 +18,6 @@ into the human meaning/explanation), per the project's no-LLM-as-fact rule. The
 two AI example sentences are attached as `Example` objects flagged
 `ai_generated=True` so a downstream renderer can keep them behind a labelled
 disclosure or drop them.
-
-Redistribution: this is the user's personal deck of unknown provenance, so
-records are marked `licenseTier: "C"`, `redistributable: False`. The separate
-licensing gate decides what may ever be published.
 """
 
 from __future__ import annotations
@@ -150,8 +146,6 @@ def _read_notes(apkg_bytes: bytes) -> list[list[str]]:
 class BunpouExtractor(Extractor):
     name = "bunpou"
     label = "文法"
-    license_tier = "C"
-    redistributable = False
 
     def extract(self) -> ExtractResult:
         lock = load_source_lock(self.input_dir)
@@ -221,8 +215,6 @@ class BunpouExtractor(Extractor):
                     ai_generated=ai_generated,
                     provenance={
                         "sourceLabel": self.label,
-                        "licenseTier": self.license_tier,
-                        "redistributable": self.redistributable,
                         "notetype": NOTETYPE,
                     },
                 )
@@ -247,8 +239,6 @@ class BunpouExtractor(Extractor):
                 "points": len(points),
                 "skipped": skipped,
                 "notetype": NOTETYPE,
-                "licenseTier": self.license_tier,
-                "redistributable": self.redistributable,
                 "withExamples": sum(1 for p in points if p.examples),
                 "withAiFields": ai_note_count,
                 "examples": sum(len(p.examples) for p in points),

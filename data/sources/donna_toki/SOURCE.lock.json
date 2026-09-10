@@ -27,9 +27,6 @@
   "provenance": {
     "acquiredVia": "public mirror; absent from aiko-tanaka HEAD",
     "corroboratedBy": "donnatoki_1_05.zip",
-    "license": "unlicensed community derivative of a commercial print work",
-    "licenseTier": "C",
-    "redistributable": false,
     "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
   },
   "source": "donna_toki"

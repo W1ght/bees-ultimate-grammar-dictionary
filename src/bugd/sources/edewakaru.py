@@ -19,9 +19,6 @@ The upstream text-only variant is used deliberately. A separate community build
 adds images scraped from the producer's site; those bytes would grow the package
 for every entry and carry a weaker provenance claim, so this card takes the
 text banks only (see the media-cost policy in the dictionary skill).
-
-Redistribution: the producer publishes 利用規約 with no CC grant, so this is
-`licenseTier: "B"`, `redistributable: False` — local build only.
 """
 
 from __future__ import annotations
@@ -113,8 +110,6 @@ class EdewakaruExtractor(CommunityBankExtractor):
     name = "edewakaru"
     label = "絵でわかる日本語"
     members = tuple(f"term_bank_{index}.json" for index in range(1, 5))
-    license_tier = "B"
-    redistributable = False
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         sections = split_sections(row.text, _HEADINGS)

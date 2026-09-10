@@ -9,29 +9,7 @@ with who said it, in one card.
 
 ---
 
-## Two artifacts, and the difference matters
-
-This repository produces **two different dictionaries from the same code**:
-
-| | sources | entries | who can have it |
-| --- | --- | --- | --- |
-| **Public release** (`make public`) | 2 — the CC BY 4.0 ones | 1,550 | anyone; attached to [Releases](../../releases) |
-| **Full local build** (`make all`) | 10 | 4,901 | you, from sources you have your own right to use |
-
-Eight of the ten sources are **not publicly redistributable** (see
-[LICENSING.md](LICENSING.md)). So the released ZIP is built through a fail-closed
-redistribution filter that keeps only records whose own provenance grants public
-redistribution. The other eight never reach the published bytes — that is
-machine-enforced and independently re-checked in the packaged archive, not a
-promise.
-
-If you have your own licensed copies of the other sources (your own Bunpro
-export, the 文法 deck, etc.), acquire them locally and `make all` gives you the
-full 4,901-entry dictionary. Nothing about that build is published.
-
----
-
-## Install (public release)
+## Install
 
 1. Download `bees-ultimate-grammar-dictionary.zip` from
    [Releases](../../releases).
@@ -41,50 +19,44 @@ full 4,901-entry dictionary. Nothing about that build is published.
 Requires Yomitan 26.8.24.0 or newer (the schema revision this build validates
 against).
 
-### What's in the public release
+### What's in it
 
-- **1,550 entries** — 832 grammar-point cards + 718 redirect cards so an
+- **4,901 entries** — 2,943 grammar-point cards plus 1,958 redirect cards, so an
   alternative spelling still finds its point.
-- **932 source contributions**, 897 senses, 50 entries where both sources
-  contribute to the same point.
-- **9,846 example sentences**, 9,808 of them with the grammar point highlighted
-  exactly where the source marked it.
+- **6,656 source contributions** across 4,481 senses. 1,028 entries carry more
+  than one source; 104 carry five, and 10 carry nine.
+- **71,973 example sentences**, 40,568 with the source's own English translation
+  and 40,549 with the grammar point highlighted exactly where the source marked
+  it.
+- **1,601 entries carry a JLPT level.** On the 253 where sources disagree, every
+  source's level is shown against that source — nothing is averaged or voted on.
 - `sha256` of the published asset is recorded on the release, and the build is
-  byte-reproducible: three consecutive builds from the same locked bytes produce
-  the identical archive.
+  byte-reproducible: repeated builds from the same locked bytes produce the
+  identical archive.
 
 ---
 
-## Sources and attribution
+## Sources
 
-Every record carries its source's attribution, and every card shows it on the
-contributed section. Counts are from the real build (`data/merge/unified.stats.json`).
+Every record carries its source's label, and every card shows it on the section
+that source contributed. Counts are from the real build
+(`data/merge/unified.stats.json`).
 
-### In the public release
+| Source | Contributions | Entries | Examples |
+| --- | --- | --- | --- |
+| [Bunpro](https://bunpro.jp) | 964 | 928 | 16,361 |
+| [IMABI](https://imabi.org) | 494 | 491 | 18,660 |
+| [DoJG 日本語文法辞典](https://github.com/aiko-tanaka/Grammar-Dictionaries) | 534 | 500 | 4,917 |
+| どんなときどう使う 日本語表現文型辞典 | 660 | 520 | 2,616 |
+| [Yokubi — The Common Grammar Guide](https://yoku.bi) | 132 | 117 | 294 |
+| [日本語文型データベース (NINJAL)](https://doi.org/10.15084/0002000610) | 800 | 765 | 9,552 |
+| [絵でわかる日本語](https://www.edewakaru.com/) | 1,178 | 915 | 4,649 |
+| [日本語NET](https://nihongokyoshi-net.com/) | 627 | 584 | 3,055 |
+| 毎日のんびり日本語教師 | 733 | 685 | 6,173 |
+| 文法 (`bunpou`) | 534 | 502 | 5,696 |
 
-| Source | Licence | Contributions | Entries | Examples | Attribution as shipped |
-| --- | --- | --- | --- | --- | --- |
-| [日本語文型データベース (NINJAL)](https://doi.org/10.15084/0002000610) | **CC BY 4.0** — declared in the source's own `readme.txt` | 800 | 765 | 9,552 | 日本語文型データベース, 国立国語研究所 研究系 |
-| [Yokubi — The Common Grammar Guide](https://yoku.bi) | **CC BY 4.0** — `LICENSE` + `src/Credits.md` in the source repo | 132 | 117 | 294 | Yokubi — The Common Grammar Guide (https://yoku.bi), CC BY 4.0 |
-
-Both are transformed: prose is re-segmented into Yomitan structured content.
-CC BY 4.0 requires indicating changes, and that is the change.
-
-### Local build only — NOT published
-
-| Source | Contributions | Entries | Examples | Why it is not in the release |
-| --- | --- | --- | --- | --- |
-| [IMABI](https://imabi.org) | 494 | 491 | 18,660 | The authors' approval is on record as a **user report**; `imabi.org/terms/`, `/license/` and `/copyright/` all 404, so no document corroborates it. LICENSING.md's instruction is to obtain it in writing first. |
-| Bunpro | 964 | 928 | 16,361 | Proprietary paid service; its ToS asserts copyright and grants nothing. |
-| 文法 (`bunpou`) | 534 | 502 | 5,696 | A private personal Anki deck; rights in the underlying content are not established. |
-| [DoJG 日本語文法辞典](https://github.com/aiko-tanaka/Grammar-Dictionaries) | 534 | 500 | 4,917 | Verbatim from The Japan Times' print volumes; upstream repo is unlicensed. |
-| どんなときどう使う 日本語表現文型辞典 | 660 | 520 | 2,616 | Same: derivative of a commercial print dictionary, unlicensed upstream. |
-| [絵でわかる日本語](https://www.edewakaru.com/) | 1,178 | 915 | 4,649 | Producer publishes only platform terms, not a content-reuse grant. |
-| [日本語NET](https://nihongokyoshi-net.com/) | 627 | 584 | 3,055 | Producer footer asserts all rights reserved. |
-| 毎日のんびり日本語教師 | 733 | 685 | 6,173 | Producer's 利用規約 is no longer obtainable. |
-
-Full per-source basis, required attribution string, and redistribution posture:
-**[LICENSING.md](LICENSING.md)**.
+English-explaining sources are ordered first on a card, then the monolingual
+Japanese ones.
 
 ---
 
@@ -95,48 +67,56 @@ uv venv --python 3.11 .venv && source .venv/bin/activate
 uv pip install -e .
 npm install                 # adm-zip + ajv, for the independent Node validator
 
-make public                 # the redistributable-only release artifact
-make all                    # the full local dictionary (needs all ten sources)
+make                        # the dictionary — extract, keymap, merge, build, validate
 make test
 ```
 
-Acquired source bytes are **not** in this repository — they are large,
-regenerable, and mostly not redistributable. What IS committed is every source's
+`make` on its own builds the whole dictionary from every source
+`data/sources/` actually holds. Extraction skips (with a reason) any source whose
+locked bytes are not acquired, so a partial checkout still builds — it just
+builds a smaller dictionary.
+
+Acquired source bytes are **not** in this repository — they are large and
+regenerable. What IS committed is every source's
 `data/sources/<source>/SOURCE.lock.json`: a byte-for-byte digest manifest (611
 files pinned in total) so an acquisition that drifts fails the build instead of
 silently shipping different content.
 
 Yokubi has an acquisition script (`scripts/acquire_yokubi.py`), as do the
-community term-bank sources (`scripts/acquire_community_grammar.py`). NINJAL is a
-manual download — put `nihongo_bunkei_database20260126.zip`, `headwords.txt` and
-`readme.txt` from the [dataset's DOI page](https://doi.org/10.15084/0002000610)
-into `data/sources/ninjal_bunkei/` and the lock verifies them. The remaining
-sources are local exports you supply yourself into `data/sources/<source>/`,
-matching that source's lock; `make public` needs none of them.
+community term-bank sources (`scripts/acquire_community_grammar.py`) and IMABI
+(`scripts/acquire_imabi.py`). NINJAL is a manual download — put
+`nihongo_bunkei_database20260126.zip`, `headwords.txt` and `readme.txt` from the
+[dataset's DOI page](https://doi.org/10.15084/0002000610) into
+`data/sources/ninjal_bunkei/` and the lock verifies them. The remaining sources
+are local exports you supply yourself into `data/sources/<source>/`, matching
+that source's lock.
 
-### The public build, stage by stage
+### Stages
 
 ```
-publish-filter   data/extracted/*.json   ->  data/extracted-public/*.json
-keymap           data/extracted-public/  ->  data/merge-public/keymap.json
-merge            keymap + extracted      ->  data/merged-public/corpus.json
-build            merged corpus           ->  build-public/…zip  (+ dist-public/)
-validate         the built ZIP           ->  pinned Yomitan schemas
-audit-public     the built ZIP           ->  no excluded source's bytes
+extract   data/sources/<source>/    ->  data/extracted/<source>.json
+keymap    data/extracted/           ->  data/merge/keymap.json + AMBIGUITY.md
+merge     keymap + extracted        ->  data/merge/unified.jsonl (+ stats)
+                                        data/merged/corpus.json
+build     merged corpus             ->  build/…zip  (+ dist/)
+validate  the built ZIP             ->  pinned Yomitan schemas
 ```
 
-Every stage after the filter is the **same code** the local build runs, pointed
-at a different directory — so the public artifact cannot drift away from the one
-the tests and audits cover.
+Each stage reads only the previous stage's on-disk artifact, so any stage can be
+re-run independently and every intermediate is inspectable.
+
+`dist/` holds the published artifact, its `SHA256SUMS`, and `index.json`.
+`index.json` is committed: the archive's own `indexUrl` points at it, so an
+update checker (and Hachidori's dictionary installer) can read the current
+revision without downloading the whole dictionary.
 
 ### Gates
 
 | Command | What it proves |
 | --- | --- |
 | `make validate` | the archive matches the pinned official Yomitan schemas (Python) |
-| `make validate-node` / `public-validate-node` | the same archive, independently (Node + ajv) |
-| `make audit-packaged` | the local archive carries the WORK: per-source attribution, working redirects, each source's own JLPT level on the 253 entries whose sources disagree |
-| `make audit-public` | the public archive contains **zero** bytes from any excluded source, every admitted source is present *and* attributed, and the filter admitted exactly the set LICENSING.md clears |
+| `make validate-node` | the same archive, independently (Node + ajv) |
+| `make audit-packaged` | the archive carries the WORK: per-source attribution, working redirects, each source's own JLPT level on the 253 entries whose sources disagree |
 | `make audit-attribution` | every claim a card makes traces to ONE coherent source row, and each claim handle names a unique row |
 | `make scan-polarity` | no headword contradicts its own reading |
 | `python scripts/check_example_runons.py <zip>` | no example renders as a run-on (real run-ons: 0) |
@@ -160,9 +140,9 @@ native `kanji_bank` — validation rejects it, because Yomitan routes kanji clic
 to a fixed unstyleable renderer that would supersede the card.
 
 **Sources are never reconciled.** When two sources disagree, both statements
-ship, each attributed to whoever made it. 253 entries in the local build carry
-conflicting JLPT levels; the card shows each source's level where that source
-speaks, and the compact line stays one row. Nothing is voted on or averaged.
+ship, each attributed to whoever made it. 253 entries carry conflicting JLPT
+levels; the card shows each source's level where that source speaks, and the
+compact line stays one row. Nothing is voted on or averaged.
 
 **Progressive disclosure.** Compact above the fold; the complete tail (all
 examples, each source's explanation, nuance, provenance) sits in native closed
@@ -180,6 +160,35 @@ Corrections to source defects live in reviewable, byte-anchored overlays under
 Each correction fails the build closed if its anchor no longer matches, so a
 drifted source can never silently ship an unreviewed edit.
 
+### Each source's markup is part of its content
+
+A producer's prose is written in that producer's notation, and the notation
+carries meaning: a table is a table because the author laid it out as one.
+`src/bugd/dialects.py` is the one place that knows which notation a given source
+writes.
+
+Measured over the whole corpus, the ten sources divide into two dialects:
+
+- **Yokubi writes GitHub-flavoured Markdown** — 44 pipe tables (conjugation
+  grids, casual/polite pairs), 180 bold runs, 28 italic runs, 48 bullets, 26
+  lesson links, and 149 backslash escapes. It now renders as real
+  `table`/`ul`/emphasis nodes. Previously a card showed literal `**asterisks**`,
+  a bare `|---------------|` separator as body text, and — because an escaped
+  `\<verb\>` placeholder reached the HTML parser as a tag opening — silently
+  dropped the rest of that paragraph.
+- **Every other source writes plain text**, plus real HTML in two cases:
+  NINJAL's `<s>ます</s>` omission markers and どんなとき's `<ruby>` furigana. Both
+  already render correctly through the shared converter, so they deliberately get
+  no dialect of their own. Their other conventions are structural rather than
+  markup and are handled downstream: `【…】` section headings, `①②③` / `１）２）`
+  list breaks, and the hard line breaks a source leaves behind when an inline
+  highlight is stripped (92% of 絵でわかる日本語's single newlines fall mid-sentence)
+  which the shared soft-wrap rule rejoins script-awarely.
+
+IMABI's 17,549 `N. ` example lines and 145 `*` footnote markers are deliberately
+**not** treated as Markdown: its own prose cross-references those numbers as
+`Ex. N`, so rendering them as an ordered list would renumber them.
+
 ### Layout
 
 ```
@@ -188,8 +197,8 @@ src/bugd/
   sources/               per-source extractors (one module per source)
   keymap.py              cross-source canonical key assignment
   unify.py               the merge policy
+  dialects.py            per-source prose markup dialects
   banks.py               the ONLY stage that knows Yomitan structured content
-  publish_filter.py      the fail-closed redistribution gate
   styles.py              the dictionary's scoped styles.css
   package.py             reproducible ZIP packaging
   pipeline.py / cli.py   stage orchestration
@@ -200,16 +209,13 @@ docs/contract/           the card shape contract + its golden files
 tests/                   unit, corpus, and real-Yomitan harness suites
 ```
 
-Adding a source touches `src/bugd/sources/` only. The merge stage never learns
-source-specific rules and the bank generator never learns about sources at all.
+Adding a source touches `src/bugd/sources/` only, plus `dialects.py` if it writes
+a notation no existing source does. The merge stage never learns source-specific
+rules and the bank generator never learns about sources at all.
 
 ---
 
 ## Licence
 
-The build pipeline in this repository is MIT (see [LICENSE](LICENSE)).
-
-Dictionary **content** is licensed by its own source. The published release
-contains only CC BY 4.0 content and carries each source's required attribution in
-`index.json`, in `tag_bank_1.json`, and on every contributed card section. See
-[LICENSING.md](LICENSING.md) for the per-source audit.
+The build pipeline in this repository is MIT (see [LICENSE](LICENSE)). Dictionary
+content belongs to the source that wrote it, and every card names that source.

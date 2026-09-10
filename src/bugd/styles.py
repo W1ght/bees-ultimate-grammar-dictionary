@@ -871,6 +871,87 @@ STYLES_CSS = """\
   margin-top: var(--bugd-space-group);
 }
 
+/* ------------------------------------------- tables and lists in prose */
+/* A source that lays its prose out as a TABLE means the table (Yokubi writes 44 of
+   them: conjugation grids, casual/polite pairs). Before `bugd.dialects` these
+   arrived as body text — a `|---------------|` separator rendered as a paragraph
+   and the cells ran together once the author's alignment padding was collapsed.
+   Now they are real `table`/`tr`/`td` nodes and need the geometry rules the rest
+   of the card already lives by.
+
+   `table-layout: fixed` + `width: 100%` is what keeps a table inside a ~320px
+   popup: the default `auto` layout sizes columns to their widest unbreakable run,
+   which for a Japanese cell is the whole cell, so a 3-column grid overflowed
+   horizontally. Fixed layout divides the available width first and lets the cells
+   wrap inside it, which is why `overflow-wrap` on the cell is part of the same
+   rule rather than a separate nicety.
+
+   `pre-line` is inherited from `[data-sc-prose]` and must be switched off here:
+   cell text is already one line, and leaving it on made the author's padding
+   newlines render as blank lines inside the cells. */
+[data-sc-prose] table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-top: var(--bugd-space-para);
+  font-size: 0.96em;
+}
+
+[data-sc-prose] table:first-child {
+  margin-top: 0;
+}
+
+/* Two tables back to back are two tables (`lesson-20:の` writes four), so the
+   second one takes the group step rather than touching the first. */
+[data-sc-prose] table + table {
+  margin-top: var(--bugd-space-group);
+}
+
+[data-sc-prose] :is(th, td) {
+  border: 1px solid var(--bugd-rule);
+  padding: 0.3em 0.45em;
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+/* A header row the author actually filled in. Two thirds of Yokubi's tables ship
+   an EMPTY header row (GFM requires the syntax even when the author wants a plain
+   grid); `bugd.dialects` drops those, so any `th` reaching here is real content
+   and is allowed to look like a header. */
+[data-sc-prose] th {
+  font-weight: 700;
+  background: var(--bugd-example-well);
+}
+
+/* A real bulleted list from the source. The two existing `ul` roles
+   (`[data-sc-patterns]`, `[data-sc-examples]`) both set `list-style: none`
+   because they are layout lists, so a genuine prose list has to ask for its
+   markers back explicitly. */
+[data-sc-prose] ul {
+  margin-top: var(--bugd-space-para);
+  margin-bottom: 0;
+  padding-left: 1.4em;
+  list-style: disc;
+}
+
+[data-sc-prose] ul:first-child {
+  margin-top: 0;
+}
+
+[data-sc-prose] ul > li {
+  /* The items are one group, so they bind tightly to each other and the paragraph
+     step belongs above the list as a whole. */
+  margin-top: var(--bugd-space-tight);
+  overflow-wrap: anywhere;
+}
+
+[data-sc-prose] ul > li:first-child {
+  margin-top: 0;
+}
+
 /* Per-source attribution: quiet, small, and always last. */
 [data-sc-attribution] {
   font-size: 0.85em;

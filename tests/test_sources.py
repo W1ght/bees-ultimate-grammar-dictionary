@@ -717,7 +717,7 @@ def test_ninjal_flattens_every_sense_without_collapsing_to_the_first():
 
 
 def test_ninjal_extracts_every_locked_headword_from_the_real_archive():
-    """End-to-end over the committed CC BY 4.0 distribution ZIP.
+    """End-to-end over the locked NINJAL distribution ZIP.
 
     Fails closed if the archive digest does not match its lock, reads only the
     locked bytes, and must yield one GrammarPoint per XML member with no leaked
@@ -731,8 +731,6 @@ def test_ninjal_extracts_every_locked_headword_from_the_real_archive():
 
     result = NinjalBunkeiExtractor(input_dir).extract()
     assert result.source == "ninjal_bunkei"
-    assert result.stats["licenseTier"] == "A"
-    assert result.stats["redistributable"] is True
     assert result.stats["members"] == len(result.points)
     assert result.stats["members"] > 700  # 800 headwords ship in this version
     assert result.stats["withJlpt"] == 0, "NINJAL publishes no JLPT level to read"

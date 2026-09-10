@@ -1,8 +1,8 @@
 # `data/` layout
 
 Everything under `data/` except this file and the `.gitkeep` markers is
-gitignored: it is acquired or generated, often large, and in some cases not
-redistributable. The layout is the contract between pipeline stages.
+gitignored: it is acquired or generated, and often large. The layout is the
+contract between pipeline stages.
 
 ```
 data/

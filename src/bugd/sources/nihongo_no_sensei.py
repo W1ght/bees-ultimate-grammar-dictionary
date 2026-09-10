@@ -28,9 +28,6 @@ documents creating "fake" headwords (e.g. `以外の何ものでもある` besid
 They repeat another entry's body verbatim. They are kept — they are the reason
 lookup works — but flagged `syntheticLookupForm: True` so the merge stage can
 fold them instead of rendering the same content twice.
-
-Redistribution: the producer publishes 利用規約 with no CC grant, so this is
-`licenseTier: "B"`, `redistributable: False` — local build only.
 """
 
 from __future__ import annotations
@@ -133,8 +130,6 @@ class NihongoNoSenseiExtractor(CommunityBankExtractor):
     name = "nihongo_no_sensei"
     label = "毎日のんびり日本語教師"
     members = tuple(f"term_bank_{index}.json" for index in range(1, 6))
-    license_tier = "B"
-    redistributable = False
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         text = _SENTINEL.sub("", row.text)

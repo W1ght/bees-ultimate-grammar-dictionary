@@ -768,12 +768,11 @@ def unify(
     # overlay claim to fix a defect it no longer touches.
     #
     # A correction for a source that contributes NO rows here is out of scope, not
-    # stale. Two real corpora are legitimately narrower than the overlay: a
-    # single-source stage run, and the PUBLIC build, where the redistribution
-    # filter (`bugd.publish_filter`) removes eight of the ten sources. Failing
-    # there would block the publish path for the wrong reason while telling us
-    # nothing about drift. Scoping keeps the gate's full bite on every source
-    # actually in the corpus.
+    # stale. A corpus is legitimately narrower than the overlay after a
+    # single-source stage run, or in a checkout that has acquired only some
+    # sources. Failing there would block the build for the wrong reason while
+    # telling us nothing about drift. Scoping keeps the gate's full bite on every
+    # source actually in the corpus.
     present_sources = {source for source, _ in rows}
     unmatched = [
         c

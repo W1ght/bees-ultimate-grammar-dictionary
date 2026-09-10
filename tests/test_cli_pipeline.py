@@ -171,8 +171,8 @@ def test_extract_skips_a_source_whose_locked_bytes_are_not_acquired(tmp_path):
     `SOURCE.lock.json` is committed for every source -- it IS the reproducibility
     contract -- so in a fresh clone every source directory exists while holding
     only that lock, the check skipped nothing, and `make extract` died on the
-    first unacquired source. That made `make public` unreachable for a public
-    user, who by design has only the two CC BY 4.0 sources.
+    first unacquired source -- so a checkout that had acquired only some sources
+    could not build at all.
 
     Keying on the locked PAYLOAD fixes it. Verified end to end: a clean checkout
     with only `ninjal_bunkei` and `yokubi` acquired extracts 932 points, reports 8

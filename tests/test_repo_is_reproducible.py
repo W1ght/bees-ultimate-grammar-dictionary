@@ -99,9 +99,9 @@ def test_every_source_extractor_module_is_tracked(tracked_files: set[str]) -> No
 def test_the_source_lock_digest_manifests_are_tracked(tracked_files: set[str]) -> None:
     """`SOURCE.lock.json` is the reproducibility contract and must be committed.
 
-    The locks pin every acquired byte by sha256 + byteCount + upstream URL, and
-    carry the licence tier and redistributable flag that LICENSING.md and any
-    publish step depend on. They hold no source content, only hashes.
+    The locks pin every acquired byte by sha256 + byteCount + upstream URL, so an
+    acquisition that drifts fails the build instead of silently building a
+    different dictionary. They hold no source content, only hashes.
     """
     on_disk = sorted(
         str(p.relative_to(REPO)) for p in (REPO / "data" / "sources").glob("*/SOURCE.lock.json")
@@ -116,8 +116,8 @@ def test_no_acquired_source_payload_is_tracked(tracked_files: set[str]) -> None:
     """Only the manifests ship -- never the acquired bytes.
 
     The counterpart to the test above: relaxing .gitignore to admit the locks must
-    not admit term banks, decks or archives, several of which are explicitly
-    non-redistributable in LICENSING.md.
+    not admit term banks, decks or archives. The acquired bytes are large and
+    regenerable; the manifests that pin them are neither.
     """
     leaked = sorted(
         f
@@ -129,8 +129,8 @@ def test_no_acquired_source_payload_is_tracked(tracked_files: set[str]) -> None:
     assert not leaked, f"acquired source payload is tracked: {leaked}"
 
 
-def test_every_tracked_lock_declares_a_redistribution_posture() -> None:
-    """A lock without a licence posture cannot gate a publish step."""
+def test_every_tracked_lock_pins_every_file_by_digest() -> None:
+    """A lock entry without a sha256 pins nothing, so it cannot detect drift."""
     locks = sorted((REPO / "data" / "sources").glob("*/SOURCE.lock.json"))
     if not locks:
         pytest.skip("no acquired sources in this checkout")

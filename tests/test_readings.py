@@ -225,16 +225,14 @@ def test_stale_correction_fails_closed():
 def test_a_correction_for_a_source_outside_the_corpus_is_not_stale():
     """Staleness is scoped to the sources the corpus actually carries.
 
-    Two real corpora are legitimately narrower than the overlay: a single-source
-    stage run (`--source dojg`), and the PUBLIC build, where the redistribution
-    filter removes eight of the ten sources. Raising there blocks the publish path
-    for a reason that says nothing about drift — the overlay simply describes rows
-    this corpus does not include.
+    A corpus is legitimately narrower than the overlay after a single-source stage
+    run (`--source dojg`), or in a checkout that has acquired only some sources.
+    Raising there blocks the build for a reason that says nothing about drift —
+    the overlay simply describes rows this corpus does not include.
 
     Verified against the shipped overlay's actual shape: all eight corrections
-    target `dojg`, `edewakaru`, `nihongo_net`, `nihongo_no_sensei` — every one of
-    them excluded from the public artifact — so an unscoped gate makes
-    `make public` impossible.
+    target `dojg`, `edewakaru`, `nihongo_net`, `nihongo_no_sensei`, so a corpus
+    without those sources would fail an unscoped gate.
     """
     rows = [_row("yokubi", "だ", "だ", None)]
     corrections = [ReadingCorrection("dojg", "の下で", "の下で", "のしたで", "のもとで", "t")]

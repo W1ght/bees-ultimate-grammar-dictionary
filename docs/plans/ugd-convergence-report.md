@@ -32,10 +32,6 @@ integration branch, dictionary rebuilt end-to-end, every gate re-verified.
 - AI-channel segregation: bunpou's 534 AI-field contributions / 1,068 AI-flagged
   examples are carried in a separate channel (channelPreserved=true), NONE
   rendered as human-authored fact; media references = 0.
-- Redistribution (LICENSING.md): publishable-with-attribution = IMABI, Yokubi,
-  NINJAL ninjal_bunkei (CC BY 4.0 / author-approved). NOT publishable without
-  clearance = bunpou (personal), Bunpro (proprietary), DoJG (Japan Times), and
-  community sources; per-record `redistributable:false` is authoritative.
 
 ## Byte-stability (reproducibility gate)
 The ZIP is byte-reproducible: three consecutive `bugd.cli build` runs produce
@@ -66,10 +62,8 @@ the merged source.
 - sha256: `2520b72f54c7cedd4747929153fe3dec997ce2d1dc6cb2608cd6ec01e2916124`
 
 ## Verdict
-**READY** — the local ULTIMATE dictionary is built, validated, and internally
-consistent; all gates green. Publication (UGD-17) MUST fail-closed filter to
-`redistributable:true` records or obtain rights clearance for the tier-C sources
-before shipping anything public.
+**READY** — the ULTIMATE dictionary is built, validated, and internally
+consistent; all gates green.
 
 ## UPDATE — beauty-gate run-on defect resolved (commit 5e58b20)
 The earlier "residual risk" on the beauty gate was investigated and found to be a

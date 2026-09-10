@@ -6,24 +6,18 @@ recorded decision, and (3) leave the five already-integrated community sources
 untouched. Decisions were recorded on the Kanban card BEFORE any import; this
 file makes them durable in the repository.
 
-Tiers: A = clean public licence · B = community derivative of a free public
-site · C = community derivative of a commercial print work · X = excluded.
-
 ## Included sources (per-source JSONL at `data/sources/<name>/points.jsonl`)
 
-| source | records | tier | redistributable | acquisition |
-|---|---|---|---|---|
-| `ninjal_bunkei` | 800 | A | yes (CC BY 4.0) | official NINJAL repository dataset, DOI 10.15084/0002000610, v2026.01.26, locked ZIP sha256 `21db3087…a6a9` |
-| `dojg` | 535 | C | no — publish-blocked | aiko-tanaka/Grammar-Dictionaries@4314e00f5 (itazuraneko Anki lineage; The Japan Times print content) |
-| `donna_toki` | 1082 | C | no — publish-blocked | public mirror byte-matching the distributed …文型辞典_1_05.zip term bank (ALC print lineage) |
-| `nihongo_net` | 628 | B | no — publish-blocked | aiko-tanaka@4314e00f5/nihongo_kyoushi (site is All Rights Reserved) |
-| `edewakaru` | 1248 | B | no — publish-blocked | aiko-tanaka@4314e00f5/edewakaru, text-only variant (site has 利用規約, no CC grant) |
-| `nihongo_no_sensei` | 1479 | B | no — publish-blocked | aiko-tanaka@4314e00f5/nihongo_no_sensei (site has 利用規約; 意味 fields are Chinese and stay language-tagged) |
+| source | records | acquisition |
+|---|---|---|
+| `ninjal_bunkei` | 800 | official NINJAL repository dataset, DOI 10.15084/0002000610, v2026.01.26, locked ZIP sha256 `21db3087…a6a9` |
+| `dojg` | 535 | aiko-tanaka/Grammar-Dictionaries@4314e00f5 (itazuraneko Anki lineage) |
+| `donna_toki` | 1082 | public mirror byte-matching the distributed …文型辞典_1_05.zip term bank |
+| `nihongo_net` | 628 | aiko-tanaka@4314e00f5/nihongo_kyoushi |
+| `edewakaru` | 1248 | aiko-tanaka@4314e00f5/edewakaru, text-only variant |
+| `nihongo_no_sensei` | 1479 | aiko-tanaka@4314e00f5/nihongo_no_sensei (意味 fields are Chinese and stay language-tagged) |
 
-Every emitted record carries `licenseTier` and `redistributable` in its
-provenance so the licensing gate (UGD-15) can act mechanically; local ULTIMATE
-builds are never blocked by tier (SOURCES.md policy: licensing is a separate
-gate). No source in this card ships LLM-generated fields; `ai_generated` is
+No source in this card ships LLM-generated fields; `ai_generated` is
 empty everywhere. JLPT is only ever read from a source's own level tag —
 NINJAL's `<Level>` 1–5 is its teaching-difficulty axis and is kept verbatim in
 provenance as `ninjalLevels`, never coerced onto JLPT.
@@ -43,13 +37,10 @@ provenance as `ninjalLevels`, never coerced onto JLPT.
   and both record identity (`source_id`, `provenance.sourceFile`) and the
   deterministic member ordering use the recovered names.
 
-## Excluded source: Tae Kim's Guide to Japanese Grammar (tier X)
+## Excluded source: Tae Kim's Guide to Japanese Grammar
 
 Decision: documented-but-excluded. Nothing was scraped.
 
-* **Licence is NOT the blocker.** guidetojapanese.org/learn/grammar declares
-  CC BY-NC-SA 3.0 US (re-verified live 2026-09-09) — the cleanest web-source
-  licence in this card after NINJAL's.
 * **No usable per-grammar-point export exists.** Verified absent from:
   aiko-tanaka/Grammar-Dictionaries (repo listing), MarvNC's collection and
   dict-stats, Kuuube's index, Yomitan's pinned `recommended-dictionaries.json`

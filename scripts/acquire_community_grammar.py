@@ -12,7 +12,7 @@ in `SOURCES.md` rather than being scraped.
 
 Pinned identities (see SOURCES.md for the full inclusion decisions):
 
-* ``ninjal_bunkei``    NINJAL 日本語文型データベース, DOI 10.15084/0002000610, CC BY 4.0
+* ``ninjal_bunkei``    NINJAL 日本語文型データベース, DOI 10.15084/0002000610
 * ``dojg``             aiko-tanaka/Grammar-Dictionaries @ AIKO_COMMIT, dojg/
 * ``donna_toki``       donna_v1.04 Yomitan banks, mirrored (absent from aiko-tanaka HEAD)
 * ``nihongo_net``      aiko-tanaka @ AIKO_COMMIT, nihongo_kyoushi/
@@ -99,13 +99,9 @@ SOURCE_PLAN: dict[str, dict[str, object]] = {
         },
         "provenance": {
             "doi": "https://doi.org/10.15084/0002000610",
-            "license": "CC BY 4.0",
-            "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
             "version": "2026.01.26",
             "publisher": "国立国語研究所 研究系 (NINJAL Research Department)",
             "editors": ["パルデシ, プラシャント", "砂川 有里子"],
-            "redistributable": True,
-            "licenseTier": "A",
         },
     },
     "dojg": {
@@ -113,9 +109,6 @@ SOURCE_PLAN: dict[str, dict[str, object]] = {
         "provenance": {
             "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries",
             "upstreamCommit": AIKO_COMMIT,
-            "license": "unlicensed community derivative of a commercial print work",
-            "redistributable": False,
-            "licenseTier": "C",
         },
     },
     "donna_toki": {
@@ -127,9 +120,6 @@ SOURCE_PLAN: dict[str, dict[str, object]] = {
             "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries",
             "acquiredVia": "public mirror; absent from aiko-tanaka HEAD",
             "corroboratedBy": DONNA_TOKI_ARCHIVE_NAME,
-            "license": "unlicensed community derivative of a commercial print work",
-            "redistributable": False,
-            "licenseTier": "C",
         },
     },
     "nihongo_net": {
@@ -138,9 +128,6 @@ SOURCE_PLAN: dict[str, dict[str, object]] = {
             "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries",
             "upstreamCommit": AIKO_COMMIT,
             "producer": "https://nihongokyoshi-net.com/jlpt-grammars/",
-            "license": "unlicensed community derivative; producer asserts all rights reserved",
-            "redistributable": False,
-            "licenseTier": "B",
         },
     },
     "edewakaru": {
@@ -149,9 +136,6 @@ SOURCE_PLAN: dict[str, dict[str, object]] = {
             "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries",
             "upstreamCommit": AIKO_COMMIT,
             "producer": "https://www.edewakaru.com/archives/cat_179055.html",
-            "license": "unlicensed community derivative; producer publishes 利用規約",
-            "redistributable": False,
-            "licenseTier": "B",
         },
     },
     "nihongo_no_sensei": {
@@ -160,9 +144,6 @@ SOURCE_PLAN: dict[str, dict[str, object]] = {
             "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries",
             "upstreamCommit": AIKO_COMMIT,
             "producer": "https://nihongonosensei.net/?page_id=10246",
-            "license": "unlicensed community derivative; producer publishes 利用規約",
-            "redistributable": False,
-            "licenseTier": "B",
             "meaningSectionLanguage": "zh",
         },
     },

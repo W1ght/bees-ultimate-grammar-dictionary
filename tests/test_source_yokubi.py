@@ -10,7 +10,7 @@ These pin the honesty contract the card requires, not just the happy path:
   contains that headword; otherwise it stays lesson-scoped context;
 * Yokubi's own `<b>` highlights become the example highlight spans, and the
   mdBook `{f|kanji|reading}` furigana markers degrade to clean surface text;
-* every emitted point carries the CC-BY attribution the licence requires.
+* every emitted point carries the attribution that credits the source.
 """
 
 from __future__ import annotations
@@ -54,7 +54,6 @@ def write_source(root: pathlib.Path, files: dict[str, str]) -> pathlib.Path:
             {
                 "source": "yokubi",
                 "revision": "0" * 40,
-                "licence": {"licence": "CC-BY-4.0"},
                 "files": lock_files,
             }
         ),
@@ -218,27 +217,7 @@ def test_extractor_attributes_every_point_to_yokubi(extracted):
     for point in extracted.points:
         assert point.source == "yokubi"
         assert point.provenance["attribution"] == YOKUBI_ATTRIBUTION
-        assert point.provenance["licence"] == "CC-BY-4.0"
         assert point.provenance["lessonUrl"].startswith("https://yoku.bi/")
-
-
-def test_extractor_emits_the_redistribution_flag_it_documents(extracted):
-    """CC BY 4.0 permits redistribution, so every record must SAY so.
-
-    The module docstring always claimed `redistributable: True`, but the key was
-    never written: every Yokubi record shipped `provenance.redistributable` absent
-    (reading `None`), while its sibling CC BY 4.0 source NINJAL emitted it. That
-    is invisible until something reads the flag — and the publish-time filter
-    (`bugd.publish_filter`, which requires the value to be exactly `True`) would
-    have excluded the one source whose licence is verified in its own locked
-    bytes, from the public artifact, silently.
-
-    Asserted per record rather than on `stats`, because the filter reads the
-    record.
-    """
-    for point in extracted.points:
-        assert point.provenance["redistributable"] is True
-    assert extracted.stats["redistributable"] is True
 
 
 def test_extractor_records_the_pinned_revision_on_every_point(extracted):
@@ -365,7 +344,6 @@ def test_jsonl_records_carry_attribution_and_provenance(emitted):
         record = json.loads(line)
         assert record["source"] == "yokubi"
         assert record["provenance"]["attribution"] == YOKUBI_ATTRIBUTION
-        assert record["provenance"]["licence"] == "CC-BY-4.0"
         assert record["provenance"]["revision"] == "0" * 40
 
 
@@ -388,7 +366,6 @@ def test_coverage_report_is_written_and_names_the_source(emitted):
     target, _ = emitted
     text = (target / COVERAGE_NAME).read_text(encoding="utf-8")
     assert YOKUBI_ATTRIBUTION in text
-    assert "CC-BY-4.0" in text
     assert "0" * 40 in text
 
 

@@ -16,12 +16,6 @@ excluded from the spine.
 Only files listed in `SOURCE.lock.json['files']` are read, and each is read
 through `read_locked_bytes`, which fails closed if a locked page is missing or
 its bytes no longer match the lock.
-
-Redistribution: the IMABI authors granted this build permission to redistribute
-the full lesson content with attribution (see `data/sources/imabi/PERMISSION.json`),
-so records carry `licenseTier: "A"`, `redistributable: True`, and an attribution
-string crediting IMABI (imabi.net), encoded in `provenance` the same way the
-other source modules record redistribution posture.
 """
 
 from __future__ import annotations
@@ -65,12 +59,6 @@ COVERAGE_NAME = "COVERAGE.md"
 
 #: Attribution rendered on merged IMABI entries.
 ATTRIBUTION = "IMABI (imabi.net)"
-
-#: How this build's permission to use the full content is known. The user
-#: reports the IMABI authors approved full-content use; that report is the whole
-#: basis and is recorded verbatim in `data/sources/imabi/PERMISSION.json`. No
-#: licence name, licence text, or licence URL is asserted by this build.
-PERMISSION_BASIS = "user-reported"
 
 _TAG = re.compile(r"<[^>]+>")
 _BR = re.compile(r"<br\s*/?>", re.I)
@@ -153,8 +141,6 @@ class ImabiExtractor(Extractor):
 
     name = "imabi"
     label = "IMABI"
-    license_tier = "A"
-    redistributable = True
 
     def _lesson_files(self, lock: dict[str, dict]) -> list[str]:
         """Locked `pages/*.json` files, ordered by page id."""
@@ -209,15 +195,6 @@ class ImabiExtractor(Extractor):
             provenance: dict[str, object] = {
                 "sourceLabel": self.label,
                 "attribution": ATTRIBUTION,
-                "licenseTier": self.license_tier,
-                "redistributable": self.redistributable,
-                # The grant is a user report, not a published licence: IMABI's
-                # /terms/, /license/ and /copyright/ all 404 and the footer
-                # asserts copyright only (UGD-15). Recording the basis on every
-                # record lets a publish-time filter distinguish a verified
-                # licence from a reported permission, which `redistributable`
-                # alone cannot express.
-                "permissionBasis": PERMISSION_BASIS,
                 "pageId": page["id"],
                 "slug": slug,
             }
@@ -250,10 +227,7 @@ class ImabiExtractor(Extractor):
                 "totalExamples": total_examples,
                 "examplesWithEnglish": examples_with_english,
                 "lessonsWithZeroExamples": zero_example_lessons,
-                "licenseTier": self.license_tier,
-                "redistributable": self.redistributable,
                 "attribution": ATTRIBUTION,
-                "permissionBasis": PERMISSION_BASIS,
             },
         )
         # The card's two reviewable deliverables, written by the production
@@ -316,8 +290,6 @@ def render_coverage(result: ExtractResult, locked_pages: int) -> str:
         f"Imported lessons carrying no numbered example: {stats['lessonsWithZeroExamples']}",
         "",
         f"Attribution: {stats['attribution']}",
-        f"Permission basis: {stats['permissionBasis']} "
-        "(see PERMISSION.json; no licence terms are asserted by this build)",
         "",
         "## Skipped pages, with reasons",
         "",
@@ -344,7 +316,6 @@ __all__ = [
     "JSONL_NAME",
     "COVERAGE_NAME",
     "ATTRIBUTION",
-    "PERMISSION_BASIS",
     "strip_html",
     "extract_examples",
     "skip_reason",

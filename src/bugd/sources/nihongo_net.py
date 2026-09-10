@@ -15,10 +15,6 @@ level plus an explicitly non-JLPT bank). Structured-content entries laid out as:
 The producer states the JLPT level twice (term tag and a `[JLPT レベル]` line), so
 it is read rather than inferred. Its `日本語NETーJLPTに出ない？文型` bank marks points
 that are deliberately *outside* the JLPT scale; those keep `jlpt: None`.
-
-Redistribution: 日本語NET's site footer asserts `All Rights Reserved` with no CC
-grant, so this community derivative is `licenseTier: "B"`,
-`redistributable: False` — local build only.
 """
 
 from __future__ import annotations
@@ -55,8 +51,6 @@ class NihongoNetExtractor(CommunityBankExtractor):
     name = "nihongo_net"
     label = "日本語NET JLPT文法解説まとめ"
     members = tuple(f"term_bank_{index}.json" for index in range(1, 7))
-    license_tier = "B"
-    redistributable = False
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         sections = split_sections(row.text, _HEADINGS)

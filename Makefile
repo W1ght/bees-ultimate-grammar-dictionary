@@ -31,23 +31,16 @@ export SOURCE_DATE_EPOCH := 0
 
 ZIP := build/bees-ultimate-grammar-dictionary.zip
 
-# The PUBLIC artifact is a different dictionary from the local one, so it gets
-# its own directories throughout: a filtered extracted corpus, its own keymap and
-# unified dataset, its own merged corpus, and its own build/dist tree. Nothing
-# public is ever written into the local build's paths, so `make all` and
-# `make public` can both be present on disk without one masquerading as the other.
-PUBLIC_EXTRACTED := data/extracted-public
-PUBLIC_MERGE_DIR := data/merge-public
-PUBLIC_MERGED     := data/merged-public
-PUBLIC_BUILD      := build-public
-PUBLIC_DIST       := dist-public
-PUBLIC_ZIP := $(PUBLIC_BUILD)/bees-ultimate-grammar-dictionary.zip
+# There is ONE dictionary. `all` builds it from every source present in
+# `data/sources/`, and it is the default goal: the thing you get by typing `make`
+# is the whole dictionary, not a subset of it.
+.DEFAULT_GOAL := all
 
-.PHONY: all extract keymap merge build validate validate-node audit-packaged test scan-polarity clean help \
-        publish-filter public public-validate-node audit-public
+.PHONY: all personal extract keymap merge build validate validate-node audit-packaged \
+        audit-attribution test scan-polarity clean help
 
 help:
-	@printf 'targets: extract keymap merge build validate validate-node audit-packaged test scan-polarity all public clean\n'
+	@printf 'targets: extract keymap merge build validate validate-node audit-packaged test scan-polarity all clean\n'
 
 extract:
 	$(PY) -m bugd.cli extract
@@ -110,59 +103,15 @@ test:
 scan-polarity:
 	$(PY) scripts/scan_polarity_flips.py
 
+# The whole dictionary, from every source `data/sources/` actually holds.
+# Extraction skips (with a reason) any source whose locked bytes are not
+# acquired, so this target works on a partial checkout too -- it just builds a
+# smaller dictionary.
 all: extract keymap merge build validate
 
-# ---------------------------------------------------------------------------
-# PUBLIC artifact
-# ---------------------------------------------------------------------------
-#
-# The public release is a DIFFERENT dictionary from the local one. UGD-15's
-# licensing audit found eight of the ten acquired sources are not publicly
-# redistributable, and named the missing gate: `provenance.redistributable` was
-# advisory metadata that no build-path module read. `publish-filter` is that
-# gate. It keeps only records whose own provenance grants redistribution, fails
-# closed if that leaves nothing, and reports every excluded source so the
-# exclusion list can be checked against LICENSING.md.
-#
-# The remaining stages are the SAME code as the local build, pointed at the
-# filtered corpus -- the public artifact is not a separate renderer, so it cannot
-# drift from the one the tests and audits cover.
-# `extract` is a real prerequisite: the filter projects `data/extracted/`, so a
-# fresh clone with no extraction has nothing to filter and fails with
-# "no extracted corpus" rather than building the release. Depending on it here
-# means `make public` works from a clean checkout, which is the whole point of the
-# target. Extraction skips (with a reason) every source whose locked bytes are not
-# acquired, so a public user with only the two CC BY 4.0 sources gets exactly the
-# corpus the filter then admits.
-publish-filter: extract
-	$(PY) -m bugd.cli --public-dir $(PUBLIC_EXTRACTED) publish-filter
-
-public: publish-filter
-	$(PY) scripts/build_keymap.py --extracted-dir $(PUBLIC_EXTRACTED) --merge-dir $(PUBLIC_MERGE_DIR)
-	$(PY) -m bugd.cli \
-	  --extracted-dir $(PUBLIC_EXTRACTED) \
-	  --keymap $(PUBLIC_MERGE_DIR)/keymap.json \
-	  --unified $(PUBLIC_MERGE_DIR)/unified.jsonl \
-	  --merged-dir $(PUBLIC_MERGED) \
-	  merge
-	$(PY) -m bugd.cli \
-	  --merged-dir $(PUBLIC_MERGED) \
-	  --build-dir $(PUBLIC_BUILD) \
-	  --dist-dir $(PUBLIC_DIST) \
-	  --require-entries \
-	  build
-	$(PY) -m bugd.cli --build-dir $(PUBLIC_BUILD) --require-entries validate
-	$(PY) scripts/audit_public_archive.py $(PUBLIC_ZIP) $(PUBLIC_EXTRACTED)
-
-public-validate-node:
-	$(NODE) scripts/validate_yomitan.mjs $(PUBLIC_ZIP)
-
-# Independent packaged-bytes proof that the public archive carries nothing from a
-# source the redistribution filter excluded, and that every admitted source is
-# both present and attributed. A gate that is never run is not a gate.
-audit-public:
-	$(PY) scripts/audit_public_archive.py $(PUBLIC_ZIP) $(PUBLIC_EXTRACTED)
+# `all` under the name that says what it is. The dictionary is built for the
+# person running the build, out of the sources that person has.
+personal: all
 
 clean:
-	rm -rf build dist data/extracted data/merged \
-	       $(PUBLIC_EXTRACTED) $(PUBLIC_MERGE_DIR) $(PUBLIC_MERGED) $(PUBLIC_BUILD) $(PUBLIC_DIST)
+	rm -rf build dist data/extracted data/merged

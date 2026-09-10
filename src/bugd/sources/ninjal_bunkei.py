@@ -33,10 +33,6 @@ Level is NINJAL's own teaching-difficulty axis (1–5), **not** a JLPT level, so
 exactly as DoJG's print-volume tag is — it is recorded in provenance and never
 coerced onto the JLPT scale (the fail-closed "levels are read, never guessed"
 policy the community base enforces).
-
-Redistribution: the database is published under CC BY 4.0, so records are marked
-`licenseTier: "A"`, `redistributable: True` (attribution travels in provenance
-for the separate licensing gate).
 """
 
 from __future__ import annotations
@@ -102,8 +98,6 @@ def example_from_text(raw: str) -> Example | None:
 class NinjalBunkeiExtractor(Extractor):
     name = "ninjal_bunkei"
     label = "NINJAL 日本語文型データベース"
-    license_tier = "A"
-    redistributable = True
 
     def extract(self) -> ExtractResult:
         lock = load_source_lock(self.input_dir)
@@ -142,8 +136,6 @@ class NinjalBunkeiExtractor(Extractor):
                 "members": members,
                 "points": len(points),
                 "skipped": skipped,
-                "licenseTier": self.license_tier,
-                "redistributable": self.redistributable,
                 "withExamples": sum(1 for point in points if point.examples),
                 "withJlpt": sum(1 for point in points if point.jlpt),
             },
@@ -202,8 +194,6 @@ class NinjalBunkeiExtractor(Extractor):
 
         provenance: dict[str, object] = {
             "sourceLabel": self.label,
-            "licenseTier": self.license_tier,
-            "redistributable": self.redistributable,
             "sourceFile": filename,
         }
         if categories:

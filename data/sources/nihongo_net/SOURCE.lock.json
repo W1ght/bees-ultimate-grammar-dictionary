@@ -43,10 +43,7 @@
     }
   },
   "provenance": {
-    "license": "unlicensed community derivative; producer asserts all rights reserved",
-    "licenseTier": "B",
     "producer": "https://nihongokyoshi-net.com/jlpt-grammars/",
-    "redistributable": false,
     "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
     "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
   },

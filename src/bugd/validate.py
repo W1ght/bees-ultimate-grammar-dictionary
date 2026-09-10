@@ -41,9 +41,9 @@ BANK_GROUPS = (
 
 REQUIRED_ROOT_MEMBERS = ("index.json", "styles.css")
 
-#: Non-bank root members this dictionary is allowed to ship. Yomitan ignores
-#: them at import, but attribution/licence text must travel with the archive
-#: because the per-source licences require notices to accompany redistribution.
+#: Non-bank root members this dictionary is allowed to ship. Yomitan ignores them
+#: at import; the allowance exists so a NOTICE or credits file can travel with the
+#: archive without tripping the unknown-member gate.
 ALLOWED_EXTRA_MEMBERS = frozenset({"LICENSE", "NOTICE", "ATTRIBUTION.md"})
 
 #: Native kanji banks are forbidden: Yomitan routes kanji clicks to a fixed
@@ -61,7 +61,7 @@ def load_schema(name: str) -> dict:
 def term_entry_count(zip_path: str | pathlib.Path) -> int:
     """Count term entries across every contiguous term bank in a built ZIP.
 
-    This is the number the packaging stage prints and the release gate compares
+    This is the number the packaging stage prints and the non-empty gate compares
     against: the count of records Yomitan will actually import, read back from
     the artifact rather than from the in-memory corpus that produced it.
     """

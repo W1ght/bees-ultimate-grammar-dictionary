@@ -14,12 +14,6 @@ sources this bank's glossary is plain text, not structured content, laid out as:
 Example blocks alternate a Japanese sentence (prefixed `(ks).` / `(a).`) and its
 English translation on the following line, so translations are paired
 positionally rather than machine-translated.
-
-Redistribution: the explanations and example sentences are verbatim content from
-The Japan Times' published Basic/Intermediate/Advanced grammar dictionaries, and
-the upstream repository carries no license. Records are therefore marked
-`licenseTier: "C"`, `redistributable: False` — usable for the local build,
-never published without the separate licensing gate clearing it.
 """
 
 from __future__ import annotations
@@ -56,8 +50,6 @@ class DojgExtractor(CommunityBankExtractor):
     name = "dojg"
     label = "DoJG 日本語文法辞典(全集)"
     members = ("term_bank_1.json",)
-    license_tier = "C"
-    redistributable = False
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         text = row.text
