@@ -198,12 +198,6 @@ CORRECTIONS: dict[tuple[str, str], tuple[Correction, ...]] = {
             "A1",
         ),
     ),
-    # A2. でしょう — nihongo_net's N row carries a ※ note that inserts だ, licensing
-    # ×雨だでしょう. The noun attaches bare (edewakaru 名詞［辞書形］＋…でしょう,
-    # donna_toki 「いい色でしょう」). Drop the copula from the note.
-    ("nihongo_net", "でしょう"): (
-        ReplaceIn("structure", "※Nだ + でしょう", "※Nでしょう", 1, "A2"),
-    ),
     # A3. かどうか — nihongo_net keeps だ before かどうか for ナA and N, licensing
     # ×便利だかどうか. Standard rule (nihongo_no_sensei) is bare stem + (である/なの).
     ("nihongo_net", "かどうか"): (
@@ -222,52 +216,8 @@ CORRECTIONS: dict[tuple[str, str], tuple[Correction, ...]] = {
             "A3",
         ),
     ),
-    # A4. さえ — nihongo_net's verb row says さえあれば (×飲みさえあれば), contradicted
-    # by its own example 飲みさえすれば and by donna_toki Vます＋さえすれば. Only the
-    # verb row is wrong; さえあれば stays on the イAく／ナAで／N rows.
-    ("nihongo_net", "さえ"): (
-        ReplaceIn(
-            "structure",
-            "V（ます形）ます + さえあれば",
-            "V（ます形）ます + さえすれば",
-            1,
-            "A4",
-        ),
-    ),
-    # A5. ないでもない — nihongo_net's structure is pasted from 〜ものでもない; all four
-    # rows and all eight of its own examples are V+ないでもない. Correct ものでもない
-    # → ないでもない across the four structure rows.
-    ("nihongo_net", "ないでもない"): (
-        ReplaceIn("structure", "ものでもない", "ないでもない", 4, "A5"),
-    ),
-    # A6. かいがあって — nihongo_net's structure names あげく (paste error). The
-    # formation is する動詞のNの＋かいがあって (donna_toki). Same paste fires on the
-    # かいもなく record, which shares the identical structure block.
-    ("nihongo_net", "かいがあって"): (
-        ReplaceIn(
-            "structure",
-            "Nの + あげく ※Nはする動詞のN",
-            "する動詞のNの + かいがあって",
-            1,
-            "A6",
-        ),
-    ),
-    ("nihongo_net", "かいもなく"): (
-        ReplaceIn(
-            "structure",
-            "Nの + あげく ※Nはする動詞のN",
-            "する動詞のNの + かいがあって",
-            1,
-            "A6",
-        ),
-    ),
-    # A7. に至るまで — nihongo_net's record is really a 〜に至る entry: its structure is
-    # V（辞書形）+ に至る / N + に至る (no まで) and all three examples lack まで. Re-home
-    # it onto the 〜に至る headword so it stops corrupting the range-meaning
-    # に至るまで card and merges with the other sources' に至る records.
-    ("nihongo_net", "に至るまで"): (
-        SetExpression("に至る", "に至るまで", "A7"),
-    ),
+    # A4–A7 removed: entries no longer present in the re-scraped nihongo_net data
+    # (2026-09 scrape from nihongokyoshi-net.com replaced aiko-tanaka community banks).
     # UGD-16. bunpou/247 glues an editorial comparison note onto its headword with
     # a newline: '〜向けに\n類似文型「〜向き」との違い'. A multi-line string is not a
     # lookup form -- the packaged ?query= cross-reference already truncated at the

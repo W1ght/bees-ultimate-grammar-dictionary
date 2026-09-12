@@ -56,10 +56,10 @@
    "source": "nihongo_net",
    "source_id": "込む",
    "expression": "込む",
-   "from": "ごむ",
+   "from": "む",
    "to": "こむ",
-   "evidence": "Same morpheme as the edewakaru 込む correction: the compound-verb suffix 込む is read こむ (入り込む=はいりこむ, 差し込む=さしこむ) and never voices to ごむ.",
-   "confidence": 0.88
+   "evidence": "The compound-verb suffix 込む is read こむ (入り込む=はいりこむ, 差し込む=さしこむ). The scraped data carries only む (the okurigana) as reading; the kanji こ is missing.",
+   "confidence": 0.95
   },
   {
    "source": "nihongo_no_sensei",

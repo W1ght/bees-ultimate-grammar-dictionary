@@ -1,8 +1,7 @@
 """日本語NET — JLPT文法解説まとめ.
 
-Source: `aiko-tanaka/Grammar-Dictionaries` `nihongo_kyoushi/`, revision
-`nihongo_kyoshi_v1.03;2022-05-27`, 628 entries across six banks (one per JLPT
-level plus an explicitly non-JLPT bank). Structured-content entries laid out as:
+Source: scraped from nihongokyoshi-net.com JLPT grammar pages. Banks are split
+one per JLPT level. Structured-content entries laid out as:
 
     【   【JLPT N１】文法・例文：〜あっての   】
     [意味]     ...
@@ -22,6 +21,7 @@ from __future__ import annotations
 import re
 
 from ..model import GrammarPoint
+from .base import load_source_lock
 from .community import (
     CommunityBankExtractor,
     clean,
@@ -40,6 +40,7 @@ _HEADINGS = {
     "例文": "examples",
     "教案": "lesson_plan",
     "解説": "explanation",
+    "英訳": "english",
 }
 
 _TITLE = re.compile(r"文法・例文[：:]\s*(?P<title>[^\n】]+)")
@@ -50,7 +51,11 @@ _EXAMPLE_MARKERS = "・･•"
 class NihongoNetExtractor(CommunityBankExtractor):
     name = "nihongo_net"
     label = "日本語NET JLPT文法解説まとめ"
-    members = tuple(f"term_bank_{index}.json" for index in range(1, 7))
+    @property
+    def members(self) -> tuple[str, ...]:
+        lock = load_source_lock(self.input_dir)
+        banks = sorted(k for k in lock if k.startswith("term_bank_") and k.endswith(".json"))
+        return tuple(banks)
 
     def parse(self, row: TermRow) -> GrammarPoint | None:
         sections = split_sections(row.text, _HEADINGS)
@@ -66,6 +71,13 @@ class NihongoNetExtractor(CommunityBankExtractor):
         if "lesson_plan" in sections:
             provenance["lessonPlan"] = clean(sections["lesson_plan"])
 
+        english = clean(sections.get("english"))
+        explanation = clean(sections.get("explanation"))
+        if english and explanation:
+            explanation = f"{english}\n\n{explanation}"
+        elif english:
+            explanation = english
+
         return GrammarPoint(
             source=self.name,
             source_id=str(row.sequence) if row.sequence else row.expression,
@@ -74,7 +86,7 @@ class NihongoNetExtractor(CommunityBankExtractor):
             reading=clean(row.reading),
             meaning=clean(sections.get("meaning")),
             structure=clean(sections.get("structure")),
-            explanation=clean(sections.get("explanation")),
+            explanation=explanation,
             jlpt=jlpt,
             examples=examples_from_lines(
                 sections.get("examples"),
