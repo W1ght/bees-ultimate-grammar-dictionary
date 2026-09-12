@@ -1,0 +1,18 @@
+{
+  "acquiredAt": "2026-09-12T20:41:08Z",
+  "files": {
+    "index.json": {
+      "byteCount": 603,
+      "sha256": "3219b5deb3fbb99582573e47e94f6b082392570281823cc5eb09522843504793"
+    },
+    "term_bank_1.json": {
+      "byteCount": 6690833,
+      "sha256": "e562e9eb7e8b190f8bde6afa2aabaadc9f02e784a1cf187d76a980d44d4972a0"
+    }
+  },
+  "provenance": {
+    "producer": "https://www.mefat.review/bunkei.ziten.html",
+    "producerLabel": "日本語文型辞典 英語版 (PyGlossary export by Selxo)"
+  },
+  "source": "hjgp_en"
+}

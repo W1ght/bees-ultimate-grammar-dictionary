@@ -92,10 +92,12 @@ MIN_TIER_B_KEY_LENGTH = 2
 #: by how close the source's headwords are to plain dictionary forms.
 SOURCE_PRECEDENCE = (
     "dojg",
+    "hjgp",
     "edewakaru",
     "donna_toki",
     "nihongo_net",
     "nihongo_no_sensei",
+    "hjgp_en",
 )
 
 

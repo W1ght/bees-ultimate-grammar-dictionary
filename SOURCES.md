@@ -37,12 +37,54 @@ Model policy (Bedrock-only, per user): every Kanban worker pinned to
   note field values in `notes.flds` split on `\x1f` (US, 0x1f).
 - Media files are numbered members (`0`,`1`,...) mapped by the `media` JSON manifest member.
 
-## Web / community sources to scrape or find existing dictionaries for
-Prefer finding an EXISTING Yomitan dict / Anki deck before re-scraping from scratch.
-- Yokubi (yoku.bi) — repo: github.com/Morgawr/yokubi. Grammar lessons.
-- IMABI (imabi.org) — large; modern + classical lessons.
-- DoJG — Dictionary of Japanese Grammar (A/I/A Dictionary of Basic/Intermediate/Advanced JP Grammar). Existing Yomitan dicts exist (search MarvNC / yomitan-dictionaries community).
-- NINJAL grammar patterns, Donna Toki Dou Tsukau (どんなときどう使う), Tae Kim, 日本語NET, 絵でわかる日本語, Nihongo no Sensei — check for existing Yomitan/Anki exports first.
+## Community Yomitan dictionaries (acquired or scraped)
+
+### DoJG — 日本語文法辞典(全集)
+- Source: aiko-tanaka/Grammar-Dictionaries, `dojg/`
+- Dictionary of Japanese Grammar (Basic/Intermediate/Advanced), English
+- Existing Yomitan banks
+
+### HJGP — 日本語文型辞典 (monolingual)
+- Source: HuangAntimony/Nihongo-Bunkei-Jiten, pinned commit `35308928ed5cffb3a8b2f2709a54b59b896748cf`
+- A Handbook of Japanese Grammar Patterns — monolingual Japanese
+- 1,245 Yomitan structured-content entries with rich furigana, data-role-annotated semantic blocks
+- Direct Extractor (not CommunityBankExtractor) — walks the structured content JSON tree
+- Extraction: 1,245 points, 1,076 with meaning, 535 with examples, 533 with structure
+
+### HJGP EN — 日本語文型辞典 英語版
+- Source: 日本語文型辞典 bilingual Yomitan banks (A Handbook of Japanese Grammar Patterns for Teachers and Learners)
+- English edition with bilingual examples (Japanese + English translations)
+- CommunityBankExtractor with line-based text parsing
+- Extraction: 1,049 points, 932 with examples (all with English translations)
+
+### NINJAL — 日本語文型データベース
+- Source: NINJAL (National Institute for Japanese Language and Linguistics), DOI 10.15084/0002000610
+- Grammar pattern database, Japanese
+
+### 日本語NET — JLPT文法解説まとめ
+- Source: scraped from nihongokyoshi-net.com (replaces aiko-tanaka/Grammar-Dictionaries `nihongo_kyoushi/` May 2022 data)
+- JLPT grammar explanations with meaning, structure, examples, English translations
+- Split one bank per JLPT level (N1–N5)
+
+### 絵でわかる日本語
+- Source: aiko-tanaka/Grammar-Dictionaries, `edewakaru/`
+- Grammar explained through illustrations, Japanese
+
+### Donna Toki — どんなときどう使う 日本語表現文型辞典
+- Source: donna_v1.04 Yomitan banks
+- "When and How to Use" expression pattern dictionary, English/Japanese
+
+### 毎日のんびり日本語教師 (Nihongo no Sensei)
+- Source: aiko-tanaka/Grammar-Dictionaries, `nihongo_no_sensei/`
+- Grammar explanations for Japanese teachers, Japanese/Chinese
+
+### Yokubi
+- Source: Morgawr/yokubi mdBook markdown
+- The Common Grammar Guide (yoku.bi), English
+
+### IMABI
+- Source: imabi.org lesson pages
+- Comprehensive Japanese grammar lessons (modern + classical), English
 
 ## Attribution
 - Preserve per-source label on every merged entry: a statement is never detached
