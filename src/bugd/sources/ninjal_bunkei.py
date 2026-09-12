@@ -69,7 +69,10 @@ def member_name(info: zipfile.ZipInfo) -> str:
     """
     if info.flag_bits & 0x800:
         return info.filename
-    return info.filename.encode("cp437").decode("cp932")
+    try:
+        return info.filename.encode("cp437").decode("cp932")
+    except UnicodeEncodeError:
+        return info.filename
 
 
 def strip_furigana(text: str) -> str:
