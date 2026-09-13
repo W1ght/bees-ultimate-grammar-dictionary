@@ -62,6 +62,19 @@ def fetch(url: str) -> bytes:
         raise SystemExit(f"cannot reach {url}: {error}") from error
 
 
+def resolve_head(repository: str, branch: str = "main") -> str:
+    request = urllib.request.Request(
+        f"https://api.github.com/repos/{repository}/commits/{branch}",
+        headers={"Accept": "application/vnd.github+json", "User-Agent": USER_AGENT},
+    )
+    with urllib.request.urlopen(request, timeout=120) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    sha = payload.get("sha")
+    if not isinstance(sha, str) or len(sha) != 40:
+        raise SystemExit(f"could not resolve {repository}@{branch}")
+    return sha
+
+
 def resolve_commit(revision: str) -> dict:
     """Resolve a revision to an exact commit, so the lock is content-addressed."""
     payload = json.loads(fetch(f"https://api.github.com/repos/{REPO}/commits/{revision}"))
@@ -180,10 +193,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--target", type=pathlib.Path, default=DEFAULT_DIR)
     parser.add_argument("--revision", default=DEFAULT_REVISION)
     parser.add_argument(
+        "--latest", action="store_true", help="resolve the current upstream main commit"
+    )
+    parser.add_argument(
         "--force", action="store_true", help="remove the target directory first"
     )
     args = parser.parse_args(argv)
-    print(json.dumps(acquire(args.target, revision=args.revision, force=args.force)))
+    revision = resolve_head(REPO) if args.latest else args.revision
+    print(json.dumps(acquire(args.target, revision=revision, force=args.force)))
     return 0
 
 

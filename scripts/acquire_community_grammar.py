@@ -163,6 +163,52 @@ def fetch(url: str) -> bytes:
     return payload
 
 
+def resolve_head(repository: str, branch: str = "main") -> str:
+    """Resolve a public GitHub branch to an exact commit for the lock."""
+    request = urllib.request.Request(
+        f"https://api.github.com/repos/{repository}/commits/{branch}",
+        headers={"Accept": "application/vnd.github+json", "User-Agent": USER_AGENT},
+    )
+    with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    sha = payload.get("sha")
+    if not isinstance(sha, str) or len(sha) != 40:
+        raise RuntimeError(f"could not resolve {repository}@{branch}")
+    return sha
+
+
+def refresh_latest_plans() -> None:
+    """Move GitHub-backed community sources to their current default branches."""
+    global AIKO_COMMIT, DONNA_TOKI_MIRROR_COMMIT, DONNA_TOKI_MIRROR, DONNA_TOKI_ARCHIVE
+    AIKO_COMMIT = resolve_head("aiko-tanaka/Grammar-Dictionaries")
+    for name, directory, members in (
+        ("dojg", "dojg", TERM_BANKS_1),
+        ("nihongo_net", "nihongo_kyoushi", _banks(6, changelog=True)),
+        ("edewakaru", "edewakaru", _banks(4, changelog=True)),
+        ("nihongo_no_sensei", "nihongo_no_sensei", _banks(5, changelog=True)),
+    ):
+        SOURCE_PLAN[name]["urls"] = aiko_urls(directory, members)
+        provenance = SOURCE_PLAN[name]["provenance"]
+        if isinstance(provenance, dict):
+            provenance["upstreamCommit"] = AIKO_COMMIT
+
+    DONNA_TOKI_MIRROR_COMMIT = resolve_head("yangjizhou99/language-learning2")
+    DONNA_TOKI_MIRROR = (
+        "https://raw.githubusercontent.com/yangjizhou99/language-learning2/"
+        f"{DONNA_TOKI_MIRROR_COMMIT}/src/data/grammar/sources/extra/donnatoki"
+    )
+    DONNA_TOKI_ARCHIVE = (
+        "https://raw.githubusercontent.com/yangjizhou99/language-learning2/"
+        f"{DONNA_TOKI_MIRROR_COMMIT}/src/data/grammar/sources/extra/"
+        "%E3%81%A9%E3%82%93%E3%81%AA%E3%81%A8%E3%81%8D%E3%81%A9%E3%81%86%E4%BD%BF%E3%81%86"
+        "%20%E6%97%A5%E6%9C%AC%E8%AA%9E%E8%A1%A8%E7%8F%BE%E6%96%87%E5%9E%8B%E8%BE%9E%E5%85%B8_1_05.zip"
+    )
+    SOURCE_PLAN["donna_toki"]["urls"] = {
+        **{name: f"{DONNA_TOKI_MIRROR}/{name}" for name in TERM_BANKS_1},
+        DONNA_TOKI_ARCHIVE_NAME: DONNA_TOKI_ARCHIVE,
+    }
+
+
 def verify_donna_toki(directory: pathlib.Path) -> dict[str, object]:
     """Corroborate the mirrored loose banks against the distributed archive.
 
@@ -236,7 +282,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--force", action="store_true", help="re-download even when bytes already exist"
     )
+    parser.add_argument(
+        "--latest", action="store_true", help="resolve GitHub-backed sources from their current main branches"
+    )
     args = parser.parse_args(argv)
+
+    if args.latest:
+        refresh_latest_plans()
 
     names = args.only or sorted(SOURCE_PLAN)
     failures: list[str] = []

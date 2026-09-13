@@ -1,0 +1,135 @@
+name: Update Chinese/Japanese dictionary
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dictionary-update
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the fork
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Sync non-conflicting upstream changes
+        run: |
+          git remote add upstream https://github.com/bee-san/bees-ultimate-grammar-dictionary.git
+          git fetch --no-tags upstream main
+          if ! git merge-base --is-ancestor upstream/main HEAD; then
+            # Keep this fork's language policy on overlapping lines while taking
+            # upstream changes everywhere else. A conflict still fails closed.
+            git merge --no-edit -X ours upstream/main
+            git push origin HEAD:main
+          fi
+
+      - name: Install build dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e . pytest
+
+      - name: Set one release version for this run
+        run: |
+          revision="$(date -u +%Y.%m.%d).${GITHUB_RUN_NUMBER}"
+          echo "DICTIONARY_REVISION=$revision" >> "$GITHUB_ENV"
+          echo "DICTIONARY_TAG=v$revision" >> "$GITHUB_ENV"
+
+      - name: Restore Chinese translations
+        uses: actions/cache/restore@v4
+        with:
+          path: translation-cache.json
+          key: zh-translation-cache-v1-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            zh-translation-cache-v1-${{ runner.os }}-
+
+      - name: Acquire public source data
+        run: |
+          python scripts/acquire_community_grammar.py --latest --force
+          python scripts/acquire_imabi.py --force
+          python scripts/acquire_yokubi.py --latest --force
+          # Bunpro/文法 are local Anki decks in the upstream project and are
+          # intentionally skipped in CI; the pipeline reports skipped sources.
+
+      - name: Extract source records
+        env:
+          PYTHONPATH: src
+        run: python -m bugd.cli extract
+
+      - name: Apply language policy and translate English-only sources
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TRANSLATION_MODEL: ${{ vars.OPENAI_TRANSLATION_MODEL }}
+        run: |
+          test -n "$OPENAI_API_KEY" || {
+            echo "::error::Add the OPENAI_API_KEY repository secret before enabling scheduled releases."
+            exit 1
+          }
+          PYTHONPATH=src python scripts/localize_chinese.py --cache translation-cache.json
+
+      - name: Save Chinese translations
+        uses: actions/cache/save@v4
+        with:
+          path: translation-cache.json
+          key: zh-translation-cache-v1-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Set up Node validation tools
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install Node validation dependencies
+        run: npm ci
+
+      - name: Build and validate
+        env:
+          PYTHONPATH: src
+        run: |
+          python scripts/build_keymap.py
+          python scripts/audit_keymap.py
+          python scripts/render_ambiguity_report.py
+          python -m bugd.cli merge
+          python scripts/audit_unified.py
+          python scripts/audit_readings.py
+          python scripts/resolve_reading_disagreements.py
+          python -m bugd.cli --require-entries --revision "$DICTIONARY_REVISION" build
+          python -m bugd.cli --require-entries validate
+          npm run validate:node
+          python scripts/audit_packaged_merge.py
+          python scripts/audit_packaged_jlpt.py
+          python scripts/audit/attribution_coherence.py
+          python scripts/audit/attribution_precision.py data/merge/unified.jsonl data/merge/attribution_precision.json --handle rowUid
+
+      - name: Run regression tests
+        env:
+          PYTHONPATH: src
+        run: python -m pytest -q
+
+      - name: Publish a versioned release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$DICTIONARY_TAG" \
+            build/bees-ultimate-grammar-dictionary.zip \
+            --target "$(git rev-parse HEAD)" \
+            --title "Dictionary $DICTIONARY_TAG" \
+            --generate-notes
+
+      - name: Publish the current index and source locks
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/index.json data/sources/*/SOURCE.lock.json
+          git diff --cached --quiet || git commit -m "Update dictionary index and source locks"
+          git push origin HEAD:main

@@ -1,6 +1,16 @@
-# Bee's Ultimate Grammar Dictionary
+# Bee's Ultimate Grammar Dictionary — 中文版
 
-A unified Japanese grammar dictionary for [Yomitan](https://github.com/yomidevs/yomitan). Combines **12 sources** into a single installable dictionary with unified lookup and per-source attribution.
+A Chinese-first unified Japanese grammar dictionary for [Yomitan](https://github.com/yomidevs/yomitan). It combines **12 sources** into a single installable dictionary with unified lookup and per-source attribution.
+
+This is an automatically updated fork of [bee-san/bees-ultimate-grammar-dictionary](https://github.com/bee-san/bees-ultimate-grammar-dictionary).
+
+## Language policy
+
+- English-only sources (DoJG, Bunpro, IMABI, and Yokubi) keep the original English and add a separately labelled Simplified Chinese translation.
+- Sources that contain Japanese or Japanese-English content keep the Japanese side and remove English explanations and example translations.
+- Locked source bytes are never edited. The language pass runs on normalized records immediately before merge, and translation results are cached by source text.
+
+The scheduled workflow runs every Monday, rebuilds the dictionary, validates the Yomitan ZIP, and publishes a release. To enable the Chinese translation step, add a repository secret named `OPENAI_API_KEY`; optionally set the repository variable `OPENAI_TRANSLATION_MODEL`.
 
 ## Install
 

@@ -231,6 +231,32 @@ def _text(value: object) -> str:
     return html_to_text(value)
 
 
+def _translation_zh(point: GrammarPoint, field: str) -> str:
+    """Read an optional cached Chinese translation without altering source text."""
+    provenance = point.provenance if isinstance(point.provenance, dict) else {}
+    translations = provenance.get("translationZh")
+    value = translations.get(field) if isinstance(translations, dict) else None
+    if not isinstance(value, str) and field == "meaning":
+        value = provenance.get("meaningZh")
+    return value.strip() if isinstance(value, str) else ""
+
+
+def _example_translation_zh(point: GrammarPoint, japanese: str, index: int) -> str:
+    provenance = point.provenance if isinstance(point.provenance, dict) else {}
+    translations = provenance.get("translationZh")
+    if not isinstance(translations, dict):
+        return ""
+    examples = translations.get("examples")
+    if isinstance(examples, dict):
+        value = examples.get(japanese)
+    elif isinstance(examples, list) and index < len(examples):
+        # Backward compatibility for an early cache format.
+        value = examples[index]
+    else:
+        value = None
+    return value.strip() if isinstance(value, str) else ""
+
+
 def _prose(value: object, point: GrammarPoint | None = None) -> object | None:
     """Convert a source prose field to structured content, or None when empty.
 
@@ -851,7 +877,7 @@ def _node_text(node: object) -> str:
 def _examples_section(point: GrammarPoint) -> dict | None:
     """A closed `details` block of this source's example sentences."""
     items: list[dict] = []
-    for example in point.examples[:EXAMPLES_PER_SOURCE]:
+    for index, example in enumerate(point.examples[:EXAMPLES_PER_SOURCE]):
         japanese = example.japanese
         if not isinstance(japanese, str) or not japanese.strip():
             continue
@@ -870,6 +896,9 @@ def _examples_section(point: GrammarPoint) -> dict | None:
         english = _text(example.english)
         if english:
             body.append(_span("en", _split_dialogue_turns(english), lang="en"))
+        chinese = _text(_example_translation_zh(point, example.japanese, index))
+        if chinese:
+            body.append(_span("zh", _split_dialogue_turns(chinese), lang="zh"))
         items.append({"tag": "li", "data": {"example": ""}, "content": body})
     if not items:
         return None
@@ -1376,6 +1405,29 @@ def _source_block(point: GrammarPoint) -> list[object]:
             if isinstance(raw, str):
                 node["lang"] = field_lang
             body.append(node)
+        translated = _translation_zh(point, field_name)
+        translated_content = _prose(translated)
+        if translated_content is not None:
+            body.append(
+                {
+                    "tag": "div",
+                    "data": {"proseZh": ""},
+                    "lang": "zh",
+                    "content": _paragraphs(translated_content, "zh"),
+                }
+            )
+    for field_name in ("explanation_ja", "nuance_ja"):
+        raw = getattr(point, field_name, None)
+        content = _prose(raw, point)
+        if content is not None:
+            body.append(
+                {
+                    "tag": "div",
+                    "data": {"proseJa": ""},
+                    "lang": "ja",
+                    "content": _paragraphs(content, "ja"),
+                }
+            )
     construction = _construction_section(point)
     if construction is not None:
         body.append(construction)
@@ -1497,7 +1549,7 @@ def _source_blocks(entry: MergedEntry, headline: str = "") -> list[dict]:
                 "content": [
                     {
                         "tag": "summary",
-                        "content": [_span("sourceName", label)],
+                        "content": [_span("sourceName", label, lang=_lang_of(label))],
                     },
                     {"tag": "div", "content": body},
                 ],
@@ -1634,6 +1686,7 @@ def _compact_block(entry: MergedEntry) -> tuple[dict, str]:
     immediately above this block.
     """
     meaning = ""
+    meaning_zh = ""
     structure = ""
     jlpt = ""
     for point in entry.contributions:
@@ -1644,6 +1697,10 @@ def _compact_block(entry: MergedEntry) -> tuple[dict, str]:
             candidate = _readable_meaning(point.meaning)
             if candidate:
                 meaning = _headline(candidate)
+        if not meaning_zh:
+            candidate_zh = _translation_zh(point, "meaning")
+            if candidate_zh:
+                meaning_zh = _headline(candidate_zh)
         if not structure:
             candidate = _text(point.structure)
             # Only a single readable formula earns a compact badge; multi-pattern
@@ -1660,6 +1717,8 @@ def _compact_block(entry: MergedEntry) -> tuple[dict, str]:
         # Sources publish meanings in English OR Japanese; declare what this one
         # actually is rather than assuming English.
         body.append(_span("meaning", meaning, lang=_lang_of(meaning)))
+    if meaning_zh:
+        body.append(_span("meaningZh", meaning_zh, lang="zh"))
 
     metarow: list[object] = []
     if structure:
@@ -1768,11 +1827,11 @@ def build_index(
         "author": DICTIONARY_AUTHOR,
         "url": DICTIONARY_URL,
         "description": (
-            "One unified Japanese grammar dictionary combining multiple grammar "
-            "sources with per-source attribution."
+            "Chinese-first unified Japanese grammar dictionary combining multiple "
+            "grammar sources with per-source attribution."
         ),
         "sourceLanguage": "ja",
-        "targetLanguage": "en",
+        "targetLanguage": "zh",
         "sequenced": True,
     }
     labels = sorted({label for label in (source_labels or {}).values() if label})

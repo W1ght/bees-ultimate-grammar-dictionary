@@ -15,9 +15,9 @@ re-run independently and every intermediate is inspectable.
 
 DICTIONARY_TITLE = "Bee's Ultimate Grammar Dictionary"
 DICTIONARY_SLUG = "bees-ultimate-grammar-dictionary"
-DICTIONARY_AUTHOR = "bee-san"
+DICTIONARY_AUTHOR = "W1ght"
 # Shown in Yomitan's dictionary details pane as the source of the dictionary.
-DICTIONARY_URL = "https://github.com/bee-san/bees-ultimate-grammar-dictionary"
+DICTIONARY_URL = "https://github.com/W1ght/bees-ultimate-grammar-dictionary"
 
 # Self-update coordinates. Yomitan's index schema pins `isUpdatable` to
 # `const: true` and makes it depend on BOTH of these, so all three travel together
@@ -29,11 +29,11 @@ DICTIONARY_URL = "https://github.com/bee-san/bees-ultimate-grammar-dictionary"
 # under. So `DICTIONARY_INDEX_URL` must name the committed `dist/index.json` on
 # the default branch, and `DICTIONARY_DOWNLOAD_URL` the release asset beside it.
 DICTIONARY_INDEX_URL = (
-    "https://raw.githubusercontent.com/bee-san/"
+    "https://raw.githubusercontent.com/W1ght/"
     "bees-ultimate-grammar-dictionary/main/dist/index.json"
 )
 DICTIONARY_DOWNLOAD_URL = (
-    "https://github.com/bee-san/bees-ultimate-grammar-dictionary/"
+    "https://github.com/W1ght/bees-ultimate-grammar-dictionary/"
     "releases/latest/download/bees-ultimate-grammar-dictionary.zip"
 )
 

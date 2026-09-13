@@ -1,5 +1,14 @@
 # Bee's Ultimate Grammar Dictionary — Source Inventory
 
+## Fork language policy
+
+The W1ght fork renders English-only sources (DoJG, Bunpro, IMABI, Yokubi) as
+English plus a separately labelled Simplified Chinese translation. Any source
+that contains Japanese, including a Japanese-English edition, keeps the
+Japanese content and drops English explanations/translations. This policy is
+applied after extraction; locked publisher bytes and their digests are never
+modified.
+
 Goal: ONE unified Yomitan dictionary ("Bee's Ultimate Grammar Dictionary") combining
 every grammar source into a single installable ZIP with unified lookup + per-source
 attribution. Not separate dictionaries. Progressive disclosure: compact card + closed

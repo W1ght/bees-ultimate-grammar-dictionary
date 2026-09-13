@@ -96,7 +96,15 @@ SUPPORTED_KEYMAP_SCHEMA = 1
 KIND_POINT = "point"
 KIND_REDIRECT = "redirect"
 
-_SUBSTANCE_FIELDS = ("meaning", "structure", "nuance", "explanation", "notes")
+_SUBSTANCE_FIELDS = (
+    "meaning",
+    "structure",
+    "nuance",
+    "explanation",
+    "notes",
+    "nuance_ja",
+    "explanation_ja",
+)
 
 _DIGITS = re.compile(r"(\d+)")
 
@@ -165,6 +173,8 @@ class Contribution:
     nuance: str | None
     explanation: str | None
     notes: str | None
+    nuance_ja: str | None
+    explanation_ja: str | None
     jlpt: str | None
     row_uid: str = ""
     examples: tuple[Example, ...] = ()
@@ -384,6 +394,11 @@ def _examples_of(record: dict[str, object]) -> tuple[Example, ...]:
                 japanese=japanese,
                 english=item.get("english") or None,
                 highlight=tuple(str(h) for h in highlight),
+                japanese_html=(
+                    item.get("japanese_html")
+                    if isinstance(item.get("japanese_html"), str)
+                    else None
+                ),
                 # The AI flag is preserved exactly, never inferred. A source that
                 # does not declare it is not AI-flagged.
                 ai_generated=bool(item.get("ai_generated")),
@@ -446,6 +461,8 @@ def build_contribution(
         nuance=_text_or_none(record.get("nuance")),
         explanation=_text_or_none(record.get("explanation")),
         notes=_text_or_none(record.get("notes")),
+        nuance_ja=_text_or_none(record.get("nuance_ja")),
+        explanation_ja=_text_or_none(record.get("explanation_ja")),
         jlpt=_text_or_none(record.get("jlpt")),
         examples=_examples_of(record) if examples is None else examples,
         tags=tuple(str(tag) for tag in tags),
@@ -968,6 +985,8 @@ def example_to_json(example: Example) -> dict[str, object]:
     payload: dict[str, object] = {"japanese": example.japanese}
     if example.english:
         payload["english"] = example.english
+    if example.japanese_html:
+        payload["japaneseHtml"] = example.japanese_html
     if example.highlight:
         payload["highlight"] = list(example.highlight)
     # Written only when true, so an AI-flagged sentence is visible in a diff
@@ -995,6 +1014,8 @@ def contribution_to_json(contribution: Contribution) -> dict[str, object]:
         ("nuance", "nuance"),
         ("explanation", "explanation"),
         ("notes", "notes"),
+        ("nuance_ja", "nuanceJa"),
+        ("explanation_ja", "explanationJa"),
         ("jlpt", "jlpt"),
     ):
         value = getattr(contribution, name)
@@ -1064,6 +1085,11 @@ def example_from_json(payload: dict[str, object]) -> Example:
         english=english if isinstance(english, str) and english else None,
         highlight=tuple(str(item) for item in highlight),
         ai_generated=bool(payload.get("aiGenerated")),
+        japanese_html=(
+            payload.get("japaneseHtml")
+            if isinstance(payload.get("japaneseHtml"), str)
+            else None
+        ),
     )
 
 
@@ -1092,6 +1118,8 @@ def contribution_from_json(payload: dict[str, object]) -> Contribution:
         nuance=_text_or_none(payload.get("nuance")),
         explanation=_text_or_none(payload.get("explanation")),
         notes=_text_or_none(payload.get("notes")),
+        nuance_ja=_text_or_none(payload.get("nuanceJa")),
+        explanation_ja=_text_or_none(payload.get("explanationJa")),
         jlpt=_text_or_none(payload.get("jlpt")),
         examples=tuple(
             example_from_json(item) if isinstance(item, dict) else _bad_example(item)

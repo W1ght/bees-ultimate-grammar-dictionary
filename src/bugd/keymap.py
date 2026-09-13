@@ -76,6 +76,8 @@ SUBSTANCE_FIELDS = (
     "nuance",
     "explanation",
     "notes",
+    "nuance_ja",
+    "explanation_ja",
     "jlpt",
 )
 

@@ -40,6 +40,7 @@ def test_index_carries_the_unified_title_and_format():
     assert index["author"] == DICTIONARY_AUTHOR
     assert index["revision"] == "2026.09.08"
     assert index["sourceLanguage"] == "ja"
+    assert index["targetLanguage"] == "zh"
 
 
 def test_index_requires_a_revision():
