@@ -55,7 +55,7 @@ jobs:
           python scripts/build_keymap.py
           python scripts/audit_keymap.py
           python scripts/render_ambiguity_report.py
-          python -m bugd.cli merge
+          python -m bugd.cli --no-reading-corrections merge
           python scripts/audit_unified.py
           python scripts/audit_readings.py
           python scripts/resolve_reading_disagreements.py
