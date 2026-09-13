@@ -131,6 +131,7 @@ def main():
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--end", type=int)
     parser.add_argument("--chunk-output")
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
     translator = ensure_model()
     cache_data = json.loads(CACHE.read_text()) if CACHE.exists() else {"entries": {}}
@@ -145,12 +146,12 @@ def main():
             translation = point.setdefault("provenance", {}).setdefault("translationZh", {})
             for field in ("meaning", "nuance", "explanation", "structure"):
                 text = point.get(field)
-                if isinstance(text, str) and LATIN.search(text) and not translation.get(field):
+                if isinstance(text, str) and LATIN.search(text) and (args.overwrite or not translation.get(field)):
                     jobs.append({"cache_key": ckey(source, field, text), "text": text, "kind": "field", "index": index, "field": field})
             existing = translation.setdefault("examples", {})
             for ex in point.get("examples") or []:
                 japanese, english = ex.get("japanese"), ex.get("english")
-                if isinstance(japanese, str) and isinstance(english, str) and english.strip() and not existing.get(japanese):
+                if isinstance(japanese, str) and isinstance(english, str) and english.strip() and (args.overwrite or not existing.get(japanese)):
                     jobs.append({"cache_key": ckey(source, f"example:{japanese}", english), "text": english, "kind": "example", "index": index, "japanese": japanese})
         print(f"[argos] {source}: jobs={len(jobs)}", flush=True)
         translate_jobs(translator, jobs, cache)
