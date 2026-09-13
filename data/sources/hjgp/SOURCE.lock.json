@@ -1,23 +1,1081 @@
 {
-  "acquiredAt": "2026-09-13T07:18:29+00:00Z",
+  "acquiredAt": "2026-09-13T15:55:26Z",
   "files": {
-    "index.json": {
-      "byteCount": 663,
-      "sha256": "94125e227743b56f95cfd427bdbe141ffb29193274d09636fb4978918cc66e7f"
-    },
-    "tag_bank_1.json": {
-      "byteCount": 116,
-      "sha256": "f883b2aded1add885cfb29d1670abff9e6a38ec2dd0c2de038a296ed9b38bb8d"
-    },
-    "styles.css": {
-      "byteCount": 3297,
-      "sha256": "b9d957f2e123fc50b4f161ae44055fb6b1f7514e7a6824a275b4513ae8eab280"
-    },
     "term_bank_1.json": {
-      "byteCount": 15978649,
-      "sha256": "9133770ddc59ebe4218a869e5fbce358f547964c442dacceeba208e39b66f90e"
+      "byteCount": 4910718,
+      "sha256": "abf236810716c29f7b8228ad8bf5cf67f051d7a411591e122f6a8a3290122ca7",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_1.json"
+    },
+    "term_bank_10.json": {
+      "byteCount": 2695758,
+      "sha256": "77273af8a205ffafdd35b395ef27a03aef210290fe4987f5011a98bd4863fe06",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_10.json"
+    },
+    "term_bank_100.json": {
+      "byteCount": 2242242,
+      "sha256": "44fd64843960ff29ccbb88b93e986698208156a445d0058e4b2d947fddf110a6",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_100.json"
+    },
+    "term_bank_101.json": {
+      "byteCount": 2700702,
+      "sha256": "e9c364f2f985b86fd811cd63b6a9e0a6d85d100b9ca22770157ccdb7f7f683d4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_101.json"
+    },
+    "term_bank_102.json": {
+      "byteCount": 2853037,
+      "sha256": "7bed84724fadb35571ca021b1d90679cbb87d1fd3dec4caca3e9b7b8062e5713",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_102.json"
+    },
+    "term_bank_103.json": {
+      "byteCount": 2707041,
+      "sha256": "5bde99d7052877c72c404a775d63bbe9173eaf2aa7f4b5d44cbfac2ba1332008",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_103.json"
+    },
+    "term_bank_104.json": {
+      "byteCount": 2607807,
+      "sha256": "942a362fd253bfbca54a699e544faf255a83618073b992b43b2aeb9b420362b3",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_104.json"
+    },
+    "term_bank_105.json": {
+      "byteCount": 2478788,
+      "sha256": "ee814ade9e4d984ba8de3e3234271a41ea8dd84681279a6f92f82a08375c6792",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_105.json"
+    },
+    "term_bank_106.json": {
+      "byteCount": 2470282,
+      "sha256": "3e95e025bab38418f1123f7f07380876297ac4ec5b572dd33db255407a5f219a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_106.json"
+    },
+    "term_bank_107.json": {
+      "byteCount": 2390957,
+      "sha256": "560dd8aa49c0383b36e6917d2e94b301afc2227329d2c782dbb24001c88949d6",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_107.json"
+    },
+    "term_bank_108.json": {
+      "byteCount": 2467139,
+      "sha256": "5108529684a8bf0e87ebc41d16e3e11787547491e3f21607a68cfd8a5fffc54f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_108.json"
+    },
+    "term_bank_109.json": {
+      "byteCount": 2381716,
+      "sha256": "7f03d8c0976ace184bda2ba6d3d435c11123888fd56fd5d9247346808d829f31",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_109.json"
+    },
+    "term_bank_11.json": {
+      "byteCount": 2624900,
+      "sha256": "0ec3ccf0134663a7e3b4a3838d375270f33c2bc8426ee772eeb9f796fbdaf68d",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_11.json"
+    },
+    "term_bank_110.json": {
+      "byteCount": 2334172,
+      "sha256": "9cac5a0dbc44fc6d4352ca515bca44ad9d8e93a766ad5075c71e92e47a6f03b5",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_110.json"
+    },
+    "term_bank_111.json": {
+      "byteCount": 2215678,
+      "sha256": "41babccae9d0fe11c7c895d102912153e1df9461f8a7f7c18a6f510f840600d0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_111.json"
+    },
+    "term_bank_112.json": {
+      "byteCount": 2594590,
+      "sha256": "f945f509d6a2a10ca8a010cff251a2df563b1be2814c590c49926da9c4bd8c02",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_112.json"
+    },
+    "term_bank_113.json": {
+      "byteCount": 2431837,
+      "sha256": "5696737d4d83b995317404e55bc6a671082aa14df200b43b329e2860a5445168",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_113.json"
+    },
+    "term_bank_114.json": {
+      "byteCount": 2534325,
+      "sha256": "dbe4df61ed0b0cfd6c5ece5b2e218eabe103ab94af6d996dd784c913fb53f728",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_114.json"
+    },
+    "term_bank_115.json": {
+      "byteCount": 2613264,
+      "sha256": "697a5e28fb7ed05265ab7c2ddf667515dfcab6597aaf02f4530b89ec6d1a5ffc",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_115.json"
+    },
+    "term_bank_116.json": {
+      "byteCount": 2512790,
+      "sha256": "2bcfded447d6b3113ba714c2603c925df40325cd5d1adbcce4bd6639e984d648",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_116.json"
+    },
+    "term_bank_117.json": {
+      "byteCount": 2663631,
+      "sha256": "e9ad4b2242a8598defcfdaa3ff4b4a812d78491dbdf394fadba9ab0c3e9555ae",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_117.json"
+    },
+    "term_bank_118.json": {
+      "byteCount": 2430998,
+      "sha256": "41b4823294e69cec8ac5aaa9485e25d82685a6a88a057d94199cf10b5dc3e18e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_118.json"
+    },
+    "term_bank_119.json": {
+      "byteCount": 2527789,
+      "sha256": "9f224b02f32f7fc5e3637ecbd5c8b3c687154a790e605165018ffcd56abd1f06",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_119.json"
+    },
+    "term_bank_12.json": {
+      "byteCount": 2624768,
+      "sha256": "74a3bb0e6e0a8c4e4c28c8bac460ae01d22fef47686b9a27619eaaf181526b52",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_12.json"
+    },
+    "term_bank_120.json": {
+      "byteCount": 2953025,
+      "sha256": "795225a66bd602c5fb868b1eaba4cef8e1e3b6e24772924c4b3c538a927b4f4c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_120.json"
+    },
+    "term_bank_121.json": {
+      "byteCount": 2838411,
+      "sha256": "895d0cb956d012242fc8e761b872748e759cfcd69596257e528b186588b642b4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_121.json"
+    },
+    "term_bank_122.json": {
+      "byteCount": 2619523,
+      "sha256": "46780456a32c5e9d816e253cc2cd8c6d0be4062634a5cb9c0ea451e2b66ceb90",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_122.json"
+    },
+    "term_bank_123.json": {
+      "byteCount": 2144099,
+      "sha256": "67b7b6540c9c239756cba97fe6a558f1d5d011795d3741370ff570fccaf93b3f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_123.json"
+    },
+    "term_bank_124.json": {
+      "byteCount": 2116333,
+      "sha256": "0e682036614c98735e652d88221cd9177dbda96dfab7ac6a013b2fd093edc99a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_124.json"
+    },
+    "term_bank_125.json": {
+      "byteCount": 2064044,
+      "sha256": "c238a85b382424192e7ed5db61b67f483b2de92e93ca3739d2ab75c35d6d934b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_125.json"
+    },
+    "term_bank_126.json": {
+      "byteCount": 2073372,
+      "sha256": "b8c0921ad207917858db29abde8cb7c126416f6eba6844d0464834a6df675f59",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_126.json"
+    },
+    "term_bank_127.json": {
+      "byteCount": 1883681,
+      "sha256": "569a37fc2f32c0773b9c67f90d75447465df1fa0bba3953958385e2251c17040",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_127.json"
+    },
+    "term_bank_128.json": {
+      "byteCount": 1701457,
+      "sha256": "606e121fa8636f16b6b7a204b412879decbb5e83df59ff1b68dcbf09331a9c79",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_128.json"
+    },
+    "term_bank_129.json": {
+      "byteCount": 1697567,
+      "sha256": "abfb7577ecd8f519cc9649e3373b7159a564345717c48eb8204e4ccddc3be7e9",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_129.json"
+    },
+    "term_bank_13.json": {
+      "byteCount": 3066449,
+      "sha256": "56eef5814879cf7cfa7548e2f0665ea6b30850a2781ac9f891d9a641746b3ff1",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_13.json"
+    },
+    "term_bank_130.json": {
+      "byteCount": 1708893,
+      "sha256": "759d36c42ac262370064d3b72070e353ff6d5a49c2a78c9d6db6f5cf6195e574",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_130.json"
+    },
+    "term_bank_131.json": {
+      "byteCount": 1700180,
+      "sha256": "326c5692359dcc859404e7d70a2fb158d5a3ae42dfdcfee26d9947c4d60f7797",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_131.json"
+    },
+    "term_bank_132.json": {
+      "byteCount": 2272287,
+      "sha256": "115548727e1ed13a55dd21b8bc9fe69358efca0f2783e115ea549530b1d0d65e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_132.json"
+    },
+    "term_bank_133.json": {
+      "byteCount": 2377891,
+      "sha256": "090dcf193cc5b4c5a5c184712059be2b3c16eea5671422c2429ba1e26c895111",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_133.json"
+    },
+    "term_bank_134.json": {
+      "byteCount": 2234694,
+      "sha256": "b98ce1d13451ff5b0273116e25a830791bdf05cfdeefbdf9259435aefde3fbdf",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_134.json"
+    },
+    "term_bank_135.json": {
+      "byteCount": 2222074,
+      "sha256": "0b61b335db5265e2e896f9eb02a1119fb269d798b12eea1f17396a597f08f253",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_135.json"
+    },
+    "term_bank_136.json": {
+      "byteCount": 2099406,
+      "sha256": "922f69f4101bbe4d2f27d4087427cc2689f801f536f76329c008c8e24e602fb8",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_136.json"
+    },
+    "term_bank_137.json": {
+      "byteCount": 2065390,
+      "sha256": "4f62eae1561322224d773b28f767659ec183ece106ae30e7e42f768e9f73c1f8",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_137.json"
+    },
+    "term_bank_138.json": {
+      "byteCount": 2261000,
+      "sha256": "956544e35222b126a4fa0e5a7aeec0fa2c8fa06d4a6a4dbe7e2db26c4f2b852e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_138.json"
+    },
+    "term_bank_139.json": {
+      "byteCount": 2168702,
+      "sha256": "54298ec379ff726a1da9af21a2414446db2c379f981a0da50617fe6f697ca163",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_139.json"
+    },
+    "term_bank_14.json": {
+      "byteCount": 3133646,
+      "sha256": "88ff74b3959a21924d9b3626e390afc148f8c8b477789b27936718ada5b9835c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_14.json"
+    },
+    "term_bank_140.json": {
+      "byteCount": 2038336,
+      "sha256": "50283d7df7f9c235871671b035edcc9f1513bf55955b1aab33b9cef3fbfc4661",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_140.json"
+    },
+    "term_bank_141.json": {
+      "byteCount": 1978783,
+      "sha256": "70341fd7c0dc994e1b75f4441ab4c4beaa875e5011175b4b0c7b2bb15d9c2dad",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_141.json"
+    },
+    "term_bank_142.json": {
+      "byteCount": 2122652,
+      "sha256": "ca195e39bb23afc77ca50ce5fef9b62311dc362df72d0d4b3b42731183c2c311",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_142.json"
+    },
+    "term_bank_143.json": {
+      "byteCount": 2155688,
+      "sha256": "ab66ce6e2287e20139d60782ce9099f8a604170883bbebbce62571b04198b8a8",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_143.json"
+    },
+    "term_bank_144.json": {
+      "byteCount": 2206285,
+      "sha256": "5fe50ec333835226047246555daf83d932fe0a6ebcc1fe5dbb3622c747764ae7",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_144.json"
+    },
+    "term_bank_145.json": {
+      "byteCount": 2127635,
+      "sha256": "6ffd3143c27d8314e602b23c3e8cb5e31b61ed394b0ac162b34b3af3df1e8629",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_145.json"
+    },
+    "term_bank_146.json": {
+      "byteCount": 2049614,
+      "sha256": "bf19c24a867e052420429b58af01f69c2058ddd7051300087c428eca7e6f831b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_146.json"
+    },
+    "term_bank_147.json": {
+      "byteCount": 2695186,
+      "sha256": "19cae73412f01112feee5e59334ba3c045b5c03777b2be8628e77c1c5c1074fd",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_147.json"
+    },
+    "term_bank_148.json": {
+      "byteCount": 2680990,
+      "sha256": "8e8e2566a4f036d12fd45227aff1a7b1273fd7fefc286c05a377ec2e28628c9b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_148.json"
+    },
+    "term_bank_149.json": {
+      "byteCount": 2479023,
+      "sha256": "ad6e3d9d8052a177967baa3ec2a9f6e18db1b076659d23b6dbe2e355c6f47eca",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_149.json"
+    },
+    "term_bank_15.json": {
+      "byteCount": 2581326,
+      "sha256": "01da162b762d51ff3c848045bfbe36c24b990140488f7faa99335b759d249439",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_15.json"
+    },
+    "term_bank_150.json": {
+      "byteCount": 2590864,
+      "sha256": "c41023bee9bd0d2e8ea6aa6b478ba7b311d8582f8d23359971f6153db376893b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_150.json"
+    },
+    "term_bank_151.json": {
+      "byteCount": 2139186,
+      "sha256": "8f5cddc809674d6c8aa36091e408b384123f28cd840a9846e547fed638d63412",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_151.json"
+    },
+    "term_bank_152.json": {
+      "byteCount": 2243296,
+      "sha256": "0739bcf9fa9be795d399f4d6b2658b5d54fb4cb87775aac8515deb3070be0800",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_152.json"
+    },
+    "term_bank_153.json": {
+      "byteCount": 2167728,
+      "sha256": "29f1e5eab63172878631cb28e23ef20846c141ae54efe1b382b856280f7e13ad",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_153.json"
+    },
+    "term_bank_154.json": {
+      "byteCount": 1944605,
+      "sha256": "5f4effbf026ae683ca80d9eee80a9b3002c034128fd95d4410abc7e6e51fa627",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_154.json"
+    },
+    "term_bank_155.json": {
+      "byteCount": 2048602,
+      "sha256": "ebc4783e8c0ec3037f5a16d9aa84ae6b8259fa3ebb8d325c3e15031d79dbe93f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_155.json"
+    },
+    "term_bank_156.json": {
+      "byteCount": 2028639,
+      "sha256": "16da3a45ab9d04f8c4534fd0cffe7cef95e32c74a83a1d950f905376a542a089",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_156.json"
+    },
+    "term_bank_157.json": {
+      "byteCount": 2063164,
+      "sha256": "25dd0fceb13d35c2c1c1e88be569a2d11e3665587a94b34c6e25a20ecbeb3e38",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_157.json"
+    },
+    "term_bank_158.json": {
+      "byteCount": 2145298,
+      "sha256": "41d772f97e992e06702382c1859d568311891e0ce41164e298898f8e492a643b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_158.json"
+    },
+    "term_bank_159.json": {
+      "byteCount": 2188514,
+      "sha256": "17c9f0bc93db5af82f40ba62adc9012bb69aeef40b48d1c4339d9d5e9cda3e9a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_159.json"
+    },
+    "term_bank_16.json": {
+      "byteCount": 2680126,
+      "sha256": "df363ec0ce51ee3f192e8b6424adc55adc1b47cd543d7a692316f3f4b1891ab2",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_16.json"
+    },
+    "term_bank_160.json": {
+      "byteCount": 2098645,
+      "sha256": "3313903b5004a1c8484521f16f3a0fdf7834dabaac8bacd5d4161ef1851c24c8",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_160.json"
+    },
+    "term_bank_161.json": {
+      "byteCount": 2293331,
+      "sha256": "2853602d79f4d4ab652f92ce1890c3a916523675c78bfb5123570da204ca1fb0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_161.json"
+    },
+    "term_bank_162.json": {
+      "byteCount": 2441859,
+      "sha256": "8866fa4c2b75b9ed682bf3c77c8e510bd2f975a97950d0c4ad0676eeca00933e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_162.json"
+    },
+    "term_bank_163.json": {
+      "byteCount": 2366356,
+      "sha256": "67fd438d990dfbcd78176ce540eaddc62994cc5d87fcb8c277b1b006a75d7f18",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_163.json"
+    },
+    "term_bank_164.json": {
+      "byteCount": 2414056,
+      "sha256": "fe92a88f1621694eb47cda0700ad5800cbe9d4d75f36810f879e700b2db91ad3",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_164.json"
+    },
+    "term_bank_165.json": {
+      "byteCount": 2263991,
+      "sha256": "5882856dd22b02bd4c81896804380a4cac548bab79015ed26c5a089b06a39a47",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_165.json"
+    },
+    "term_bank_166.json": {
+      "byteCount": 2371550,
+      "sha256": "7d5ecd455bbe0a78a7254fb25648494c0e354b1ce987001c0e4e1c0083f4008a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_166.json"
+    },
+    "term_bank_167.json": {
+      "byteCount": 2338688,
+      "sha256": "973ec464bc9a65fe1daa17b6126f01d2920a48ef44258ced8ed128b8cac6623b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_167.json"
+    },
+    "term_bank_168.json": {
+      "byteCount": 2312348,
+      "sha256": "ebe75e246bc2d7dfda617e61fd270af5dca535737d28cf4e62db93d50a7bc865",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_168.json"
+    },
+    "term_bank_169.json": {
+      "byteCount": 2316539,
+      "sha256": "e8fda94d0ea1143f107712f666d85042232f4f933c33d319709a8d014c17bc5f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_169.json"
+    },
+    "term_bank_17.json": {
+      "byteCount": 3022173,
+      "sha256": "262fff2479da9fb39baa42f01ca39275f0136024a55fe50dd44343e6584af99a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_17.json"
+    },
+    "term_bank_170.json": {
+      "byteCount": 2298091,
+      "sha256": "9d85a901d786d2c4f411bd82a58e0f90b963cdfb02594479d5ab99bf4b075d63",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_170.json"
+    },
+    "term_bank_171.json": {
+      "byteCount": 2103783,
+      "sha256": "867fa831c3b2a39f73fff40807c89d9c68747e095edd6527e4b1dd537231060c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_171.json"
+    },
+    "term_bank_172.json": {
+      "byteCount": 2280805,
+      "sha256": "d9b0d827e195ef811ce5fa612997ed3392e0af7402490296474d5df317746e3c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_172.json"
+    },
+    "term_bank_173.json": {
+      "byteCount": 2293036,
+      "sha256": "874af9261ebdbacab846e2d1b3f1791bc5561b9dfde2467984a7e145cf409a3a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_173.json"
+    },
+    "term_bank_174.json": {
+      "byteCount": 2310381,
+      "sha256": "e50a5cdd6277e394379f1d419fa2d382e80d4452a23af8fac287e0ab5b9d2013",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_174.json"
+    },
+    "term_bank_175.json": {
+      "byteCount": 2240357,
+      "sha256": "a19928086beec8947c914daf129d4170af3e07bffb69b4fa40851e87f16dba1a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_175.json"
+    },
+    "term_bank_176.json": {
+      "byteCount": 2370419,
+      "sha256": "d9406e0d94efc3d42d0bdfbefd4015880d2319194d91b6fdbc0e79d982d75aba",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_176.json"
+    },
+    "term_bank_177.json": {
+      "byteCount": 2296229,
+      "sha256": "5037d5ea7fa5fd5e0e0fdaa2b49f1733b4be335c8dafebbba48315305d9a8fb4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_177.json"
+    },
+    "term_bank_178.json": {
+      "byteCount": 2295031,
+      "sha256": "722395953d631ff52ab50a9b94ecc60098b0a2b6d0a3b34881305cd5e6463d8b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_178.json"
+    },
+    "term_bank_179.json": {
+      "byteCount": 2307071,
+      "sha256": "5fe622e8d09eda9fac1a405d53623d7e35349d78693f3945d9891ec2558d7454",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_179.json"
+    },
+    "term_bank_18.json": {
+      "byteCount": 3072206,
+      "sha256": "a0ab7e754553d363b8704033159451ac0921e213bac32a2115d6c8015a0c6458",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_18.json"
+    },
+    "term_bank_180.json": {
+      "byteCount": 2186152,
+      "sha256": "be0f28ca51b88845d8b2654cb3704fb59bccbeda97bdcc8990dd802b8a531073",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_180.json"
+    },
+    "term_bank_181.json": {
+      "byteCount": 2380975,
+      "sha256": "bc3bffd4ab105bd11869198dc072d05a08e3a61594fa6442643a95449406c278",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_181.json"
+    },
+    "term_bank_182.json": {
+      "byteCount": 2272618,
+      "sha256": "2bace340fd29f5ed2f8c5471a5665e01f1c810caa42a038cb9822c1ef0cbc209",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_182.json"
+    },
+    "term_bank_183.json": {
+      "byteCount": 2353688,
+      "sha256": "2b29c390b374223196067b20c8bfc184f4300588c9e23f10cd112a3a0b08b374",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_183.json"
+    },
+    "term_bank_184.json": {
+      "byteCount": 2108531,
+      "sha256": "f32f5859ba1d05dfc8d86efd225232c405bd8694783acce3917c40713722ba37",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_184.json"
+    },
+    "term_bank_185.json": {
+      "byteCount": 2068223,
+      "sha256": "c77ddf44c9aa076883d32483876ab8401ada532a46b168bae687d6e9946ca41e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_185.json"
+    },
+    "term_bank_186.json": {
+      "byteCount": 2290643,
+      "sha256": "2accc770885895f3defe6e490ecb71e005485b37f744ba9f06f727cf656f8048",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_186.json"
+    },
+    "term_bank_187.json": {
+      "byteCount": 2379497,
+      "sha256": "268829fcc9714826c77055b91d8dcd6a62786b1dc15ebd61b8b7ef1499308bc0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_187.json"
+    },
+    "term_bank_188.json": {
+      "byteCount": 2342542,
+      "sha256": "b1a2b4d6926c0a5e1630b5558dfa3d610a71bf1c8fdf5579d60fa764a5ef8b05",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_188.json"
+    },
+    "term_bank_189.json": {
+      "byteCount": 2422343,
+      "sha256": "0280216cff7092d16ee097b0f7e0c39e9f742ca40c472091d017a1cc6d2301af",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_189.json"
+    },
+    "term_bank_19.json": {
+      "byteCount": 2939845,
+      "sha256": "208e3465f1daeaeb3379798e87359aae34b7eef5e750878ccb83309a51560817",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_19.json"
+    },
+    "term_bank_190.json": {
+      "byteCount": 2382899,
+      "sha256": "e0e1649dab50cef49cce915fd8ae468dce3b36b4393db1eb19559103aceab9c4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_190.json"
+    },
+    "term_bank_191.json": {
+      "byteCount": 2285774,
+      "sha256": "8d8f69605d52c54a1a97561e83ea031d7edfffd0119f0da3569654b74477ad77",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_191.json"
+    },
+    "term_bank_192.json": {
+      "byteCount": 2278840,
+      "sha256": "869d541b40212ebcdad63fa41fc42f2a6814c8eba5fbc3ddf9da278bad8591be",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_192.json"
+    },
+    "term_bank_193.json": {
+      "byteCount": 2250965,
+      "sha256": "9052ae2c90711f3fd888e350b436d0f464bff207cbdb562a79a0df3ba052ce0a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_193.json"
+    },
+    "term_bank_194.json": {
+      "byteCount": 2284369,
+      "sha256": "817118d9355860455ef25b72bd49f1ab22a117e39cd23be09e4ddc32629ad71b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_194.json"
+    },
+    "term_bank_195.json": {
+      "byteCount": 2188173,
+      "sha256": "76e9205030a1ac87bf305bc4ea5f5993f332fb9c89018536d5ad2bd0aa34c29b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_195.json"
+    },
+    "term_bank_196.json": {
+      "byteCount": 2236190,
+      "sha256": "3775ea814f493638b8688d00ea37f133070046616654432760da320afa4e903f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_196.json"
+    },
+    "term_bank_197.json": {
+      "byteCount": 2075758,
+      "sha256": "617c7a1935bd08162108852fff1a566d96caafdbc9620ed4e9584f421e5c7f25",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_197.json"
+    },
+    "term_bank_198.json": {
+      "byteCount": 1937142,
+      "sha256": "e812ec7772fb698bc79eafb34e204ae014c9eee114255363dbb256911a992ddd",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_198.json"
+    },
+    "term_bank_199.json": {
+      "byteCount": 2047026,
+      "sha256": "44106d25e6d040ab903d4276527e58d970020d3ac4978395f7ba5bbd90931c62",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_199.json"
+    },
+    "term_bank_2.json": {
+      "byteCount": 3831495,
+      "sha256": "454d11d5f67d16d0818d10dd2d496ac4284d977cf3b31678278e5c74a9196b3b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_2.json"
+    },
+    "term_bank_20.json": {
+      "byteCount": 2665947,
+      "sha256": "3c60fda98600f7119a0e27b20c4fc8340eb22c02d199a5540ffd70998cf4c3c6",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_20.json"
+    },
+    "term_bank_200.json": {
+      "byteCount": 2110940,
+      "sha256": "e0a403e568aed9dffa71ea3d9a18baa34cf3ca1b8f5c923ccc5fc0bb617b72a4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_200.json"
+    },
+    "term_bank_201.json": {
+      "byteCount": 2153440,
+      "sha256": "163a0524efd4be4a2922a7dca606eea6f50722b777b00a5b81bda377be0eb490",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_201.json"
+    },
+    "term_bank_202.json": {
+      "byteCount": 2112323,
+      "sha256": "33fdb6e04d6ab7ef5619228ae637013d2dad45aab6b0f318efc268f751ef1a89",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_202.json"
+    },
+    "term_bank_203.json": {
+      "byteCount": 2180545,
+      "sha256": "8a51369d131da4f8b864b17cce28a67269757d0ec59b4cf77d958c067544ea65",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_203.json"
+    },
+    "term_bank_204.json": {
+      "byteCount": 2194946,
+      "sha256": "da848e099881941450d5a92dd7edeb1c497fa35b0a4e16488049713ecc311956",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_204.json"
+    },
+    "term_bank_205.json": {
+      "byteCount": 2162611,
+      "sha256": "5a5386484f10dd6ffcc47a5e5b07758b3a5c6ec05da4fc4de51ebdaee6564860",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_205.json"
+    },
+    "term_bank_206.json": {
+      "byteCount": 2065283,
+      "sha256": "058e9bd3ae7fc277e0904d68433878fe7a0164c360733d21745cae31dc5f0be0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_206.json"
+    },
+    "term_bank_207.json": {
+      "byteCount": 2024468,
+      "sha256": "f9821790f9bf72e568fa51f1bf315fe9b318280d823b8fcfd7541cbba9f31087",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_207.json"
+    },
+    "term_bank_208.json": {
+      "byteCount": 2184270,
+      "sha256": "2e84aff23f336f1b903b8f88ce933da6a59953742e915f1be328eb057baebf27",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_208.json"
+    },
+    "term_bank_209.json": {
+      "byteCount": 2073786,
+      "sha256": "16b0ad4b5b424eebfe19842c69d56a8075fdc6998afcb2823448a544193fcd2b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_209.json"
+    },
+    "term_bank_21.json": {
+      "byteCount": 2907150,
+      "sha256": "a262b2028a3345c1b394981524f96e661ed65998ef68458c2a6394d1b68fdf9c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_21.json"
+    },
+    "term_bank_210.json": {
+      "byteCount": 1973311,
+      "sha256": "146f692bc55e3d88c898aecf04ad54b92babf063c754eca4be30e7e6d7cc72bd",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_210.json"
+    },
+    "term_bank_211.json": {
+      "byteCount": 2027094,
+      "sha256": "7058fff1959ff2efe3c4c7fa2b332944a353813e119d22cd88ecf642f6246197",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_211.json"
+    },
+    "term_bank_212.json": {
+      "byteCount": 2114740,
+      "sha256": "281a83922bb6af3ed9996a73565c6354882919189e3ede15ce487692e197bd25",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_212.json"
+    },
+    "term_bank_213.json": {
+      "byteCount": 2126852,
+      "sha256": "9a646221f61466b88faefae9ecfadcb0293cb17425c98aa1dde51ea15b7b3e07",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_213.json"
+    },
+    "term_bank_214.json": {
+      "byteCount": 1080818,
+      "sha256": "6461aab96a231c58611724a92cf03a045c71c8d67e7ac26a22ba963a3e9c885f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_214.json"
+    },
+    "term_bank_22.json": {
+      "byteCount": 2811179,
+      "sha256": "61047ebf41b5ac5fd426ee5ae7bf7619d0e0e703d39bc538ff104344dd136f85",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_22.json"
+    },
+    "term_bank_23.json": {
+      "byteCount": 2926425,
+      "sha256": "b81f26a6018a3f6a295b72081b4c0c306da696a298b9e1bc42736ce71f0b29bf",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_23.json"
+    },
+    "term_bank_24.json": {
+      "byteCount": 2976406,
+      "sha256": "363ce3cb0805751fd9f6a60ebcfe3c281b4c4b14087741463f216869754381e4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_24.json"
+    },
+    "term_bank_25.json": {
+      "byteCount": 2676680,
+      "sha256": "a786c250c48d0fe088af954f5925756fc70b24321c9dac59a9d541e4892fe535",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_25.json"
+    },
+    "term_bank_26.json": {
+      "byteCount": 3011568,
+      "sha256": "812172fa1d6920b2abe491fb08af9afad740bc0188f1741bf90d862f6a8310f0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_26.json"
+    },
+    "term_bank_27.json": {
+      "byteCount": 3041870,
+      "sha256": "13a3707b12d3f1482f83f978f62b247e042abf11c908c08c25efc65123003ba4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_27.json"
+    },
+    "term_bank_28.json": {
+      "byteCount": 3065549,
+      "sha256": "33251a962e9e2943ca21725a5453384c787310e2e3bc1c3146bb1f30bf6ee7fc",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_28.json"
+    },
+    "term_bank_29.json": {
+      "byteCount": 2897094,
+      "sha256": "275de363a2fcdc51e50dee1424041d9d8d01f2d264e4a787fb848b9b731bd22c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_29.json"
+    },
+    "term_bank_3.json": {
+      "byteCount": 2648963,
+      "sha256": "a98b1693a8cb415c87e5c79f7b5b99d00517c8e248696c505cab52ca8192c852",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_3.json"
+    },
+    "term_bank_30.json": {
+      "byteCount": 2857954,
+      "sha256": "1dd8ec0a3234a679498d66d7aa1f2fa21b3b96214d8223154d27b47c80e1454d",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_30.json"
+    },
+    "term_bank_31.json": {
+      "byteCount": 3130548,
+      "sha256": "9f40da946fcd2248a4ab10601888e7225ee1231a30a3ab391e833ee85c6db066",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_31.json"
+    },
+    "term_bank_32.json": {
+      "byteCount": 3121326,
+      "sha256": "930e5586d2cbdd5cd9040d0cedf865eacad149466ff56ae9f8c917182340fefa",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_32.json"
+    },
+    "term_bank_33.json": {
+      "byteCount": 2886918,
+      "sha256": "bd672df301a1dbd4114eef42f73e0cf0d8314bf8dbd93874c263563d1a936f86",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_33.json"
+    },
+    "term_bank_34.json": {
+      "byteCount": 2838352,
+      "sha256": "2f1bc84699b43c202da831885c864c775319aa96196104d4f6b386395c0920ed",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_34.json"
+    },
+    "term_bank_35.json": {
+      "byteCount": 2980485,
+      "sha256": "de50a89ce84bcf384273bf4ae5181fc8c27fa11617cfb75bef032836ace01f9d",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_35.json"
+    },
+    "term_bank_36.json": {
+      "byteCount": 2864354,
+      "sha256": "0175d908eb32d04dbcf5023323905902e1514ddbe9fbe9407ec218f10cc61d8b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_36.json"
+    },
+    "term_bank_37.json": {
+      "byteCount": 2951279,
+      "sha256": "47e79f25895fd38c213f4845f5b06e65ab9ad77519ac978a80119117736b373b",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_37.json"
+    },
+    "term_bank_38.json": {
+      "byteCount": 3043702,
+      "sha256": "a16312da36904a4f624a56ed77c03e9fff0b5e5bce040ff1b1a1e0f80bd8817c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_38.json"
+    },
+    "term_bank_39.json": {
+      "byteCount": 3079475,
+      "sha256": "dda37f319c12f2fca0218aeffc6ae2fc3c6ccdc3a5430d6921c04a96180c3903",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_39.json"
+    },
+    "term_bank_4.json": {
+      "byteCount": 2731180,
+      "sha256": "a99cdce0e90ba588c10148b1ab94b63e6f5b80bb6586ed7fa88551f90b466605",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_4.json"
+    },
+    "term_bank_40.json": {
+      "byteCount": 2848015,
+      "sha256": "5bfdcde691295dd45f28540dfae33d0bef9779219b495f9dcc11985b9256a356",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_40.json"
+    },
+    "term_bank_41.json": {
+      "byteCount": 3040430,
+      "sha256": "45b33ecc591130546624df9ae97036a7902af38ae522d483f96721bd8c7d653e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_41.json"
+    },
+    "term_bank_42.json": {
+      "byteCount": 2631583,
+      "sha256": "cda5876fe6f930ab3b5defba13869b41fb6be9731c1914f7bfd80f335dfccc7e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_42.json"
+    },
+    "term_bank_43.json": {
+      "byteCount": 3122363,
+      "sha256": "d16df5eebf6452462daa75fd2b81d255ac06d6f4388e1fe4230a504c2f78266a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_43.json"
+    },
+    "term_bank_44.json": {
+      "byteCount": 2885343,
+      "sha256": "b0f26b79d35e39e21f6707432552a4d738f95edf1469ab8bdcaf320b7afedd27",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_44.json"
+    },
+    "term_bank_45.json": {
+      "byteCount": 2936885,
+      "sha256": "c3780500b41c07f50ae827192251e928f17fe6223a09c36f399fb4e91d27e582",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_45.json"
+    },
+    "term_bank_46.json": {
+      "byteCount": 2777229,
+      "sha256": "907887707b92d446636ee1a787818dba408a9e0d3afcd391acb1bc2df2f2f332",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_46.json"
+    },
+    "term_bank_47.json": {
+      "byteCount": 2860603,
+      "sha256": "2ebf0bf2ac67804a252e05cc8ae6993db498462fe408fa2f14456aa964656ee4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_47.json"
+    },
+    "term_bank_48.json": {
+      "byteCount": 2909735,
+      "sha256": "faba2df9baab4902589ab3925607180f318de3450e946919e4cfbd7fb1bdeb58",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_48.json"
+    },
+    "term_bank_49.json": {
+      "byteCount": 3208824,
+      "sha256": "759938ba318325266ead25218a183b94ef1df2252020e5b59f9797bc55b807ce",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_49.json"
+    },
+    "term_bank_5.json": {
+      "byteCount": 2573298,
+      "sha256": "5d2d1def93c1a7508114794b294113d22caebcb12f8faa1385e046af1c084231",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_5.json"
+    },
+    "term_bank_50.json": {
+      "byteCount": 2733990,
+      "sha256": "f560a2bf16bacb0344e8d6d75083e5f66b5ccdaba28c267118c988267f19b040",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_50.json"
+    },
+    "term_bank_51.json": {
+      "byteCount": 2769706,
+      "sha256": "7fcdf9524f9ca9169d63f4a8cabf31de83feb9c90f7a51b9234297dc676159f4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_51.json"
+    },
+    "term_bank_52.json": {
+      "byteCount": 3294791,
+      "sha256": "110727da0afa8d59382744c495e7960862dd6660007dbd3659789138a6bc9766",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_52.json"
+    },
+    "term_bank_53.json": {
+      "byteCount": 4308565,
+      "sha256": "a67b84c65859a19126f3e17e49e9da12bca0377ea7f661ca5e90ba395a111c7a",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_53.json"
+    },
+    "term_bank_54.json": {
+      "byteCount": 5016102,
+      "sha256": "89b3f575255f2b22c2da2640b89b5f2874ac9ab58e5ea01aeef441732c630c9c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_54.json"
+    },
+    "term_bank_55.json": {
+      "byteCount": 4157590,
+      "sha256": "a36e0df2f9ae6ecfa35d4b920576bc7cdca382df5e8dab118f55603c42724d57",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_55.json"
+    },
+    "term_bank_56.json": {
+      "byteCount": 3747819,
+      "sha256": "dcffeb61d936cb79f3fa0bd1c18fde8e67ebb0b41c4a9e81ddd1516010872eb4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_56.json"
+    },
+    "term_bank_57.json": {
+      "byteCount": 4024173,
+      "sha256": "fead60a633fdc0300158156c8e386724712c3cbe7d320dc8715120b0c7c35201",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_57.json"
+    },
+    "term_bank_58.json": {
+      "byteCount": 3938182,
+      "sha256": "9869eeae5d2c905baeec64ac1754cf209ba4432ffa8bdb7e1edc1d0adf610a32",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_58.json"
+    },
+    "term_bank_59.json": {
+      "byteCount": 3242191,
+      "sha256": "43866d93749f58f86a120c0efa4bb456a9b93057327b980b973018020c980243",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_59.json"
+    },
+    "term_bank_6.json": {
+      "byteCount": 2670880,
+      "sha256": "5cea077a0531d4c197af4fc8d8e872372678ac1cff27183777db32b939da0fe6",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_6.json"
+    },
+    "term_bank_60.json": {
+      "byteCount": 2386029,
+      "sha256": "f4f66267e5d6b89a55f199db3381a397088c32527fdbfd465c07b2909d152ded",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_60.json"
+    },
+    "term_bank_61.json": {
+      "byteCount": 3097722,
+      "sha256": "1c3de97e0a11c3a7727e0c8cdfb152f4365e6de5e323338a29595a2fec3ddb06",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_61.json"
+    },
+    "term_bank_62.json": {
+      "byteCount": 2387539,
+      "sha256": "63a7a3fa8ff9864e00a435d119751f3f45e2c8966b26290a8611fb94bd8a1fca",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_62.json"
+    },
+    "term_bank_63.json": {
+      "byteCount": 2605311,
+      "sha256": "31eed2deee579ff3fc3bf263d9665bf23909e5dfcc544755605212b5a1a62d79",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_63.json"
+    },
+    "term_bank_64.json": {
+      "byteCount": 2624928,
+      "sha256": "e97a7b1efe415cefe9357b96319ff50d5788e935083ddc15b830450c72fd7e12",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_64.json"
+    },
+    "term_bank_65.json": {
+      "byteCount": 2008906,
+      "sha256": "76930c82fd2b0770d167d9bb864ed8746fb2b284a19c4f82ba87986ee1547f77",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_65.json"
+    },
+    "term_bank_66.json": {
+      "byteCount": 2006821,
+      "sha256": "344c586362e8d92db2c99fffc0836a23eb91c1e26c379c664e8d96f0640187bc",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_66.json"
+    },
+    "term_bank_67.json": {
+      "byteCount": 2192933,
+      "sha256": "18600cdff1d59ade0f5e0fa5ae125c82bf9a3088e8e55a0e70fe0b2b799787f9",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_67.json"
+    },
+    "term_bank_68.json": {
+      "byteCount": 1982985,
+      "sha256": "d4c9a00af3eb85fceb2e40500c5feef5f3a38527e49d7100af89cb8f416ea1b2",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_68.json"
+    },
+    "term_bank_69.json": {
+      "byteCount": 1996422,
+      "sha256": "5d648b4c8f33343ea62c317e8861cf6b1a64980f452c8bff3ebc0d86f220fbd0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_69.json"
+    },
+    "term_bank_7.json": {
+      "byteCount": 2737638,
+      "sha256": "a38258ae11a6cff29214c8010dcd120d88bdc25146215a477da839a013becefe",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_7.json"
+    },
+    "term_bank_70.json": {
+      "byteCount": 2169984,
+      "sha256": "25fd5e10440b5bf11c9ef15bfc3dd6480c8f2ffd01828c3554dc4d19ea6b94d8",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_70.json"
+    },
+    "term_bank_71.json": {
+      "byteCount": 2028612,
+      "sha256": "f61a6896d1fbe5d6284b59e3f1606123a3bc070a12140785eb39fa8fcad370b6",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_71.json"
+    },
+    "term_bank_72.json": {
+      "byteCount": 2001534,
+      "sha256": "043dd749efc5b3e5ddfd696bdcb82133c46ca9b195d6f37715d75a2faa01f6fb",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_72.json"
+    },
+    "term_bank_73.json": {
+      "byteCount": 2069614,
+      "sha256": "8fa32bf966d0cba92c069ab394ab06a14a53a1e834823d1a7358f697ba9a0f51",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_73.json"
+    },
+    "term_bank_74.json": {
+      "byteCount": 2066361,
+      "sha256": "06d859c26e8508b34d52ceb57e7daea22f9502e48f9277dac2375fb8d656ba77",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_74.json"
+    },
+    "term_bank_75.json": {
+      "byteCount": 2168539,
+      "sha256": "c7530ed9beb639546bed6e645b345f91026de894fbe38f55c7e25f9a2f185451",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_75.json"
+    },
+    "term_bank_76.json": {
+      "byteCount": 2048662,
+      "sha256": "c2b4904c1a17209a8af42e5df89a26c72fcbebe2cf81db826bff7278303b8e78",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_76.json"
+    },
+    "term_bank_77.json": {
+      "byteCount": 1975978,
+      "sha256": "fd0d7b3e161ee09a5523fa4af81c41393e8f1668bfd5bae7a09684ed231cb7f4",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_77.json"
+    },
+    "term_bank_78.json": {
+      "byteCount": 2083812,
+      "sha256": "cad40891c3893ff7d7e3d530d6dd14a4e0191a173eb20119057d02ad6a7b037c",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_78.json"
+    },
+    "term_bank_79.json": {
+      "byteCount": 1936930,
+      "sha256": "1fd8fea11abed59d176c5338b60f8dff4833769e04e0bcce9d703e0207bcb1da",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_79.json"
+    },
+    "term_bank_8.json": {
+      "byteCount": 2735876,
+      "sha256": "f5eef4973573882f0845ddc988c11df1ea644c88bdef8e3bd7ad4b0eb92de55f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_8.json"
+    },
+    "term_bank_80.json": {
+      "byteCount": 2162575,
+      "sha256": "259706be3566dfa70b30ea2849279bf481935945ea955f5dd2df078f8f652948",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_80.json"
+    },
+    "term_bank_81.json": {
+      "byteCount": 2095968,
+      "sha256": "8c33bd55a2be59d834dc1d37f04e252b04fc9c3a64c7c27d76dee944bfe74b24",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_81.json"
+    },
+    "term_bank_82.json": {
+      "byteCount": 2379641,
+      "sha256": "36648157ae30f6c7bf51f5136fa0e7ae34969095b84f60017165cdaea82766d5",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_82.json"
+    },
+    "term_bank_83.json": {
+      "byteCount": 2466404,
+      "sha256": "869a70184d1eda22708113d227fc524c99ecd5342356661aa1ad5e333b998a31",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_83.json"
+    },
+    "term_bank_84.json": {
+      "byteCount": 2043069,
+      "sha256": "a5e385f9fd74a1e23e6762617f742eee43e6d022bdbccc341fb7cd01bc35caf3",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_84.json"
+    },
+    "term_bank_85.json": {
+      "byteCount": 1951920,
+      "sha256": "d71adfcc66f34ef429a35416d7094c164d38e1d4389acfbedd06fd539508160f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_85.json"
+    },
+    "term_bank_86.json": {
+      "byteCount": 2118397,
+      "sha256": "b1d2b3fde2b2a7bdb69045fab72dc5e39b12b5c4af160a49f450b8fb8efcdb97",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_86.json"
+    },
+    "term_bank_87.json": {
+      "byteCount": 2141079,
+      "sha256": "bb932979bd97dc97826ef549bfd184bc9be8553e8022fe6514256f3f97a86ca0",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_87.json"
+    },
+    "term_bank_88.json": {
+      "byteCount": 2214525,
+      "sha256": "0e4a3a54ae247da2c3554af68d84bf98f5c1127b4d9ff3607a7388866cfc753e",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_88.json"
+    },
+    "term_bank_89.json": {
+      "byteCount": 1799246,
+      "sha256": "e769cb6b434cd1022a731579585962db4a2e35aa311aa14fcb5e594665291020",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_89.json"
+    },
+    "term_bank_9.json": {
+      "byteCount": 2635766,
+      "sha256": "dd9e743e080d11562b5973de112c83ca17c1d90ca5afdbb08f183d3c9d626b8f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_9.json"
+    },
+    "term_bank_90.json": {
+      "byteCount": 2266773,
+      "sha256": "c1bc5f4c0b8f2e7578ae358894f58db55b3ec8a4403a96a72b81d760e88e3fa6",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_90.json"
+    },
+    "term_bank_91.json": {
+      "byteCount": 1921874,
+      "sha256": "afc881acdaf2c8fb5f70ec9eaa85fddb6aef9c44fd1ff09520ffbd1550d06819",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_91.json"
+    },
+    "term_bank_92.json": {
+      "byteCount": 1721737,
+      "sha256": "8b96545d3653c65977d8fa472c04723193386698d9fd938c72f99bef542034de",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_92.json"
+    },
+    "term_bank_93.json": {
+      "byteCount": 2343055,
+      "sha256": "bf30909f2db3232808ef0c6adccd662f3c69db7ffc3ed8f9247590a86d541b4d",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_93.json"
+    },
+    "term_bank_94.json": {
+      "byteCount": 1772788,
+      "sha256": "d543ceceb582e2ef5038f7dcaaf4f05deec23110fc42c121f26058844f9d7a13",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_94.json"
+    },
+    "term_bank_95.json": {
+      "byteCount": 2872030,
+      "sha256": "c433f9dddaefefacb042e1eb376f8fad04702b8a6f5b921ff13efa98b7cd05db",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_95.json"
+    },
+    "term_bank_96.json": {
+      "byteCount": 3152383,
+      "sha256": "bcbda38fa58b913ec308d79b29f584b94cf8d41bb3841f4898295564cf669b04",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_96.json"
+    },
+    "term_bank_97.json": {
+      "byteCount": 2446818,
+      "sha256": "38f5c1ec174e208f716471673af77e033ae4f4204c148ab2d79f569affe10cff",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_97.json"
+    },
+    "term_bank_98.json": {
+      "byteCount": 2592309,
+      "sha256": "193d3a572b5103434b670bb6fd04cecdd6458b18815e1222484c8429d6742134",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_98.json"
+    },
+    "term_bank_99.json": {
+      "byteCount": 1770687,
+      "sha256": "ae14a664e0ec029d0e7973576c435305ce439ddc2b1305f57c7b740a6200542f",
+      "url": "https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten/35308928ed5cffb3a8b2f2709a54b59b896748cf/raw/jitendex-yomitan/term_bank_99.json"
     }
   },
-  "source": "hjgp",
-  "note": "日本語文型辞典 monolingual Yomitan banks from HuangAntimony/Nihongo-Bunkei-Jiten"
+  "provenance": {
+    "producer": "https://www.mefat.review/bunkei.ziten.html",
+    "upstreamCommit": "35308928ed5cffb3a8b2f2709a54b59b896748cf",
+    "upstreamRepository": "https://github.com/HuangAntimony/Nihongo-Bunkei-Jiten"
+  },
+  "source": "hjgp"
 }

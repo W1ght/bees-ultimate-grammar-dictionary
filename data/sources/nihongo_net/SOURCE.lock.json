@@ -1,35 +1,51 @@
 {
-  "acquiredAt": "2026-09-12T21:41:39Z",
+  "acquiredAt": "2026-09-13T15:47:30Z",
   "files": {
+    "changelog.txt": {
+      "byteCount": 622,
+      "sha256": "0a5cca86d96edf59ca84364efcf7300286b7a8e73061a9f75a003d23e001500d",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/changelog.txt"
+    },
     "index.json": {
-      "byteCount": 415,
-      "sha256": "7708a7160d5af473e0b3270e2f236fab432def77a017e995629b0c924a4e6fc5"
+      "byteCount": 467,
+      "sha256": "8b3002f6ae5009f9228ad987277bdc9c1358c803a910eb92d9aaa4217c654484",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/index.json"
     },
     "term_bank_1.json": {
-      "byteCount": 219721,
-      "sha256": "2616f1efeb67ef95fb7ae1bb4dde50103b0e0794bee24277c973171c8967640e"
+      "byteCount": 278120,
+      "sha256": "29a7738146ec0087b568cce38831bd2a7048dacc19c1031dac0626695fb7e329",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/term_bank_1.json"
     },
     "term_bank_2.json": {
-      "byteCount": 279899,
-      "sha256": "92cbda665a829c857cd04211e09c72cac97c12a1a378900ed3ff3a4b56c795fc"
+      "byteCount": 370636,
+      "sha256": "2103e3236fc2a9aae25a5c0809e6afcadbe2b846e3bd90ddc151ab3376bb8aff",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/term_bank_2.json"
     },
     "term_bank_3.json": {
-      "byteCount": 321127,
-      "sha256": "c2c0c4ee3ca41691615e6efb118e54fcc31d96caf6f289a8a660bf96bcb08cd4"
+      "byteCount": 337155,
+      "sha256": "9127819daeffe3c547e8b2bd4e4f27f48d359c80efb9770df69c1f94299324c5",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/term_bank_3.json"
     },
     "term_bank_4.json": {
-      "byteCount": 193265,
-      "sha256": "9e7fbfde1b744b1169d0e6464f840b0c4895a1ff7d3a19ff8147e8bf95b3b023"
+      "byteCount": 148076,
+      "sha256": "0c533491a7f6609ea6cc6cb3a720df35a739eda291eb370b7201ac7719c2bc8c",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/term_bank_4.json"
     },
     "term_bank_5.json": {
-      "byteCount": 71688,
-      "sha256": "a7ad5113c4f9832c91449ff71110b8eb66a08f570420b3bb3737eb2d0148ad43"
+      "byteCount": 59455,
+      "sha256": "ebf04a548cd944ff06f5d6b39dcc3423cec162ccf427c11d970e13c49460cbfb",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/term_bank_5.json"
+    },
+    "term_bank_6.json": {
+      "byteCount": 9403,
+      "sha256": "c589797e1aa2b1f131696ce3f4e965fcfa6b6965545a2433657ff706043d5ff8",
+      "url": "https://raw.githubusercontent.com/aiko-tanaka/Grammar-Dictionaries/4314e00f59140364ac75be264a6beb910af824d8/nihongo_kyoushi/term_bank_6.json"
     }
   },
   "provenance": {
-    "method": "scraped",
     "producer": "https://nihongokyoshi-net.com/jlpt-grammars/",
-    "scrapedAt": "2026-09-12"
+    "upstreamCommit": "4314e00f59140364ac75be264a6beb910af824d8",
+    "upstreamRepository": "https://github.com/aiko-tanaka/Grammar-Dictionaries"
   },
   "source": "nihongo_net"
 }

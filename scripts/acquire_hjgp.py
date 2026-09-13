@@ -21,6 +21,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import datetime
 import hashlib
 import json
@@ -34,18 +35,20 @@ SOURCES_DIR = REPO_ROOT / "data" / "sources"
 
 USER_AGENT = "bees-ultimate-grammar-dictionary/acquire (+local build)"
 TIMEOUT_SECONDS = 120
-MAX_RESPONSE_BYTES = 32 * 1024 * 1024
+MAX_RESPONSE_BYTES = 256 * 1024 * 1024
 
 HJGP_COMMIT = "35308928ed5cffb3a8b2f2709a54b59b896748cf"
 HJGP_RAW = (
     f"https://raw.githubusercontent.com/HuangAntimony/Nihongo-Bunkei-Jiten"
-    f"/{HJGP_COMMIT}/raw/mefat.review"
+    f"/{HJGP_COMMIT}/raw/jitendex-yomitan"
 )
 
+# The extractor consumes the published Yomitan banks.  The repository also
+# contains the producer's internal dict/toc/trans files, but those are not the
+# locked input used by this project and do not have the Yomitan row shape.
 FILES = {
-    "dict.json": f"{HJGP_RAW}/dict.json",
-    "toc.json": f"{HJGP_RAW}/toc.json",
-    "trans.json": f"{HJGP_RAW}/trans.json",
+    f"term_bank_{number}.json": f"{HJGP_RAW}/term_bank_{number}.json"
+    for number in range(1, 215)
 }
 
 
@@ -62,16 +65,28 @@ def fetch(url: str) -> bytes:
 
 def acquire(*, force: bool) -> dict[str, object]:
     directory = SOURCES_DIR / "hjgp"
+    if force:
+        for path in directory.glob("term_bank_*.json"):
+            path.unlink()
     directory.mkdir(parents=True, exist_ok=True)
+
+    # Raw GitHub serves each bank independently.  Fetch concurrently so a
+    # 214-bank source does not take several minutes on a high-latency link.
+    def fetch_one(item: tuple[str, str]) -> tuple[str, bytes]:
+        relative_path, url = item
+        local = directory / relative_path
+        if not force and local.is_file():
+            return relative_path, local.read_bytes()
+        return relative_path, fetch(url)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as pool:
+        extracted = dict(pool.map(fetch_one, sorted(FILES.items())))
 
     files: dict[str, dict[str, object]] = {}
     for relative_path, url in sorted(FILES.items()):
         target = directory / relative_path
-        if target.is_file() and not force:
-            payload = target.read_bytes()
-        else:
-            payload = fetch(url)
-            target.write_bytes(payload)
+        payload = extracted[relative_path]
+        target.write_bytes(payload)
         files[relative_path] = {
             "sha256": hashlib.sha256(payload).hexdigest(),
             "byteCount": len(payload),

@@ -1,76 +1,80 @@
 # Bee's Ultimate Grammar Dictionary — 中文版
 
-A Chinese-first unified Japanese grammar dictionary for [Yomitan](https://github.com/yomidevs/yomitan). It combines **12 sources** into a single installable dictionary with unified lookup and per-source attribution.
+这是一个以中文为主的日语语法统一词典，适用于 [Yomitan](https://github.com/yomidevs/yomitan)。它将 **12 个来源**合并为一个可安装的词典，并保留统一检索和逐来源署名。
 
-This is an automatically updated fork of [bee-san/bees-ultimate-grammar-dictionary](https://github.com/bee-san/bees-ultimate-grammar-dictionary).
+本项目是 [bee-san/bees-ultimate-grammar-dictionary](https://github.com/bee-san/bees-ultimate-grammar-dictionary) 的自动更新分支。
 
-## Language policy
+## 语言处理规则
 
-- English-only sources (DoJG, Bunpro, IMABI, and Yokubi) keep the original English and add a separately labelled Simplified Chinese translation.
-- Sources that contain Japanese or Japanese-English content keep the Japanese side and remove English explanations and example translations.
-- Locked source bytes are never edited. The language pass runs on normalized records immediately before merge, and translation results are cached by source text.
+- 纯英文来源（DoJG、Bunpro、IMABI、Yokubi）保留英文原文，并增加单独标注的简体中文翻译。
+- 含日语或日英双语内容的来源保留日语部分，删除英文解释和例句译文。
+- 已锁定的来源字节不会被修改。语言处理在合并前对规范化记录执行，翻译结果按来源文本缓存。
 
-The scheduled workflow runs every Monday, rebuilds the dictionary, validates the Yomitan ZIP, and publishes a release. To enable the Chinese translation step, add a repository secret named `OPENAI_API_KEY`; optionally set the repository variable `OPENAI_TRANSLATION_MODEL`.
+更新流程会重新构建词典、验证 Yomitan ZIP，并发布版本。翻译在本地完成后再上传发布；不依赖 GitHub Actions 在线调用翻译服务。
 
-## Install
+## 安装
 
-1. Download the latest `.zip` from [Releases](https://github.com/bee-san/bees-ultimate-grammar-dictionary/releases)
-2. In Yomitan settings, go to Dictionaries → Import
-3. Select the downloaded ZIP
+1. 从 [Releases](https://github.com/W1ght/bees-ultimate-grammar-dictionary/releases) 下载最新的 `.zip`。
+2. 在 Yomitan 设置中进入“词典 → 导入”。
+3. 选择下载的 ZIP 文件。
 
-## What's included
+## 包含内容
 
-Every grammar point shows a compact card with progressive disclosure — click to expand per-source details, extra examples, and provenance.
+每个语法点都会显示一个紧凑卡片；点击后可展开各来源详情、额外例句和来源信息。
 
-### Sources
+### 来源
 
-| Source | Name | Language | Description |
+| 来源 | 名称 | 语言 | 说明 |
 |--------|------|----------|-------------|
-| DoJG | 日本語文法辞典(全集) | EN | Dictionary of Japanese Grammar (Basic/Intermediate/Advanced) |
-| HJGP | 日本語文型辞典 | JA | A Handbook of Japanese Grammar Patterns — monolingual |
-| HJGP EN | 日本語文型辞典 英語版 | EN | A Handbook of Japanese Grammar Patterns — English edition |
-| NINJAL | 日本語文型データベース | JA | National Institute for Japanese Language and Linguistics grammar pattern database |
-| 日本語NET | JLPT文法解説まとめ | JA | JLPT grammar explanations from nihongokyoshi-net.com |
-| 絵でわかる | 絵でわかる日本語 | JA | Japanese grammar explained through illustrations |
-| Donna Toki | どんなときどう使う 日本語表現文型辞典 | EN/JA | "When and How to Use" expression pattern dictionary |
-| 日本語教師 | 毎日のんびり日本語教師 | JA/ZH | Grammar explanations for Japanese teachers |
-| Bunpro | Bunpro Grammar Reference | EN | SRS-based grammar reference |
-| 文法 | 文法 | JA | Personal grammar Anki deck |
-| IMABI | IMABI | EN | Comprehensive Japanese grammar lessons (modern + classical) |
-| Yokubi | Yokubi | EN | The Common Grammar Guide (yoku.bi) |
+| DoJG | 日本語文法辞典(全集) | EN | 《日语语法辞典》（基础/中级/高级） |
+| HJGP | 日本語文型辞典 | JA | 《日语句型辞典》——日语单语版 |
+| HJGP EN | 日本語文型辞典 英語版 | EN | 《日语句型辞典》——英文版 |
+| NINJAL | 日本語文型データベース | JA | 日本国立国语研究所日语句型数据库 |
+| 日本語NET | JLPT文法解説まとめ | JA | 来自 nihongokyoshi-net.com 的 JLPT 语法解释 |
+| 絵でわかる | 絵でわかる日本語 | JA | 通过插图讲解日语语法 |
+| Donna Toki | どんなときどう使う 日本語表現文型辞典 | EN/JA | “何时以及如何使用”表达句型辞典 |
+| 日本語教師 | 毎日のんびり日本語教師 | JA/ZH | 面向日语教师的语法解释 |
+| Bunpro | Bunpro Grammar Reference | EN | 基于 SRS 的语法参考资料 |
+| 文法 | 文法 | JA | 个人语法 Anki 卡组 |
+| IMABI | IMABI | EN | 全面的日语语法课程（现代语和古典语） |
+| Yokubi | Yokubi | EN | Common Grammar Guide（yoku.bi） |
 
-### What makes this different from installing them separately?
+### 与分别安装各词典相比有什么不同？
 
-- **Single lookup**: one dictionary, one card per grammar point — not 12 separate popups
-- **Merged entries**: when multiple sources describe the same grammar point, their contributions are merged into one card with per-source attribution
-- **Deduplication**: the keymap stage aligns entries across sources so you don't see the same point repeated
-- **Progressive disclosure**: compact by default, expand any source's details on demand
+- **统一检索**：一个词典、每个语法点一张卡片，不会弹出 12 个独立窗口。
+- **合并词条**：多个来源描述同一语法点时，合并到一张卡片中，并分别标明来源。
+- **去重对齐**：keymap 阶段会对齐不同来源的词条，减少重复显示。
+- **渐进式展开**：默认显示紧凑卡片，需要时再展开任意来源的详细内容。
 
-## Building from source
+## 从源码构建
 
 ```
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-make all
+python scripts/apply_translation_chunks.py
+PYTHONPATH=src python scripts/localize_chinese.py --offline
+PYTHONPATH=src python -m bugd.cli --no-reading-corrections all
 ```
 
-The pipeline stages:
+词典更新在本地完成后再推送到 GitHub。`.github/workflows/update-dictionary.yml` 仅提供手动发布入口，不会自动同步上游或在线翻译。
 
-1. **extract** — read each source's locked data into normalized `GrammarPoint` records
-2. **keymap** — align entries across sources (which rows are the same grammar point?)
-3. **merge** — combine aligned entries into a unified dataset
-4. **build** — render the Yomitan dictionary ZIP
-5. **validate** — verify against Yomitan's JSON schemas
+流水线阶段：
 
-## Adding a new source
+1. **extract** — 将每个来源的锁定数据读取为规范化的 `GrammarPoint` 记录。
+2. **keymap** — 对齐不同来源的词条，判断哪些记录属于同一个语法点。
+3. **merge** — 将已对齐的记录合并为统一数据集。
+4. **build** — 生成 Yomitan 词典 ZIP。
+5. **validate** — 根据 Yomitan JSON Schema 进行验证。
 
-1. Place source data in `data/sources/<name>/` with a `SOURCE.lock.json`
-2. Write an extractor in `src/bugd/sources/<name>.py` (see existing extractors for patterns)
-3. Register it with `@register_extractor`
-4. Add to `SOURCE_PRECEDENCE` in `keymap.py` and `_SOURCE_EXPLANATION_LANG` in `banks.py`
-5. Run `make all`
+## 添加新来源
 
-## License
+1. 将来源数据放入 `data/sources/<name>/`，并提供 `SOURCE.lock.json`。
+2. 在 `src/bugd/sources/<name>.py` 中编写提取器，可参考现有提取器。
+3. 使用 `@register_extractor` 注册提取器。
+4. 将来源加入 `keymap.py` 的 `SOURCE_PRECEDENCE` 和 `banks.py` 的 `_SOURCE_EXPLANATION_LANG`。
+5. 执行 `make all`。
 
-Dictionary content retains its original licensing from each source. The build pipeline code is MIT.
+## 许可证
+
+词典内容继续遵循各来源原有的许可协议；构建流水线代码采用 MIT 许可证。

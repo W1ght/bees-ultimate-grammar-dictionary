@@ -264,15 +264,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--extracted-dir", type=pathlib.Path, default=pathlib.Path("data/extracted"))
     parser.add_argument("--cache", type=pathlib.Path, default=pathlib.Path("translation-cache.json"))
     parser.add_argument("--model", default=os.environ.get("OPENAI_TRANSLATION_MODEL") or "gpt-4o-mini")
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="apply existing translations and the Japanese-only policy without calling an API",
+    )
     args = parser.parse_args(argv)
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
-    if not api_key:
+    if not api_key and not args.offline:
         raise SystemExit("OPENAI_API_KEY is required to create the Chinese side of English-only sources")
     global _CURRENT_CACHE_PATH
     _CURRENT_CACHE_PATH = args.cache
     cache = load_cache(args.cache)
     total = 0
     for path in sorted(args.extracted_dir.glob("*.json")):
+        if args.offline and path.stem in ENGLISH_ONLY:
+            continue
         total += localize_file(path, cache=cache, api_key=api_key, model=args.model)
     save_cache(args.cache, cache)
     print(f"[translate] localized {total} record/field changes")
