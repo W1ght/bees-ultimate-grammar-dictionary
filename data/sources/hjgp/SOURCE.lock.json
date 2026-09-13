@@ -1,26 +1,23 @@
 {
-  "acquiredAt": "2026-09-12T20:41:03Z",
+  "acquiredAt": "2026-09-13T07:18:29+00:00Z",
   "files": {
     "index.json": {
       "byteCount": 663,
       "sha256": "94125e227743b56f95cfd427bdbe141ffb29193274d09636fb4978918cc66e7f"
     },
-    "styles.css": {
-      "byteCount": 3297,
-      "sha256": "b9d957f2e123fc50b4f161ae44055fb6b1f7514e7a6824a275b4513ae8eab280"
-    },
     "tag_bank_1.json": {
       "byteCount": 116,
       "sha256": "f883b2aded1add885cfb29d1670abff9e6a38ec2dd0c2de038a296ed9b38bb8d"
+    },
+    "styles.css": {
+      "byteCount": 3297,
+      "sha256": "b9d957f2e123fc50b4f161ae44055fb6b1f7514e7a6824a275b4513ae8eab280"
     },
     "term_bank_1.json": {
       "byteCount": 15978649,
       "sha256": "9133770ddc59ebe4218a869e5fbce358f547964c442dacceeba208e39b66f90e"
     }
   },
-  "provenance": {
-    "producer": "https://www.mefat.review/bunkei.ziten.html",
-    "upstreamRepository": "https://github.com/HuangAntimony/Nihongo-Bunkei-Jiten"
-  },
-  "source": "hjgp"
+  "source": "hjgp",
+  "note": "日本語文型辞典 monolingual Yomitan banks from HuangAntimony/Nihongo-Bunkei-Jiten"
 }
