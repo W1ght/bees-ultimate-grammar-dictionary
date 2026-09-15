@@ -24,8 +24,14 @@ from bugd.sources.imabi import (
     skip_reason,
 )
 
+from conftest import requires_source  # noqa: E402
+
 _REPO = pathlib.Path(__file__).resolve().parents[1]
 _SOURCE_DIR = _REPO / "data" / "sources" / "imabi"
+
+# Every test here reads the locked IMABI pages. Without them the extractor
+# raises SourceLockError, which is an unacquired checkout, not a defect.
+pytestmark = requires_source("imabi")
 
 
 @pytest.fixture(scope="module")

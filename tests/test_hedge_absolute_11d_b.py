@@ -34,10 +34,9 @@ from bugd.sources.nihongo_no_sensei import NihongoNoSenseiExtractor
 REPO = pathlib.Path(__file__).resolve().parents[1]
 SOURCES = REPO / "data" / "sources"
 
-_needs_sources = pytest.mark.skipif(
-    not (SOURCES / "edewakaru" / "SOURCE.lock.json").is_file(),
-    reason="locked source data not present in this checkout",
-)
+from conftest import requires_source  # noqa: E402
+
+_needs_sources = requires_source("edewakaru")
 
 _EXTRACTORS = {
     "edewakaru": EdewakaruExtractor,

@@ -131,6 +131,7 @@ def main() -> int:
         )
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
     print(f"[reading-audit] checked {checked} kanji-bearing readings")

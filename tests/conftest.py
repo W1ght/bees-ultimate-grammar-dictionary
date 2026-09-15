@@ -31,6 +31,90 @@ _GUARDED_ARTIFACTS = (
 _REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
+def source_is_acquired(name: str) -> bool:
+    """True when this checkout holds the locked BYTES of one source.
+
+    The guards used to ask whether `SOURCE.lock.json` was present. It always is:
+    the manifests are committed and the payloads they pin are not
+    (`test_no_acquired_source_payload_is_tracked` enforces exactly that), so on a
+    fresh clone the guards said "acquired", the extractors raised
+    `SourceLockError: locked input is missing`, and 20 tests reported as failures
+    what is simply an unacquired checkout. The manifest lists what must be on
+    disk, so ask it.
+    """
+    lock_path = _REPO / "data" / "sources" / name / "SOURCE.lock.json"
+    if not lock_path.is_file():
+        return False
+    try:
+        payload = json.loads(lock_path.read_text(encoding="utf-8"))
+        files = payload["files"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+    if not isinstance(files, dict) or not files:
+        return False
+    directory = lock_path.parent
+    return all((directory / relative).is_file() for relative in files)
+
+
+#: The EXACT source set the pinned corpus counts in `test_keymap` and
+#: `test_unify` were measured over: the six-source basis plus the four UGD-16
+#: convergence landed.
+#:
+#: A count pinned to one corpus says nothing about another, so a checkout holding
+#: a different set must SKIP those tests rather than run them. The guards used to
+#: ask only "is there an extracted corpus", so this fork -- which lacks bunpro and
+#: bunpou locally and has added hjgp's 2,000 rows -- reported `assert 8398 ==
+#: 7896` and `assert それまでだ not in unresolved`, both of which read as merge
+#: regressions and are neither.
+PINNED_CORPUS_SOURCES = frozenset(
+    {
+        "bunpou",
+        "bunpro",
+        "dojg",
+        "donna_toki",
+        "edewakaru",
+        "imabi",
+        "nihongo_net",
+        "nihongo_no_sensei",
+        "ninjal_bunkei",
+        "yokubi",
+    }
+)
+
+
+def pinned_corpus_mismatch() -> str:
+    """Why `data/extracted` is not the pinned corpus, or '' when it is."""
+    extracted = _REPO / "data" / "extracted"
+    if not extracted.is_dir():
+        return "data/extracted is absent"
+    present = {path.stem for path in extracted.glob("*.json")}
+    missing = sorted(PINNED_CORPUS_SOURCES - present)
+    extra = sorted(present - PINNED_CORPUS_SOURCES)
+    parts = []
+    if missing:
+        parts.append(f"missing {', '.join(missing)}")
+    if extra:
+        parts.append(f"unpinned {', '.join(extra)}")
+    return "; ".join(parts)
+
+
+requires_pinned_corpus = pytest.mark.skipif(
+    bool(pinned_corpus_mismatch()),
+    reason=(
+        "pinned counts were measured over a different corpus: "
+        f"{pinned_corpus_mismatch()} (run `make extract` on the pinned source set)"
+    ),
+)
+
+
+def requires_source(name: str) -> pytest.MarkDecorator:
+    """Skip marker for a test that needs one source's locked bytes on disk."""
+    return pytest.mark.skipif(
+        not source_is_acquired(name),
+        reason=f"{name} locked source bytes are not acquired in this checkout",
+    )
+
+
 def _fingerprint() -> dict[str, str | None]:
     prints: dict[str, str | None] = {}
     for name in _GUARDED_ARTIFACTS:

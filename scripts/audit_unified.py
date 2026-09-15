@@ -10,7 +10,7 @@ from bugd.unify import KIND_POINT, KIND_REDIRECT, load_extracted, load_keymap, r
 rows, labels = load_extracted(pathlib.Path("data/extracted"))
 keymap = load_keymap(pathlib.Path("data/merge/keymap.json"))
 entries = read_unified(pathlib.Path("data/merge/unified.jsonl"))
-stats = json.load(open("data/merge/unified.stats.json"))
+stats = json.load(open("data/merge/unified.stats.json", encoding="utf-8"))
 
 fail = []
 

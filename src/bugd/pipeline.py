@@ -193,7 +193,8 @@ def run_extract(
             "points": [point_to_json(point) for point in points],
         }
         (extracted_dir / f"{cls.name}.json").write_text(
-            dump_json(payload) + "\n", encoding="utf-8"
+            dump_json(payload) + "\n", encoding="utf-8",
+            newline="\n",
         )
         written[cls.name] = len(points)
     out: dict[str, object] = {
@@ -261,7 +262,7 @@ def run_merge(
         "keymapPath": str(keymap_path),
     }
     stats_path = unified_path.with_name(f"{unified_path.stem}.stats.json")
-    stats_path.write_text(dump_json(stats) + "\n", encoding="utf-8")
+    stats_path.write_text(dump_json(stats) + "\n", encoding="utf-8", newline="\n")
 
     entries = unify.to_merged_entries(unified)
     corpus = {
@@ -269,7 +270,9 @@ def run_merge(
         "entries": [entry_to_json(entry) for entry in entries],
     }
     merged_dir.mkdir(parents=True, exist_ok=True)
-    (merged_dir / MERGED_CORPUS_NAME).write_text(dump_json(corpus) + "\n", encoding="utf-8")
+    (merged_dir / MERGED_CORPUS_NAME).write_text(
+        dump_json(corpus) + "\n", encoding="utf-8", newline="\n"
+    )
     return {
         "points": len(rows),
         "entries": len(entries),

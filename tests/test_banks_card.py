@@ -1988,6 +1988,51 @@ def test_an_english_translation_line_is_subordinated_to_its_japanese():
     assert "--bugd-quiet" in body or "--bugd-muted" in body, "a translation must be quieter"
 
 
+def test_an_english_source_keeps_its_own_prose_primary():
+    """The inverse of the rule above, and what v2026.09.14.4 got wrong.
+
+    An IMABI lesson is English prose that QUOTES a lot of Japanese, so the
+    field-level `_lang_of` called all 494 of them `ja` and every English
+    paragraph inside then matched the per-line translation rule. 18,476
+    paragraphs -- IMABI's and Yokubi's entire primary explanation -- shipped
+    indented, quietened and at 0.94em, which is the exact inversion of what the
+    role is for. `_field_language` asks the dominance question of the WHOLE
+    field, which separates the two on the real corpus with no source list.
+    """
+    from bugd.banks import _field_language, _lang_of, _prose_paragraph, _source_block
+
+    lesson = (
+        "Abbreviations (略語) are very handy when words get lengthy. In fact, the "
+        "Japanese term for abbreviation is itself an abbreviation. The "
+        "non-abbreviated term is 省略語, and the chart below shows the most common "
+        "methods of abbreviation used in Japanese today."
+    )
+    # The trap: the field DOES contain Japanese, so the old classifier said `ja`.
+    assert _lang_of(lesson) == "ja"
+    assert _field_language(lesson) == "en"
+
+    # A Japanese-authored field is unaffected: its English lines stay subordinate.
+    japanese_field = "「〜くらい」は程度を表します。\nGenerally, くらい becomes ぐらい after nouns."
+    assert _field_language(japanese_field) == "ja"
+
+    node = _source_block(_point(source="imabi", explanation=lesson))[0]
+    assert node["lang"] == "en", "English prose must declare its own language"
+    paragraphs = node["content"]
+    if isinstance(paragraphs, list):
+        for paragraph in paragraphs:
+            assert "proseTranslation" not in (paragraph.get("data") or {})
+    else:
+        assert "proseTranslation" not in (node.get("data") or {})
+
+    # The per-line rule itself is unchanged for a field written in Japanese.
+    assert (
+        _prose_paragraph("Generally, くらい becomes ぐらい after nouns.", field_lang="ja")
+        .get("data", {})
+        .get("proseTranslation")
+        == ""
+    )
+
+
 def test_newline_separated_patterns_are_a_list_not_a_run_on_badge():
     """Three patterns separated by newlines must not be badged as one line.
 

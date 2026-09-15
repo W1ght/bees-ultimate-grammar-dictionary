@@ -232,6 +232,7 @@ class NinjalBunkeiExtractor(Extractor):
         path.write_text(
             "".join(dump_json(point_to_json(point)) + "\n" for point in points),
             encoding="utf-8",
+            newline="\n",
         )
 
 

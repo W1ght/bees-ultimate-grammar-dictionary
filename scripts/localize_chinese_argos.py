@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
-"""Fill missing English-to-Simplified-Chinese translations with local Argos."""
+"""Fill missing English-to-Simplified-Chinese translations with local Argos.
+
+The single-string path. `scripts/localize_chinese_argos_batch.py` is the same
+work batched; both hold Japanese, links and markup OUT of the model rather than
+replacing them with a sentinel (see `bugd.translation_quality.split_protected`),
+and both refuse to store a translation that fails the quality gate.
+"""
 
 from __future__ import annotations
 
 import argparse
+import collections
 import hashlib
 import json
 import re
+import sys
 from pathlib import Path
 
 import argostranslate.package
@@ -14,17 +22,14 @@ import argostranslate.translate
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from bugd.translation_quality import degradation, split_protected  # noqa: E402
+
 MODEL = ROOT / "work/translation-models/translate-en_zh-1_9.full.argosmodel"
 CACHE_PATH = ROOT / "translation-cache.json"
 CHUNK_DIR = ROOT / "translation-chunks"
 
-PROTECTED = re.compile(
-    r"<[^>\n]*>|https?://\S+|`[^`\n]*`|\{\{[^}\n]*\}\}|\{[^}\n]*\}|"
-    r"\[[^\]\n]{1,240}\]\([^\)\n]*\)"
-)
-JAPANESE = re.compile(
-    r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uff01-\uffef。、，．：；！？「」『』（）［］【】〔〕〈〉《》…〜～※]+"
-)
 LATIN = re.compile(r"[A-Za-z]")
 
 
@@ -37,38 +42,14 @@ def install_model() -> None:
     argostranslate.package.install_from_path(str(MODEL))
 
 
-def protect(text: str) -> tuple[str, list[str]]:
-    saved: list[str] = []
-
-    def save(match: re.Match[str]) -> str:
-        token = f"ZXQJPN{len(saved):05d}Q"
-        saved.append(match.group(0))
-        return token
-
-    text = PROTECTED.sub(save, text)
-    text = JAPANESE.sub(save, text)
-    return text, saved
-
-
-def restore(text: str, saved: list[str]) -> str:
-    for i, value in enumerate(saved):
-        text = text.replace(f"ZXQJPN{i:05d}Q", value)
-    return text
-
-
-def translate_text(text: str, translator) -> str:
-    if not isinstance(text, str) or not text.strip() or not LATIN.search(text):
-        return text
-    protected, saved = protect(text)
-    # Translate paragraph/line groups independently so Markdown structure and
-    # long IMABI pages remain stable and the local model gets manageable input.
-    pieces = re.split(r"(\n+)", protected)
+def _translate_groups(text: str, translator) -> str:
+    """Translate one English run in paragraph-sized groups, losing no character."""
     groups: list[str] = []
     buf = ""
-    for piece in pieces:
+    for piece in re.split(r"(\n+)", text):
         if piece == "":
             continue
-        if buf and len(buf) + len(piece) > 1200:
+        if buf and len(buf) + len(piece) > 600:
             groups.append(buf)
             buf = ""
         buf += piece
@@ -77,13 +58,22 @@ def translate_text(text: str, translator) -> str:
             buf = ""
     if buf:
         groups.append(buf)
+    return "".join(
+        translator.translate(group) if LATIN.search(group) else group for group in groups
+    )
+
+
+def translate_text(text: str, translator) -> str:
+    """Translate `text`, or return None when the result fails the quality gate."""
+    if not isinstance(text, str) or not text.strip() or not LATIN.search(text):
+        return text
     out = []
-    for group in groups:
-        if LATIN.search(group):
-            out.append(translator.translate(group))
-        else:
-            out.append(group)
-    return restore("".join(out), saved)
+    for translate, piece in split_protected(text):
+        # The protected runs never reach the model, so there is no sentinel to
+        # mangle and nothing to restore afterwards.
+        out.append(_translate_groups(piece, translator) if translate and LATIN.search(piece) else piece)
+    result = "".join(out)
+    return None if degradation(text, result) else result
 
 
 def key(source: str, field: str, text: str) -> str:
@@ -102,13 +92,14 @@ def main() -> None:
     en = next(x for x in langs if x.code == "en")
     zh = next(x for x in langs if x.code == "zh")
     translator = en.get_translation(zh)
-    cache = json.loads(CACHE_PATH.read_text()) if CACHE_PATH.exists() else {"entries": {}}
+    cache = json.loads(CACHE_PATH.read_text(encoding="utf-8")) if CACHE_PATH.exists() else {"entries": {}}
     cache.setdefault("entries", {})
 
     for source in args.sources:
         path = ROOT / f"data/extracted/{source}.json"
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding="utf-8"))
         changed = 0
+        rejected = collections.Counter()
         for index, point in enumerate(data.get("points", [])):
             provenance = point.setdefault("provenance", {})
             translation = provenance.setdefault("translationZh", {})
@@ -122,6 +113,9 @@ def main() -> None:
                 result = cache["entries"].get(cache_key)
                 if not result:
                     result = translate_text(value, translator)
+                    if result is None:
+                        rejected["field"] += 1
+                        continue
                     cache["entries"][cache_key] = result
                 translation[field] = result
                 changed += 1
@@ -135,6 +129,9 @@ def main() -> None:
                 result = cache["entries"].get(cache_key)
                 if not result:
                     result = translate_text(english, translator)
+                    if result is None:
+                        rejected["example"] += 1
+                        continue
                     cache["entries"][cache_key] = result
                 examples[japanese] = result
             if examples:
@@ -142,10 +139,21 @@ def main() -> None:
                 changed += len(examples)
             if translation:
                 provenance["translationZh"] = translation
-        path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
+        path.write_text(
+            json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
         print(f"[argos] {source}: changed={changed}")
+        if rejected:
+            detail = ", ".join(f"{kind}={count}" for kind, count in sorted(rejected.items()))
+            print(f"[argos] {source}: rejected={sum(rejected.values())} degraded ({detail})")
 
-    CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False, separators=(",", ":")) + "\n")
+    CACHE_PATH.write_text(
+        json.dumps(cache, ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 if __name__ == "__main__":

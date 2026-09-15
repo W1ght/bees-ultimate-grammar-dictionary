@@ -32,6 +32,8 @@ from bugd.model import Example, GrammarPoint
 from bugd.pipeline import point_from_json, run_extract
 from bugd.structure_audit import audit_point
 
+from conftest import requires_source, source_is_acquired
+
 REPO = pathlib.Path(__file__).resolve().parents[1]
 OVERLAY_PATH = REPO / "data" / "corrections" / "structure_corrections.json"
 SOURCES_DIR = REPO / "data" / "sources"
@@ -188,6 +190,7 @@ def test_overlay_loads_and_every_entry_is_well_formed():
     assert len(keys) == len(set(keys)), "duplicate correction key in overlay"
 
 
+@requires_source("dojg")
 def test_locked_source_bytes_are_never_mutated_by_corrections():
     # The defect stays in the immutable source; the correction is an overlay, not
     # a rewrite. If this fails, a defect was laundered into "our" bytes and the
@@ -201,6 +204,8 @@ def test_locked_source_bytes_are_never_mutated_by_corrections():
 
 @pytest.fixture(scope="module")
 def corrected_points(tmp_path_factory) -> dict[str, list[GrammarPoint]]:
+    if not source_is_acquired("dojg"):
+        pytest.skip("dojg locked source bytes are not acquired in this checkout")
     out = tmp_path_factory.mktemp("extracted")
     run_extract(sources_dir=SOURCES_DIR, extracted_dir=out)
     points: dict[str, list[GrammarPoint]] = {}

@@ -10,6 +10,18 @@
 - 含日语或日英双语内容的来源保留日语部分，删除英文解释和例句译文。
 - 已锁定的来源字节不会被修改。语言处理在合并前对规范化记录执行，翻译结果按来源文本缓存。
 
+### 译文质量门（`bugd.translation_quality`）
+
+译文必须原样保留它所解释的日语、链接和标记——一段丢掉了语法点本身的讲解等于什么都没讲。
+不满足这一条的译文会被**丢弃而不是渲染**，卡片退回显示该来源自己的英文原文。
+
+判定为不可用的四种情况：占位符残渣、丢失原文中受保护的片段、解码重复循环、译文明显截断。
+这四条同时作用于三个位置——Argos 离线翻译、OpenAI 翻译、以及 `apply_translation_chunks.py`
+的入库环节——所以一次翻译跑崩不会再把垃圾写进缓存、更不会进入发布包。
+
+日语片段不再用 `ZXQJPN00001Q` 之类的哨兵占位再还原：子词 NMT 不会把自造 token 原样解出来，
+它会改写、切碎甚至音译它。现在这些片段根本不进模型，只翻译它们之间的英文段落再按原位拼回。
+
 更新流程会重新构建词典、验证 Yomitan ZIP，并发布版本。翻译在本地完成后再上传发布；不依赖 GitHub Actions 在线调用翻译服务。
 
 ## 安装
@@ -54,8 +66,16 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python scripts/apply_translation_chunks.py
 PYTHONPATH=src python scripts/localize_chinese.py --offline
-PYTHONPATH=src python -m bugd.cli --no-reading-corrections all
+PYTHONPATH=src python -m bugd.cli all
 ```
+
+如果 `data/extracted/` 里还残留着旧版本写入的坏译文，先跑一次隔离：
+
+```
+PYTHONPATH=src python scripts/quarantine_bad_translations.py
+```
+
+它只删除未通过质量门的译文值，不碰来源英文，可重复执行。
 
 词典更新在本地完成后再推送到 GitHub。`.github/workflows/update-dictionary.yml` 仅提供手动发布入口，不会自动同步上游或在线翻译。
 

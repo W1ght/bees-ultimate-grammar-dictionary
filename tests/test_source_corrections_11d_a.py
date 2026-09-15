@@ -33,10 +33,9 @@ from bugd.sources.nihongo_net import NihongoNetExtractor
 REPO = pathlib.Path(__file__).resolve().parents[1]
 SOURCES = REPO / "data" / "sources"
 
-_needs_sources = pytest.mark.skipif(
-    not (SOURCES / "nihongo_net" / "SOURCE.lock.json").is_file(),
-    reason="locked source data not present in this checkout",
-)
+from conftest import requires_source  # noqa: E402
+
+_needs_sources = requires_source("nihongo_net")
 
 
 def _index(extractor_cls) -> tuple[dict[str, object], list]:

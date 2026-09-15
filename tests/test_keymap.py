@@ -653,37 +653,21 @@ def test_malformed_keymap_payloads_fail_closed(payload: object) -> None:
 #: failures such as `assert 132 == 4972`, which read as keymap defects but were
 #: only a partial corpus. Require the full set, and skip with a message naming
 #: exactly which sources are missing.
-CORPUS_SOURCES = (
-    "dojg",
-    "donna_toki",
-    "edewakaru",
-    "nihongo_net",
-    "nihongo_no_sensei",
-)
+# The pinned corpus is defined once, in conftest, because `test_unify` pins
+# counts over the same source set and the two must never disagree about what
+# "the corpus" is.
+from conftest import pinned_corpus_mismatch, requires_pinned_corpus  # noqa: E402
 
-
-def _missing_corpus_sources() -> list[str]:
-    if not EXTRACTED.is_dir():
-        return list(CORPUS_SOURCES)
-    return [name for name in CORPUS_SOURCES if not (EXTRACTED / f"{name}.json").is_file()]
-
-
-pytestmark_corpus = pytest.mark.skipif(
-    bool(_missing_corpus_sources()),
-    reason=(
-        "pinned counts need the full corpus; missing extracted sources: "
-        f"{', '.join(_missing_corpus_sources()) or 'none'} (run `make extract`)"
-    ),
-)
+pytestmark_corpus = requires_pinned_corpus
 
 
 @pytest.fixture(scope="module")
 def corpus() -> dict[str, object]:
-    missing = _missing_corpus_sources()
-    if missing:
+    mismatch = pinned_corpus_mismatch()
+    if mismatch:
         pytest.skip(
-            "pinned counts need the full corpus; missing extracted sources: "
-            f"{', '.join(missing)} (run `make extract`)"
+            "pinned counts were measured over a different corpus: "
+            f"{mismatch} (run `make extract` on the pinned source set)"
         )
     return build_keymap(EXTRACTED)
 

@@ -16,6 +16,8 @@ from bugd.sources import Extractor, ExtractResult, SourceLockError, load_source_
 from bugd.sources.base import SOURCE_LOCK_NAME, DuplicateRowIdentity
 from bugd.sources.registry import register_extractor, source_names
 
+from conftest import source_is_acquired
+
 REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
@@ -726,8 +728,8 @@ def test_ninjal_extracts_every_locked_headword_from_the_real_archive():
     from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor
 
     input_dir = REPO / "data/sources/ninjal_bunkei"
-    if not (input_dir / "SOURCE.lock.json").is_file():  # pragma: no cover
-        pytest.skip("ninjal_bunkei source data is not present in this checkout")
+    if not source_is_acquired("ninjal_bunkei"):  # pragma: no cover
+        pytest.skip("ninjal_bunkei locked source bytes are not acquired in this checkout")
 
     result = NinjalBunkeiExtractor(input_dir).extract()
     assert result.source == "ninjal_bunkei"
@@ -756,8 +758,8 @@ def test_ninjal_member_name_recovers_cp932_names_the_utf8_flag_missed():
     from bugd.sources.ninjal_bunkei import NinjalBunkeiExtractor, member_name
 
     input_dir = REPO / "data/sources/ninjal_bunkei"
-    if not (input_dir / "SOURCE.lock.json").is_file():  # pragma: no cover
-        pytest.skip("ninjal_bunkei source data is not present in this checkout")
+    if not source_is_acquired("ninjal_bunkei"):  # pragma: no cover
+        pytest.skip("ninjal_bunkei locked source bytes are not acquired in this checkout")
 
     with zipfile.ZipFile(input_dir / "nihongo_bunkei_database20260126.zip") as archive:
         infos = [

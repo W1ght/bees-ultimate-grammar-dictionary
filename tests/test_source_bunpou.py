@@ -9,7 +9,13 @@ import pytest
 from bugd.jsonio import MalformedPayload
 from bugd.sources.bunpou import BunpouExtractor
 
+from conftest import requires_source
+
 INPUT_DIR = pathlib.Path("data/sources/bunpou")
+
+# The deck itself is not committed, only its lock. Without the deck every test
+# here raises SourceLockError, which is an unacquired checkout, not a defect.
+pytestmark = requires_source("bunpou")
 
 
 @pytest.fixture(scope="module")

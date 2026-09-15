@@ -114,6 +114,7 @@ def main() -> int:
         )
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
     print(f"[reading-disagreements] {len(resolved)} disagreements")

@@ -13,8 +13,18 @@ from harness.yomitan_harness import EXPECTED_YOMITAN_VERSION, yomitan_revision
 
 
 def test_harness_renders_the_pinned_yomitan_revision():
-    """The renderer under test is the version `make validate` pins."""
-    revision = yomitan_revision()
+    """The renderer under test is the version `make validate` pins.
+
+    Skips, like the rest of the render suite, when the pinned checkout is not
+    there to be identified: `YOMITAN_ROOT` defaults to one contributor's absolute
+    path, so on every other machine `git describe` exited 128 and this reported a
+    version MISMATCH -- a claim it had no evidence for -- instead of an absent
+    checkout. Set `BUGD_YOMITAN_ROOT` to a Yomitan clone to run it.
+    """
+    try:
+        revision = yomitan_revision()
+    except Exception as error:  # noqa: BLE001 - environment guard, skips loudly
+        pytest.skip(f"pinned Yomitan checkout unavailable: {error}")
     assert revision["describe"].startswith(EXPECTED_YOMITAN_VERSION), (
         f"harness would render Yomitan {revision['describe']!r} "
         f"({revision['commit'][:12]}) but the dictionary is built and validated "

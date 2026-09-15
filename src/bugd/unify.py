@@ -1313,7 +1313,7 @@ def write_unified(
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [dump_json(entry_to_json(entry)) for entry in entries]
     payload = "".join(f"{line}\n" for line in lines)
-    path.write_text(payload, encoding="utf-8")
+    path.write_text(payload, encoding="utf-8", newline="\n")
     return len(payload.encode("utf-8")), content_hash([entry_to_json(e) for e in entries])
 
 
@@ -1353,7 +1353,7 @@ def run_unify(
         ),
     }
     stats_path.parent.mkdir(parents=True, exist_ok=True)
-    stats_path.write_text(dump_json(stats) + "\n", encoding="utf-8")
+    stats_path.write_text(dump_json(stats) + "\n", encoding="utf-8", newline="\n")
     return stats
 
 

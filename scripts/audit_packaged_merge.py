@@ -32,7 +32,7 @@ with zipfile.ZipFile(ZIP) as zf:
     index = json.loads(zf.read("index.json"))
 
 unified = [json.loads(line) for line in open("data/merge/unified.jsonl", encoding="utf-8")]
-stats = json.load(open("data/merge/unified.stats.json"))
+stats = json.load(open("data/merge/unified.stats.json", encoding="utf-8"))
 
 check("packaged term entries == unified entries", len(entries), len(unified))
 check(

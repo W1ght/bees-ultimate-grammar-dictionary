@@ -443,6 +443,7 @@ class YokubiExtractor(Extractor):
         path.write_text(
             "".join(dump_json(point_to_json(point)) + "\n" for point in points),
             encoding="utf-8",
+            newline="\n",
         )
         return path
 
@@ -455,7 +456,7 @@ class YokubiExtractor(Extractor):
         to the lesson that declared them.
         """
         path = self.input_dir / COVERAGE_NAME
-        path.write_text(render_coverage(result), encoding="utf-8")
+        path.write_text(render_coverage(result), encoding="utf-8", newline="\n")
         return path
 
 

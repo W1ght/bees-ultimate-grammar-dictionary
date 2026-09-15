@@ -366,6 +366,8 @@ def _contribution(source, source_id, sentences, **extra):
         nuance=None,
         explanation=None,
         notes=None,
+        nuance_ja=None,
+        explanation_ja=None,
         jlpt=None,
         examples=tuple(Example(japanese=s) for s in sentences),
         **extra,
@@ -729,10 +731,20 @@ REPO = pathlib.Path(__file__).resolve().parents[1]
 EXTRACTED = REPO / "data" / "extracted"
 KEYMAP = REPO / "data" / "merge" / "keymap.json"
 
+from conftest import requires_pinned_corpus  # noqa: E402
+
 requires_corpus = pytest.mark.skipif(
     not EXTRACTED.is_dir() or not any(EXTRACTED.glob("*.json")) or not KEYMAP.is_file(),
     reason="no extracted corpus + keymap on disk (run `make extract && make keymap`)",
 )
+
+#: For the tests below that assert a NUMBER rather than a property. Those numbers
+#: were measured over one specific source set (see `conftest.PINNED_CORPUS_SOURCES`)
+#: and mean nothing over another, so a checkout holding a different corpus skips
+#: them instead of reporting a merge regression it has no evidence for. The
+#: property tests beside them keep the plain `requires_corpus` gate and still run
+#: on whatever corpus is present -- which is where a real merge defect shows up.
+requires_pinned_counts = requires_pinned_corpus
 
 
 @pytest.fixture(scope="module")
@@ -742,7 +754,7 @@ def corpus():
     return rows, entries, stats
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_the_real_corpus_merges_into_the_expected_shape(corpus):
     rows, entries, stats = corpus
     # Repinned by UGD-16 convergence, which landed the last four extractors
@@ -796,7 +808,7 @@ def test_no_packaged_headword_starts_with_a_placeholder_tilde(corpus):
     assert not offenders, f"{len(offenders)} point headwords start with a placeholder tilde: {offenders[:5]}"
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_every_tilde_first_source_spelling_is_still_reachable(corpus):
     """Stripping the mark must ADD reachability, never remove a spelling.
 
@@ -877,7 +889,7 @@ def test_no_example_disappears_without_being_counted(corpus):
     ]
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_every_written_form_in_the_corpus_stays_findable(corpus):
     """Only the 4 forms the stats report as unresolved may be unreachable."""
     rows, entries, stats = corpus
@@ -906,7 +918,7 @@ def test_every_redirect_target_is_a_real_point_entry(corpus):
             assert set(entry.redirect_targets) <= heads, entry.expression
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_the_redirect_basis_breakdown_is_pinned(corpus):
     """Pin the emitted precedence, not a hand-counted one.
 
@@ -967,7 +979,7 @@ def test_ordinal_senses_are_never_shuffled_in_the_real_corpus(corpus):
     assert checked >= 18
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_the_real_corpus_carries_no_ai_fields_and_no_media_but_keeps_both_channels(corpus):
     """Guards against a false claim in either direction.
 
@@ -994,7 +1006,7 @@ def test_the_real_corpus_carries_no_ai_fields_and_no_media_but_keeps_both_channe
     assert ai_sources == {"bunpou"}
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_conflicting_jlpt_levels_survive_the_real_merge(corpus):
     _, entries, stats = corpus
     conflicting = [e for e in entries if len(e.jlpt_levels) > 1]
@@ -1012,7 +1024,7 @@ def test_conflicting_jlpt_levels_survive_the_real_merge(corpus):
         assert len({level for _, level in per_source}) > 1, entry.expression
 
 
-@requires_corpus
+@requires_pinned_counts
 def test_bunpro_adds_jlpt_conflicts_without_erasing_the_pre_existing_ones(corpus):
     """The 158 -> 246 step must be additive, not a reshuffle.
 

@@ -66,12 +66,17 @@ def test_every_relative_import_resolves_to_a_tracked_file(tracked_files: set[str
                 base = base.parent
             parts = (node.module or "").split(".") if node.module else []
             target = base.joinpath(*parts) if parts else base
-            candidates = {f"{target}.py", str(target / "__init__.py")}
+            # `git ls-files` always spells a path with forward slashes;
+            # `str(PurePath)` spells it with the HOST separator, so on Windows
+            # every candidate missed and the test reported all 54 imports of the
+            # package as untracked.
+            target_name = target.as_posix()
+            candidates = {f"{target_name}.py", f"{target_name}/__init__.py"}
             if candidates & tracked_files:
                 continue
             # A namespace package (no __init__.py) is satisfied by any tracked
             # module inside it.
-            if any(f.startswith(f"{target}/") for f in tracked_files):
+            if any(f.startswith(f"{target_name}/") for f in tracked_files):
                 continue
             missing.append(f"{name} imports {'.' * node.level}{node.module or ''}")
     assert not missing, "tracked modules import untracked files:\n  " + "\n  ".join(missing)
@@ -104,7 +109,8 @@ def test_the_source_lock_digest_manifests_are_tracked(tracked_files: set[str]) -
     different dictionary. They hold no source content, only hashes.
     """
     on_disk = sorted(
-        str(p.relative_to(REPO)) for p in (REPO / "data" / "sources").glob("*/SOURCE.lock.json")
+        p.relative_to(REPO).as_posix()
+        for p in (REPO / "data" / "sources").glob("*/SOURCE.lock.json")
     )
     if not on_disk:
         pytest.skip("no acquired sources in this checkout")

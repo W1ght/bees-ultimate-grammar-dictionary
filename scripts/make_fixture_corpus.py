@@ -10,7 +10,7 @@ import sys
 CORPUS = "/home/skerraut/work/ugd-09-banks/data/merged/corpus.json"
 OUT = "tests/harness/fixture_corpus.json"
 
-d = json.load(open(CORPUS))
+d = json.load(open(CORPUS, encoding="utf-8"))
 entries = d["entries"]
 labels = d["sourceLabels"]
 

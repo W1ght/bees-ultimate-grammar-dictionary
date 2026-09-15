@@ -32,7 +32,7 @@ def main(argv: list[str] | None = None) -> int:
 
     args.merge_dir.mkdir(parents=True, exist_ok=True)
     path = args.merge_dir / KEYMAP_NAME
-    path.write_text(dump_json(payload) + "\n", encoding="utf-8")
+    path.write_text(dump_json(payload) + "\n", encoding="utf-8", newline="\n")
 
     report = payload["report"]
     corpus = report["corpus"]

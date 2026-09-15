@@ -36,6 +36,7 @@ from .merge import MergedEntry
 from .model import GrammarPoint
 from .dialects import prose_to_html
 from .richtext import html_to_content, html_to_text
+from .translation_quality import is_degraded
 
 #: Marker attributes for this dictionary's own CSS.
 #:
@@ -144,6 +145,31 @@ def _lang_of(text: str) -> str:
     return "ja" if _is_japanese_text(text) else "en"
 
 
+def _field_language(text: str) -> str:
+    """The language a whole prose FIELD is WRITTEN IN.
+
+    Not the same question as `_lang_of`, which answers "does this contain
+    Japanese at all". That is right for a short gloss and wrong for a field: an
+    IMABI lesson is English prose that QUOTES a great deal of Japanese, so
+    `_lang_of` called all 494 of them `ja`, which declared English prose as
+    Japanese to the browser AND -- because `_prose_paragraph` only subordinates a
+    Latin-dominant line inside a JAPANESE field -- demoted 18,476 paragraphs of
+    IMABI's and Yokubi's PRIMARY explanation to the indented, quietened,
+    0.94em `proseTranslation` role meant for a translation sitting beside the
+    Japanese it translates. That is the exact inversion `_prose_paragraph`'s
+    `field_lang` parameter exists to prevent.
+
+    Dominance over the whole field separates the two cleanly on the real corpus:
+    99.6% of DoJG's, 98.8% of IMABI's and 100% of Yokubi's explanations are
+    Latin-dominant, against 0.0% of 絵でわかる日本語's, 日本語NET's,
+    毎日のんびり日本語教師's, NINJAL's and どんなとき's. No source list is
+    hard-coded; a new English-explaining source is classified on arrival.
+    """
+    if not _is_japanese_text(text):
+        return "en"
+    return "en" if _is_latin_dominant(text) else "ja"
+
+
 #: Kana. The presence of kana is what distinguishes Japanese from Chinese here:
 #: both scripts use Han, and Han alone sits inside `_JAPANESE_RANGES`.
 _KANA = re.compile(r"[\u3040-\u309f\u30a0-\u30ff\u31f0-\u31ff\uff66-\uff9d]")
@@ -232,16 +258,36 @@ def _text(value: object) -> str:
 
 
 def _translation_zh(point: GrammarPoint, field: str) -> str:
-    """Read an optional cached Chinese translation without altering source text."""
+    """Read an optional cached Chinese translation without altering source text.
+
+    A translation that failed `bugd.translation_quality` is DROPPED rather than
+    rendered, so the card falls back to the source's own English. v2026.09.14.4
+    shipped placeholder debris (`ZQQJPN00014`, `齐·杰普恩00092Q`) and beam-1
+    repetition loops into 99.4% of IMABI's Chinese explanations; an unreadable
+    translation beside a readable original is strictly worse than no translation.
+    """
     provenance = point.provenance if isinstance(point.provenance, dict) else {}
     translations = provenance.get("translationZh")
     value = translations.get(field) if isinstance(translations, dict) else None
+    if isinstance(value, str):
+        original = getattr(point, field, None)
+        if is_degraded(original if isinstance(original, str) else "", value):
+            value = None
     if not isinstance(value, str) and field == "meaning":
+        # NOT a translation: 毎日のんびり日本語教師 publishes this Chinese column
+        # itself, so it is source text and is never quality-gated as output.
         value = provenance.get("meaningZh")
     return value.strip() if isinstance(value, str) else ""
 
 
-def _example_translation_zh(point: GrammarPoint, japanese: str, index: int) -> str:
+def _example_translation_zh(
+    point: GrammarPoint, japanese: str, index: int, english: str | None = None
+) -> str:
+    """The Chinese gloss for one example, or '' when there is none to trust.
+
+    `english` is the source gloss this was translated from; it is what the
+    quality gate measures the translation against.
+    """
     provenance = point.provenance if isinstance(point.provenance, dict) else {}
     translations = provenance.get("translationZh")
     if not isinstance(translations, dict):
@@ -254,6 +300,8 @@ def _example_translation_zh(point: GrammarPoint, japanese: str, index: int) -> s
         value = examples[index]
     else:
         value = None
+    if isinstance(value, str) and is_degraded(english if isinstance(english, str) else "", value):
+        return ""
     return value.strip() if isinstance(value, str) else ""
 
 
@@ -896,7 +944,9 @@ def _examples_section(point: GrammarPoint) -> dict | None:
         english = _text(example.english)
         if english:
             body.append(_span("en", _split_dialogue_turns(english), lang="en"))
-        chinese = _text(_example_translation_zh(point, example.japanese, index))
+        chinese = _text(
+            _example_translation_zh(point, example.japanese, index, example.english)
+        )
         if chinese:
             body.append(_span("zh", _split_dialogue_turns(chinese), lang="zh"))
         items.append({"tag": "li", "data": {"example": ""}, "content": body})
@@ -1393,10 +1443,12 @@ def _source_block(point: GrammarPoint) -> list[object]:
         raw = getattr(point, field_name, None)
         content = _prose(raw, point)
         if content is not None:
-            # Prose is Japanese for most sources but English for DoJG (373 of its
-            # explanations); the card root declares `ja`, so an English block must
-            # say so explicitly or it inherits the wrong language.
-            field_lang = _lang_of(raw) if isinstance(raw, str) else "ja"
+            # Prose is Japanese for most sources but English for DoJG, IMABI and
+            # Yokubi; the card root declares `ja`, so an English block must say so
+            # explicitly or it inherits the wrong language -- and a field written
+            # in English must not have its own paragraphs read as translations of
+            # a Japanese original that is not there. See `_field_language`.
+            field_lang = _field_language(raw) if isinstance(raw, str) else "ja"
             node: dict = {
                 "tag": "div",
                 "data": {"prose": ""},

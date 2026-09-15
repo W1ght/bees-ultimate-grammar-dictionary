@@ -17,9 +17,9 @@ OUT = REPO / "data" / "corrections" / "content" / "reports" / "ugd-11c-d.resolut
 
 
 def main() -> int:
-    D = json.loads((CLUSTERS / "cluster_D.json").read_text())["findings"]
-    F = json.loads((CLUSTERS / "cluster_F.json").read_text())["findings"]
-    corr = json.loads(MANIFEST.read_text())["corrections"]
+    D = json.loads((CLUSTERS / "cluster_D.json").read_text(encoding="utf-8"))["findings"]
+    F = json.loads((CLUSTERS / "cluster_F.json").read_text(encoding="utf-8"))["findings"]
+    corr = json.loads(MANIFEST.read_text(encoding="utf-8"))["corrections"]
 
     # Index corrections by (source, source_id, verbatim) — for the one item split
     # across two surfaces the two records share (source, source_id) but differ by

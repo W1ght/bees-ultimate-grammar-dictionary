@@ -19,9 +19,14 @@ import json
 import os
 import pathlib
 import re
+import sys
 import time
 import urllib.error
 import urllib.request
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
+
+from bugd.translation_quality import degradation  # noqa: E402
 
 ENGLISH_ONLY = frozenset({"dojg", "bunpro", "imabi", "yokubi"})
 TEXT_FIELDS = ("meaning", "structure", "nuance", "explanation", "notes")
@@ -82,6 +87,7 @@ def save_cache(path: pathlib.Path, cache: dict[str, object]) -> None:
     path.write_text(
         json.dumps(cache, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
 
@@ -221,14 +227,24 @@ def localize_file(path: pathlib.Path, *, cache: dict[str, object], api_key: str,
             for field in TEXT_FIELDS:
                 value = point.get(field)
                 if isinstance(value, str) and value.strip():
-                    translations[field] = translated[_cache_key(source, field, value)]
+                    candidate = translated[_cache_key(source, field, value)]
+                    # A translation that lost the Japanese it was explaining, or
+                    # stopped early, is not published -- the card falls back to
+                    # this source's own English. See `bugd.translation_quality`.
+                    if not degradation(value, candidate):
+                        translations[field] = candidate
             example_translations: dict[str, str] = {}
             for example_index, example in enumerate(point.get("examples") or []):
                 if isinstance(example, dict) and isinstance(example.get("english"), str) and example["english"].strip():
                     key = _cache_key(source, f"example:{example_index}", example["english"])
                     japanese = example.get("japanese")
-                    if isinstance(japanese, str) and japanese.strip():
-                        example_translations[japanese] = translated[key]
+                    candidate = translated[key]
+                    if (
+                        isinstance(japanese, str)
+                        and japanese.strip()
+                        and not degradation(example["english"], candidate)
+                    ):
+                        example_translations[japanese] = candidate
             if any(translations.values()) or example_translations:
                 translations["examples"] = example_translations
                 provenance = point.setdefault("provenance", {})
@@ -255,7 +271,7 @@ def localize_file(path: pathlib.Path, *, cache: dict[str, object], api_key: str,
         "mode": "english-plus-chinese" if source in ENGLISH_ONLY else "japanese-no-english",
         "changedRecords": changed,
     }
-    path.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8", newline="\n")
     return changed
 
 

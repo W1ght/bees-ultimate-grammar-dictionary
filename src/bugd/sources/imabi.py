@@ -246,13 +246,14 @@ class ImabiExtractor(Extractor):
         path.write_text(
             "".join(dump_json(point_to_json(point)) + "\n" for point in points),
             encoding="utf-8",
+            newline="\n",
         )
         return path
 
     def write_coverage(self, result: ExtractResult, locked_pages: int) -> pathlib.Path:
         """Write the report naming every locked page imported or skipped."""
         path = self.input_dir / COVERAGE_NAME
-        path.write_text(render_coverage(result, locked_pages), encoding="utf-8")
+        path.write_text(render_coverage(result, locked_pages), encoding="utf-8", newline="\n")
         return path
 
 

@@ -56,9 +56,9 @@
    "source": "nihongo_net",
    "source_id": "込む",
    "expression": "込む",
-   "from": "む",
+   "from": "ごむ",
    "to": "こむ",
-   "evidence": "The compound-verb suffix 込む is read こむ (入り込む=はいりこむ, 差し込む=さしこむ). The scraped data carries only む (the okurigana) as reading; the kanji こ is missing.",
+   "evidence": "The compound-verb suffix 込む is read こむ (入り込む=はいりこむ, 差し込む=さしこむ). The 2026-09 re-scrape carries ごむ: the okurigana む with a voiced ご, which 込 is never read. Every example on the row reads it こむ (煮込む=にこむ, 考え込む=かんがえこむ, 走り込む=はしりこむ).",
    "confidence": 0.95
   },
   {
